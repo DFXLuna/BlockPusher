@@ -6,8 +6,5 @@
     
     /* Strict Type-Checking Options */
     "strict": true,                      /* Enable all strict type-checking options. */
-    
-    /* god help me */
-    "outDir": "./dist/",
   }
 }
