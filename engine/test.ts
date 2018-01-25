@@ -1,4 +1,4 @@
-import { Engine } from "./engine"
+import { Engine } from "engine";
 
 window.onload = () => {
     let c = <HTMLCanvasElement>document.getElementById("cnvs");
