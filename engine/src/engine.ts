@@ -3,14 +3,23 @@ export class Engine{
     // canvas
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D | null;
+    private loopFunctions: { (): void }[] = []; 
 
     constructor( cnvs: HTMLCanvasElement ){
         this.canvas = cnvs;
         this.context = this.canvas.getContext("2d");
-        
-        this.gameLoop();
     }
-    private gameLoop(){
-        console.log("gameLoop was entered");
+
+    public registerFunction( func: () => void ): void {
+        console.log( "Function received" );
+        this.loopFunctions.push( func );
+    }
+
+    public gameLoop(): void {
+        requestAnimationFrame( this.gameLoop );
+        for( let f of this.loopFunctions ){
+            console.log( "Calling function" );
+            f();
+        }
     }
 }
