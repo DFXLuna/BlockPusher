@@ -1,4 +1,4 @@
-export default class Engine{
+export class Engine{
     // Until we work out engine / site interaction, the engine will require the
     // canvas
     private canvas: HTMLCanvasElement;
