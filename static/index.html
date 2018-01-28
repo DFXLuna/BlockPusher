@@ -1,0 +1,29 @@
+<!doctype html>
+<head>
+    <title>߷</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<textarea id="code" rows=40 cols=80>
+alert("test");
+</textarea>
+
+    <iframe id="sandbox" src="sandbox.html" sandbox="allow-scripts"></iframe>
+    <br>
+    <button onclick="submitCode();">Submit Code</button>
+
+    <script>
+        let codeElement = document.getElementById("code");
+        let sandboxElement = document.getElementById("sandbox");
+
+        function submitCode() {
+            var x = "asdf";
+
+            let code = codeElement.value;
+
+            // Need to pass a message to the frame instead.
+            sandboxElement.contentWindow.eval(code);
+        }
+    </script>
+</body>
