@@ -4,13 +4,28 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval';">
     <script>
+        function onMessage(event) {
+            if (event.origin != location.origin)
+                return;
+            
+            let msg = event.data;
+
+            if (msg.type == "submitCode") {
+                // IMPORTANT: Must call `window.eval` and not `eval`,
+                // `eval` runs code in same scope as it was called in.
+                // Probably won't keep using `eval` at all, but this is something to keep in mind.
+                window.eval(msg.code);
+            }
+        }
+
+        addEventListener("message", onMessage, false);
+    </script>
+    <script>
         // Sandboxing attempts
         delete window.alert;
-        
-        console.log("rer");
-        alert("xyzzy");
     </script>
 </head>
 <body>
-    rerrrrr
+    This frame is (hopefully) sandboxed good. <br>
+    This is where the game engine and user code should live.
 </body>
