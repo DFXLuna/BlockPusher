@@ -1,14 +1,21 @@
 export class Engine{
-    // Until we work out engine / site interaction, the engine will require the
-    // canvas
     private canvas: HTMLCanvasElement;
-    private context: CanvasRenderingContext2D | null;
+    private context: CanvasRenderingContext2D;
     private loopFunctions: { (): void }[] = [];
     private boundGameLoop: ( timestamp: number ) => void;
 
+    // Base engine functionality
     constructor( canvasName: string ){
         this.canvas = <HTMLCanvasElement>document.getElementById(canvasName);
-        this.context = this.canvas.getContext("2d");
+
+        let temp = this.canvas.getContext("2d");
+        if( temp !== null ){
+            this.context = temp;
+        }
+        else{
+            throw "Could not get context from canvas";
+        }
+
         this.boundGameLoop = this.gameLoop.bind( this );
     }
 
@@ -19,14 +26,11 @@ export class Engine{
     public gameLoop( timestamp: number = 0 ): void {
         window.requestAnimationFrame( this.boundGameLoop );
         // Clear canvas
-        if( this.context !== null ){
-            this.context.clearRect( 0, 0, this.canvas.width, this.canvas.height );
-        }
+        this.context.clearRect( 0, 0, this.canvas.width, this.canvas.height );
         // Run user registered functions
         for( let f of this.loopFunctions ){
             f();
         }
     }
-    
     
 }
