@@ -17,24 +17,8 @@ window.onload = () => {
     //     console.log("Function2");
     // }
     // );
-
-    // Draw a red triangle to screen
-    a.registerFunction( () => {
-        // tryGetContext is only for prototyping
-        let ctx = a.tryGetContext();
-        if( ctx !== null ){
-            ctx.beginPath()
-            ctx.moveTo( 0, 0 )
-            ctx.lineTo( 99, 0 )
-            ctx.lineTo( 101, 99 )
-            ctx.lineTo( 0, 0 )
-            ctx.strokeStyle = 'red'
-            ctx.stroke()
-        }
-
-    }
-    );
-
+    let boundRect = a.drawRect.bind( a, 0, 0, 100, 100 );
+    a.registerFunction( boundRect );
     // Start the game loop
     a.gameLoop();
 }

@@ -25,12 +25,21 @@ export class Engine{
 
     public gameLoop( timestamp: number = 0 ): void {
         window.requestAnimationFrame( this.boundGameLoop );
-        // Clear canvas
-        this.context.clearRect( 0, 0, this.canvas.width, this.canvas.height );
+        this.clear();
         // Run user registered functions
         for( let f of this.loopFunctions ){
             f();
         }
+    }
+
+    // Rendering functionality
+    
+    public clear(): void {
+        this.context.clearRect( 0, 0, this.canvas.width, this.canvas.height );
+    }
+
+    public drawRect( x: number, y: number, width: number, length: number ): void {
+        this.context.strokeRect( x, y, width, length );
     }
     
 }
