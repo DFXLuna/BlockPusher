@@ -28,8 +28,5 @@ export class Engine{
         }
     }
     
-    // ONLY FOR PROTOTYPING
-    public tryGetContext(): CanvasRenderingContext2D | null {
-        return this.context;
-    }
+    
 }
