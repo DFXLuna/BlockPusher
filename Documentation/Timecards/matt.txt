@@ -1,3 +1,4 @@
 Jan. 23: 30 minutes. initialize repository and add organization for documentation, meetings and time cards.
 Jan. 25: 4 hours. Proof of concept for engine / Gameloop wrapper and build chain.
 Jan. 26: 2 hours. Finish function registration concept for engine.
+Jan. 31: 1 hour. Create drawRect context wrapper proof of concept .
