@@ -17,8 +17,12 @@ window.onload = () => {
     //     console.log("Function2");
     // }
     // );
+    // Bind arguments to a function before giving it to the gameloop
     let boundRect = a.drawRect.bind( a, 0, 0, 100, 100 );
     a.registerFunction( boundRect );
+
+    let boundCirc = a.drawCircle.bind( a, 100, 100, 100 );
+    a.registerFunction( boundCirc );
     // Start the game loop
     a.gameLoop();
 }

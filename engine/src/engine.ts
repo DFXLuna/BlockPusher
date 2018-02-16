@@ -41,5 +41,11 @@ export class Engine{
     public drawRect( x: number, y: number, width: number, length: number ): void {
         this.context.strokeRect( x, y, width, length );
     }
+
+    public drawCircle( x: number, y: number, radius: number ): void {
+        this.context.beginPath();
+        this.context.arc( x, y, radius, 0, Math.PI * 2 );
+        this.context.stroke();
+    }
     
 }
