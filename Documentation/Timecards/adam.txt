@@ -1,2 +1,2 @@
-Jan. 28 - 3 Hours - Prototyped code evaluation and security measures.
-Feb. 20 - 30 Minutes - Cleaned build artifacts from website and merged website with editor prototype.
+Jan. 28: 3 hours. Prototyped code evaluation and security measures.
+Feb. 20: 30 minutes. Cleaned build artifacts from website and merged website with editor prototype.
