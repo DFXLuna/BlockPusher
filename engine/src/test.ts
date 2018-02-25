@@ -1,6 +1,5 @@
 import { Engine } from "./engine";
 
-
 window.onload = () => {
     // The engine will grab the canvas from the html by name and create its
     // context
@@ -28,6 +27,8 @@ window.onload = () => {
     // Right now every image in the cache gets rendered at 0,0
     a.registerImage( "./test.png", "test" );
     a.registerImage( "./test2.jpg", "test2" );
+    a.requestDraw( "test" );
+    a.requestDraw( "test2" );
 
     // Start the game loop
     a.gameLoop();

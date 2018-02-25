@@ -3,3 +3,5 @@ Jan. 25: 4 hours. Proof of concept for engine / Gameloop wrapper and build chain
 Jan. 26: 2 hours. Finish function registration concept for engine.
 Jan. 31: 1 hour. Create drawRect context wrapper proof of concept .
 Feb. 16: 1 hour. Create drawCircle context wrapper.
+Feb. 24: 3 hours. Prototype registering and drawing images. Create separate rendering class.
+Feb. 25: 2 hours. Trello Setup. Finish separate rendering class prototype.
