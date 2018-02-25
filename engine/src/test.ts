@@ -18,12 +18,17 @@ window.onload = () => {
     // }
     // );
     // Bind arguments to a function before giving it to the gameloop
-    let boundRect = a.drawRect.bind( a, 0, 0, 100, 100 );
-    a.registerFunction( boundRect );
+    // let boundRect = a.drawRect.bind( a, 0, 0, 100, 100 );
+    // a.registerFunction( boundRect );
 
-    let boundCirc = a.drawCircle.bind( a, 100, 100, 100 );
-    a.registerFunction( boundCirc );
+    // let boundCirc = a.drawCircle.bind( a, 100, 100, 100 );
+    // a.registerFunction( boundCirc );
+    
+    // Register an image with the engine
+    // Right now every image in the cache gets rendered at 0,0
+    a.registerImage( "./test.png", "test" );
+    a.registerImage( "./test2.jpg", "test2" );
+
     // Start the game loop
     a.gameLoop();
 }
-
