@@ -1,0 +1,11 @@
+
+
+# VS Cruft + Packages + Build Artifacts
+*.csproj.user
+website/.vs/**
+website/packages/**
+website/BlockPusher/obj/**
+website/BlockPusher/bin/**
+
+# Databases -- Not sure, but I don't these should be in VC.
+website/BlockPusher/App_Data/**
