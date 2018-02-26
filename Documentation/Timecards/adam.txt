@@ -1,2 +1,3 @@
 Jan. 28: 3 hours. Prototyped code evaluation and security measures.
 Feb. 20: 30 minutes. Cleaned build artifacts from website and merged website with editor prototype.
+Feb. 25: 1 hour. Added ACE, made editor look similar to goal for final product.
