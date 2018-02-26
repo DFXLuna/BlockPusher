@@ -1,26 +1,40 @@
-<!doctype html>
+﻿<!doctype html>
 <head>
     <title>߷</title>
     <meta charset="UTF-8">
+	<style>
+		div#code {
+			width: 640px;
+			height: 480px;
+		}
+	</style>
 </head>
 <body>
 
-<textarea id="code" rows=40 cols=80>
-alert("test");
-</textarea>
+	<div id="code">
+		alert("test"); aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+	</div>
 
-    <iframe id="sandbox" src="sandbox.html" sandbox="allow-scripts" style="width: 640px; height: 480px;"></iframe>
-    <br>
-    <button onclick="submitCode();">Submit Code</button>
+	<iframe id="sandbox" src="sandbox.html" sandbox="allow-scripts" style="width: 640px; height: 480px;"></iframe>
+	<br>
+	<button onclick="submitCode();">Submit Code</button>
 
-    <script>
-        let codeElement = document.getElementById("code");
-        let sandboxElement = document.getElementById("sandbox");
+	<script src="/Scripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script>
+		// ACE Editor Setup
 
-        function submitCode() {
-            let code = codeElement.value;
+		let editor = ace.edit("code");
+		editor.setTheme("ace/theme/monokai");
+		editor.session.setMode("ace/mode/javascript");
+	</script>
 
-            sandboxElement.contentWindow.postMessage({type: "submitCode", code: code}, "*"); // Can't use actual origin for sandboxed frames???
-        }
-    </script>
+	<script>
+		let codeElement = document.getElementById("code");
+		let sandboxElement = document.getElementById("sandbox");
+
+		function submitCode() {
+			let code = codeElement.value;
+			sandboxElement.contentWindow.postMessage({type: "submitCode", code: code}, "*"); // Can't use actual origin for sandboxed frames???
+		}
+	</script>
 </body>
