@@ -1,6 +1,5 @@
 import { Engine } from "./engine";
 
-
 window.onload = () => {
     // The engine will grab the canvas from the html by name and create its
     // context
@@ -17,25 +16,20 @@ window.onload = () => {
     //     console.log("Function2");
     // }
     // );
+    // Bind arguments to a function before giving it to the gameloop
+    // let boundRect = a.drawRect.bind( a, 0, 0, 100, 100 );
+    // a.registerFunction( boundRect );
 
-    // Draw a red triangle to screen
-    a.registerFunction( () => {
-        // tryGetContext is only for prototyping
-        let ctx = a.tryGetContext();
-        if( ctx !== null ){
-            ctx.beginPath()
-            ctx.moveTo( 0, 0 )
-            ctx.lineTo( 99, 0 )
-            ctx.lineTo( 101, 99 )
-            ctx.lineTo( 0, 0 )
-            ctx.strokeStyle = 'red'
-            ctx.stroke()
-        }
-
-    }
-    );
+    // let boundCirc = a.drawCircle.bind( a, 100, 100, 100 );
+    // a.registerFunction( boundCirc );
+    
+    // Register an image with the engine
+    // Right now every image in the cache gets rendered at 0,0
+    a.registerImage( "./test.png", "test" );
+    a.registerImage( "./test2.jpg", "test2" );
+    a.requestDraw( "test" );
+    a.requestDraw( "test2" );
 
     // Start the game loop
     a.gameLoop();
 }
-

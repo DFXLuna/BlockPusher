@@ -1,14 +1,13 @@
+import { Renderer } from "./renderer";
+
 export class Engine{
-    // Until we work out engine / site interaction, the engine will require the
-    // canvas
-    private canvas: HTMLCanvasElement;
-    private context: CanvasRenderingContext2D | null;
+
     private loopFunctions: { (): void }[] = [];
     private boundGameLoop: ( timestamp: number ) => void;
+    private renderer: Renderer;
 
     constructor( canvasName: string ){
-        this.canvas = <HTMLCanvasElement>document.getElementById(canvasName);
-        this.context = this.canvas.getContext("2d");
+        this.renderer = new Renderer( canvasName );
         this.boundGameLoop = this.gameLoop.bind( this );
     }
 
@@ -18,18 +17,23 @@ export class Engine{
 
     public gameLoop( timestamp: number = 0 ): void {
         window.requestAnimationFrame( this.boundGameLoop );
-        // Clear canvas
-        if( this.context !== null ){
-            this.context.clearRect( 0, 0, this.canvas.width, this.canvas.height );
-        }
         // Run user registered functions
         for( let f of this.loopFunctions ){
             f();
         }
+        this.draw();
+    }
+
+    public registerImage( filename: string, friendlyName: string ): void {
+        this.renderer.registerImage( filename ,friendlyName );
     }
     
-    // ONLY FOR PROTOTYPING
-    public tryGetContext(): CanvasRenderingContext2D | null {
-        return this.context;
+    public requestDraw( friendlyName: string ){
+        this.renderer.addToQueue( friendlyName );
     }
+    
+    private draw() : void{
+        this.renderer.draw();
+    }
+    
 }
