@@ -1,40 +1,79 @@
 ﻿<!doctype html>
+
 <head>
-    <title>߷</title>
-    <meta charset="UTF-8">
+	<title>BlockPusher</title>
+
+	<meta charset="UTF-8">
+
 	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+
 		div#code {
-			width: 640px;
-			height: 480px;
+			position: absolute;
+			right: 50%;
+			left: 0;
+			height: 100%;
+		}
+
+		iframe#sandbox {
+			position: absolute;
+			right: 0;
+			left: 50%;
+			height: 100%;
+			width: 50%;
+			border: none;
+		}
+
+		button#submit {
+			position: absolute;
+			z-index: 10;
+			bottom: 50px;
+			left: 50px;
 		}
 	</style>
+
 </head>
+
 <body>
 
-	<div id="code">
-		alert("test"); aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-	</div>
+<div id="code">
+// Test Code
 
-	<iframe id="sandbox" src="/Views/Play/Sandbox.html" sandbox="allow-scripts" style="width: 640px; height: 480px;"></iframe>
-	<br>
-	<button onclick="submitCode();">Submit Code</button>
+document.body.style.background = "magenta";
+</div>
+
+	<iframe id="sandbox" src="sandbox.html" sandbox="allow-scripts"></iframe>
+
+	<button id="submit" onclick="submitCode();">I'm too lazy to fix the submit logic right now, just keep using this button.</button>
+
 
 	<script src="/Scripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+
 	<script>
 		// ACE Editor Setup
 
 		let editor = ace.edit("code");
-		editor.setTheme("ace/theme/monokai");
-		editor.session.setMode("ace/mode/javascript");
-	</script>
 
-	<script>
-		let codeElement = document.getElementById("code");
+		editor.setTheme("ace/theme/monokai");
+
+		editor.session.setMode("ace/mode/javascript");
+
 		let sandboxElement = document.getElementById("sandbox");
 
 		function submitCode() {
-			let code = codeElement.value;
-			sandboxElement.contentWindow.postMessage({type: "submitCode", code: code}, "*"); // Can't use actual origin for sandboxed frames???
+
+			console.log("???");
+
+			let code = editor.getValue();
+
+			sandboxElement.contentWindow.postMessage({ type: "submitCode", code: code }, "*"); // Can't use actual origin for sandboxed frames???
+
 		}
+
 	</script>
 </body>
