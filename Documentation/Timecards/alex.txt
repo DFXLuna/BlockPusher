@@ -1,0 +1,2 @@
+Jan. 28: 1.5 hours: Initial website setup and configuration.
+March 3: 2 hours: Fixing database errors, adding 'Play' button and renaming/moving files to conform with .NET conventions, website updates.
