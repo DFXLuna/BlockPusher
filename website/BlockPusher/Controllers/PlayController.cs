@@ -8,7 +8,7 @@ namespace BlockPusher.Controllers
 {
     public class PlayController : Controller
     {
-        // GET: Play
+        // GET: /Play
         public ActionResult Index()
         {
 
@@ -16,5 +16,14 @@ namespace BlockPusher.Controllers
             return result;
             //return View();
         }
-    }
+
+		// GET: /Play/Sandbox
+		public ActionResult Sandbox()
+		{
+
+			var result = new FilePathResult("~/Views/Play/Sandbox.html", "text/html");
+			return result;
+			//return View();
+		}
+	}
 }
