@@ -1,8 +1,15 @@
-<!doctype html>
+﻿<!doctype html>
 <head>
     <title>߷</title>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval';">
+	<style>
+		/* try and make this less ugly for now */
+		body {
+			font-family: sans-serif;
+			background: #BBB;
+		}
+	</style>
     <script>
         function onMessage(event) {
             if (event.origin != location.origin)

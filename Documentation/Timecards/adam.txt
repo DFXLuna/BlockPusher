@@ -2,3 +2,4 @@ Jan. 28: 3 hours. Prototyped code evaluation and security measures.
 Feb. 20: 30 minutes. Cleaned build artifacts from website and merged website with editor prototype.
 Feb. 25: 1 hour. Added ACE, made editor look similar to goal for final product.
 Mar. 06: 1 hour. Fix merge conflict and add route for game code sandbox.
+Mar. 07: 1 hour. Try to flesh out overall design of editor. Added space for file panels.

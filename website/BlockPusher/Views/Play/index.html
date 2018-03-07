@@ -13,6 +13,7 @@
 			overflow: hidden;
 		}
 
+		/* Code Editor */
 		div#code {
 			position: absolute;
 			right: 50%;
@@ -20,6 +21,7 @@
 			height: 100%;
 		}
 
+		/* Game Frame */
 		iframe#sandbox {
 			position: absolute;
 			right: 0;
@@ -28,12 +30,50 @@
 			width: 50%;
 			border: none;
 		}
+		
+		/* Everything below the navbar */
+		div#content {
+			position: absolute;
+			top: 50px;
+			bottom: 50px;
+			left: 0;
+			right: 0;
+			border: 1px solid black;
+		}
+
+		/* Main window containing editor and game */
+		div#main {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			border: 1px solid black;
+		}
+
+		/* Base class for file list and object list. */
+		div.thing_list {
+			position: absolute;
+			width: 200px;
+			height: 100%;
+			z-index: -10;
+		}
+
+		/* File Browser */
+		div#file_list {
+			left: 0;
+			background: yellow;
+		}
+
+		div#object_list {
+			right: 0;
+			background: lime;
+		}
 
 		button#submit {
-			position: absolute;
-			z-index: 10;
-			bottom: 50px;
-			left: 50px;
+			margin-left: 50%;
+			color: green;
+			font-size: 20px;
 		}
 	</style>
 
@@ -41,16 +81,31 @@
 
 <body>
 
-<div id="code">
-// Test Code
+	<button id="submit" onclick="submitCode();">►</button>
+	<button onclick="toggleFiles();">Toggle Files [Test]</button>
+	<button onclick="toggleObjects();">Toggle Objects [Test]</button>
 
-document.body.style.background = "magenta";
-</div>
+	<div id="content">
 
-	<iframe id="sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
+		<div id="main">
+			<div id="code">
+				// Test Code
 
-	<button id="submit" onclick="submitCode();">I'm too lazy to fix the submit logic right now, just keep using this button.</button>
+				document.body.style.background = "magenta";
+			</div>
 
+			<iframe id="sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
+		</div>
+
+		<div id="file_list" class="thing_list">
+			rerr (files go here)
+		</div>
+
+		<div id="object_list" class="thing_list">
+			rerr (objects go here)
+		</div>
+
+	</div>
 
 	<script src="/Scripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
 
@@ -67,12 +122,28 @@ document.body.style.background = "magenta";
 
 		function submitCode() {
 
-			console.log("???");
-
 			let code = editor.getValue();
 
 			sandboxElement.contentWindow.postMessage({ type: "submitCode", code: code }, "*"); // Can't use actual origin for sandboxed frames???
 
+		}
+
+		let main_window = document.getElementById("main");
+
+		function toggleFiles() {
+			if (main_window.style.left !== "") {
+				main_window.style.left = "";
+			} else {
+				main_window.style.left = "200px";
+			}
+		}
+
+		function toggleObjects() {
+			if (main_window.style.right !== "") {
+				main_window.style.right = "";
+			} else {
+				main_window.style.right = "200px";
+			}
 		}
 
 	</script>
