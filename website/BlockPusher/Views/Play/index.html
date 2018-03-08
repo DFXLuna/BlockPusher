@@ -19,6 +19,7 @@
 			right: 50%;
 			left: 0;
 			height: 100%;
+			background: black;
 		}
 
 		/* Game Frame */
@@ -88,11 +89,7 @@
 	<div id="content">
 
 		<div id="main">
-			<div id="code">
-				// Test Code
-
-				document.body.style.background = "magenta";
-			</div>
+			<div id="code"></div>
 
 			<iframe id="sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
 		</div>
@@ -107,16 +104,34 @@
 
 	</div>
 
-	<script src="/Scripts/ace/ace.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
 
 	<script>
-		// ACE Editor Setup
+		// Monaco editor setup
+		var editor;
 
-		let editor = ace.edit("code");
+		require.config({ paths: { "vs": "/Scripts/vs" } });
+		require(['vs/editor/editor.main'], function () {
+			editor = monaco.editor.create(document.getElementById("code"), {
+				value: '// Test Code!\ndocument.body.style.background = "linear-gradient(135deg,cyan,red)";',
+				language: "javascript",
+				automaticLayout: true,
+				theme: "vs-dark"
+			});
 
-		editor.setTheme("ace/theme/monokai");
-
-		editor.session.setMode("ace/mode/javascript");
+			// Add keyboard shortcuts to run code!
+			editor.addAction({
+				id: "blockpusher-run",
+				label: "Run Code",
+				keybindings: [
+					monaco.KeyCode.F5,
+					monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
+				],
+				run: function (editor) {
+					submitCode();
+				}
+			})
+		});
 
 		let sandboxElement = document.getElementById("sandbox");
 
