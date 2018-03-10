@@ -17,7 +17,9 @@ module.exports = {
     },
 
     output: {
-        path: path.resolve( __dirname, 'build' ),
-        filename: 'bundle.js',
-    }
+        path: path.resolve( __dirname, '../website/BlockPusher/Scripts/' ),
+        filename: 'blockpusher.js',
+    },
+
+    watch: true
 }

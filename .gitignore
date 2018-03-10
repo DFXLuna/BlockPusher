@@ -9,3 +9,9 @@ website/BlockPusher/bin/**
 
 # Databases -- Not sure, but I don't these should be in VC.
 website/BlockPusher/App_Data/**
+
+# Node Cruft
+**/node_modules/**
+
+# Builds
+website/BlockPusher/Scripts/blockpusher.js

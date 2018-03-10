@@ -3,7 +3,7 @@ import { Engine } from "./engine";
 window.onload = () => {
     // The engine will grab the canvas from the html by name and create its
     // context
-    let a: Engine = new Engine( "cnvs" );
+    let a: Engine = new Engine( "game-canvas" );
 
     // // Register a test function that will be called once every game loop
     // a.registerFunction( () => {
@@ -25,8 +25,8 @@ window.onload = () => {
     
     // Register an image with the engine
     // Right now every image in the cache gets rendered at 0,0
-    a.registerImage( "./test.png", "test" );
-    a.registerImage( "./test2.jpg", "test2" );
+    a.registerImage( "/Content/asset_test/test.png", "test" );
+    a.registerImage( "/Content/asset_test/test2.jpg", "test2" );
     a.requestDraw( "test" );
     a.requestDraw( "test2" );
 
