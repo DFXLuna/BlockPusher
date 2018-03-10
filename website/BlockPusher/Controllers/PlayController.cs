@@ -11,11 +11,11 @@ namespace BlockPusher.Controllers
         // GET: /Play
         public ActionResult Index()
         {
-
-            var result = new FilePathResult("~/Views/Play/Index.html", "text/html");
-            return result;
-            //return View();
-        }
+			return View();
+			//var result = new FilePathResult("~/Views/Play/Index.html", "text/html");
+			//return result;
+			//return View();
+		}
 
 		// GET: /Play/Sandbox
 		public ActionResult Sandbox()
