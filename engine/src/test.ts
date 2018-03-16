@@ -25,10 +25,14 @@ window.onload = () => {
     
     // Register an image with the engine
     // Right now every image in the cache gets rendered at 0,0
-    a.registerImage( "../../website/BlockPusher/Content/asset_test/test.png", "test" );
-    a.registerImage( "../../website/BlockPusher/Content/asset_test/test2.jpg", "test2" );
-    a.requestDraw( "test" );
-    a.requestDraw( "test2" );
+    // a.registerImage( "../../website/BlockPusher/Content/asset_test/test.png", "test" );
+    // a.registerImage( "../../website/BlockPusher/Content/asset_test/test2.jpg", "test2" );
+    // a.requestDraw( "test" );
+    // a.requestDraw( "test2" );
+
+    // Test Input
+    let boundInputTest =  a.isKeyDown.bind( a, "a" );
+    a.registerFunction( boundInputTest );   
 
     // Start the game loop
     a.gameLoop();
