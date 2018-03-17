@@ -1,0 +1,47 @@
+﻿
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+.body-content {
+    position: relative;
+    height: 100%;
+}
+
+#game-player {
+    position: absolute;
+    top: 0;
+    bottom: 60px;
+    left: 0;
+    right: 0;
+}
+
+#game-player > * {
+    margin: 1px;
+}
+
+#game-player > #game-container {
+    position: absolute;
+    top: 98px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#game-player > #game-buttons {
+    //position: absolute;
+    //bottom: 0;
+    //height: 80px;
+}
+
+#game-sandbox {
+    width: 100%;
+    height: 100%;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+}
+
