@@ -1,7 +1,0 @@
-Meeting Time: 1hr
-Agenda: Discuss next steps
-
-Plan:
-Adam: integrate website and engine
-Alex: polish website
-Matt: Fill out rendering component
