@@ -1,7 +1,0 @@
-Meeting Time: 1hr
-Agenda: Discuss next steps
-
-Plan:
-Adam: fix kinks in website / engine integration
-Alex: ???
-Matt: start filling in smaller components
