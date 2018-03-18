@@ -1,4 +1,4 @@
-import { Render } from "./renderer";
+import { Render } from "./render";
 
 const CANVAS_NAME = "game-canvas";
 
@@ -30,6 +30,13 @@ function onMessage(event: MessageEvent) {
 }
 
 addEventListener("message", onMessage, false);
+
+// CONTENT PATH
+function setContentPath(path: string) {
+    Render.setImagePath(path);
+}
+
+setContentPath("/Content/asset_test/");
 
 /*export class Engine{
 
