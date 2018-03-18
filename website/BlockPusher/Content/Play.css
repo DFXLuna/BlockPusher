@@ -9,7 +9,7 @@ html, body {
     height: 100%;
 }
 
-#game-player {
+#play-container {
     position: absolute;
     top: 0;
     bottom: 60px;
@@ -17,11 +17,11 @@ html, body {
     right: 0;
 }
 
-#game-player > * {
+#play-container * {
     margin: 1px;
 }
 
-#game-player > #game-container {
+#play-content {
     position: absolute;
     top: 98px;
     bottom: 0;
@@ -29,13 +29,7 @@ html, body {
     right: 0;
 }
 
-#game-player > #game-buttons {
-    //position: absolute;
-    //bottom: 0;
-    //height: 80px;
-}
-
-#game-sandbox {
+#play-sandbox {
     width: 100%;
     height: 100%;
 }
@@ -45,3 +39,37 @@ html, body {
     bottom: 0;
 }
 
+#edit-left {
+    position: absolute;
+    left: 0;
+    width: 200px;
+    height: 100%;
+}
+
+#edit-center {
+    position: absolute;
+    left: 200px;
+    right: 200px;
+    height: 100%;
+    background: #1e1e1e;
+}
+
+#edit-right {
+    position: absolute;
+    right: 0;
+    width: 200px;
+    height: 100%;
+}
+
+#edit-code {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+}
+
+#edit-player {
+    position: absolute;
+    left: 50%;
+    width: 50%;
+    height: 100%
+}

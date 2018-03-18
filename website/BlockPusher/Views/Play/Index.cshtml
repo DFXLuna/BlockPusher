@@ -7,19 +7,17 @@
     @Styles.Render("~/Content/play")
 }
 
-<div id="game-player">
-    <h1>GameName</h1>
-    <p>By GameAuthor. Based on <b>OtherGame</b> by OtherAuthor.</p>
-    <div id="game-buttons">
+<div id="play-container">
+    <div id="play-top">
+        <h1>GameName</h1>
+        <p>by GameAuthor. Based on <b>OtherGame</b> by OtherAuthor.</p>
         <button class="btn btn-info">Game Info</button>
-        <button class="btn">Save</button>
-        <button class="btn">Load</button>
-        <button class="btn">Restart</button>
+        <button class="btn btn-danger">Reset</button>
         <button class="btn btn-primary">Edit</button>
         <button class="btn btn-primary">Edit Copy</button>
     </div>
-    <div id="game-container">
-        <iframe id="game-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
+    <div id="play-content">
+        <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
     </div>
 </div>
 
