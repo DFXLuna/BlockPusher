@@ -33,7 +33,8 @@ window.onload = () => {
     // Test Input
     let boundInputTest =  a.isKeyDown.bind( a, "a" );
     a.registerFunction( boundInputTest );   
-
+    let boundInputTest2 = a.wasKeyDown.bind( a, "a" );
+    a.registerFunction( boundInputTest2 );
     // Start the game loop
     a.gameLoop();
 }

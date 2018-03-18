@@ -42,8 +42,15 @@ export class Engine{
     
     // Input Methods
 
-    public isKeyDown( keyValue: string ){
-        console.log( "key " + keyValue + " is " + this.input.isKeyDown( keyValue ) );
-        return this.input.isKeyDown( keyValue );
+    public isKeyDown( keyValue: string ): boolean {
+        let ret: boolean = this.input.isKeyDown( keyValue );
+        console.log( "key " + keyValue + " is " + ret );
+        return ret;
+    }
+
+    public wasKeyDown( keyValue: string ): boolean {
+        let ret: boolean = this.input.wasKeyDown( keyValue );
+        console.log( "key " + keyValue + " was " + ret );
+        return ret;
     }
 }
