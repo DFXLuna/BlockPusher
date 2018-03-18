@@ -73,7 +73,18 @@ export namespace Render {
         context.arc( x, y, radius, 0, Math.PI * 2 );
         context.stroke();
     }
-    // Might reuse this later, not sure.
+
+    export function drawLine(style: string, x1: number, y1: number, x2: number, y2: number, lineWidth = 1) {
+        context.strokeStyle = style;
+        context.lineWidth = lineWidth;
+        context.beginPath();
+        context.moveTo(x1,y1);
+        context.lineTo(x2,y2);
+        context.stroke();
+    }
+
+    // Removed this for simplicity's sake.
+    // Might re-add it later because precaching assets is nice.
     /*public registerImage( filename: string, friendlyName: string ): void {
         console.log("registering " + friendlyName);
         let i =  new Image();
