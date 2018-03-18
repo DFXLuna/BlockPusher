@@ -1,4 +1,4 @@
-import { Engine } from "./engine";
+/*import { Engine } from "./engine";
 
 window.onload = () => {
     // The engine will grab the canvas from the html by name and create its
@@ -32,4 +32,4 @@ window.onload = () => {
 
     // Start the game loop
     a.gameLoop();
-}
+}*/

@@ -23,7 +23,7 @@
         <p>Documentation links can go here I guess.</p>
         <button class="btn btn-info">Edit Name/Description</button>
         <button class="btn btn-success">Save All</button>
-        <button class="btn btn-primary">Run Code</button>
+        <button class="btn btn-primary" onclick="runCode();">Run Code</button>
         ||
         <button class="btn btn-primary">Play Level</button>
     </div>
@@ -54,7 +54,7 @@
         require.config({ paths: { "vs": "/Scripts/vs" } });
         require(['vs/editor/editor.main'], function () {
             editor = monaco.editor.create(document.getElementById("edit-code"), {
-                value: '// Test Code!\ndocument.body.style.background = "linear-gradient(135deg,cyan,red)";',
+                value: '// Test Code!\nRender.clear();\nfor(var i = 1; i<100; i++)\n\tRender.drawCircleOutline("red", Math.random() * 600, Math.random() * 600, 50, 5);\n',
                 language: "javascript",
                 automaticLayout: true,
                 theme: "vs-dark"
@@ -69,18 +69,18 @@
                     monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
                 ],
                 run: function (editor) {
-                    submitCode();
+                    runCode();
                 }
             })
         });
 
         let sandboxElement = document.getElementById("play-sandbox");
 
-        function submitCode() {
+        function runCode() {
 
             let code = editor.getValue();
 
-            sandboxElement.contentWindow.postMessage({ type: "submitCode", code: code }, "*"); // Can't use actual origin for sandboxed frames???
+            sandboxElement.contentWindow.postMessage({ type: "runCode", code: code }, "*"); // Can't use actual origin for sandboxed frames???
 
         }
 

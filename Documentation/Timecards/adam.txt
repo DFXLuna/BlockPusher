@@ -6,3 +6,4 @@ Mar. 07: 1 hour. Try to flesh out overall design of editor. Added space for file
 Mar. 08: 1 hour. Replace ACE with Monaco, add key shortcuts to editor.
 ----------
 Mar. 16: 3 hours. Add play page that fits into bootstrap template better. Add resizing canvas to game sandbox.
+Mar. 17: 3 hours. Finished integration of editor/player into template. Started editor/engine integration.
