@@ -23,8 +23,7 @@ namespace BlockPusher.Controllers
         // GET: /Play/Sandbox
         public ActionResult Sandbox()
 		{
-			var result = new FilePathResult("~/Views/Play/Sandbox.html", "text/html");
-			return result;
+            return new FilePathResult("~/Views/Play/Sandbox.html", "text/html");
 		}
 	}
 }
