@@ -1,21 +1,32 @@
 import { Render } from "./render";
+import { WorldBase } from "./world";
 
 const CANVAS_NAME = "game-canvas";
+
+let World = Object.create(WorldBase);
 
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
 
 // USER-DEFINABLE TICK FUNCTION [CODE EVAL TEST]
-let tickFunction : Function = () => {}
+//let tickFunction : Function = () => {}
 
 // GAME 'LOOP'
 function doFrame( time = 0 ) {
     window.requestAnimationFrame(doFrame);
 
-    // DO STUFF HERE
-    tickFunction(Render);
+    World.update(); // <- only call when world is running    
+    World.render();
 }
 doFrame();
+
+// For clearing prototypes.
+function clearObject(obj: object) {
+    for (var k in obj) {
+        if ((<any>obj).hasOwnProperty(k))
+            delete (<any>obj)[k];
+    }
+}
 
 // CALLS FROM THE PARENT CONTEXT
 function onMessage(event: MessageEvent) {
@@ -25,7 +36,12 @@ function onMessage(event: MessageEvent) {
     let msg = event.data;
 
     if (msg.type == "runCode") {
-        tickFunction = new Function("Render",msg.code);
+        if (msg.file="World.js") {
+            // when restarting the game we want to straight-up clear all prototypes and reload their code.
+            // otherwise just run the user code over
+            let f = new Function("World","Render",msg.code);
+            f(World,Render);
+        }
     }
 }
 

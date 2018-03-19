@@ -54,7 +54,15 @@
         require.config({ paths: { "vs": "/Scripts/vs" } });
         require(['vs/editor/editor.main'], function () {
             editor = monaco.editor.create(document.getElementById("edit-code"), {
-                value: '// Test Code!\nRender.clear();\nfor(var i = 1; i<100; i++)\n\tRender.drawCircleOutline("red", Math.random() * 600, Math.random() * 600, 50, 5);\n',
+                value:
+`// Test Code
+World.render = function() {
+	Render.clear("yellow");
+	for(var i = 1; i<10; i++)
+		Render.drawCircleOutline
+		("red", Math.random() * 600, Math.random() * 600, 50, 5);
+}
+`,
                 language: "javascript",
                 automaticLayout: true,
                 theme: "vs-dark"
@@ -80,7 +88,7 @@
 
             let code = editor.getValue();
 
-            sandboxElement.contentWindow.postMessage({ type: "runCode", code: code }, "*"); // Can't use actual origin for sandboxed frames???
+            sandboxElement.contentWindow.postMessage({ type: "runCode", file: "World.js", code: code }, "*"); // Can't use actual origin for sandboxed frames???
 
         }
 
