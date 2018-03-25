@@ -87,10 +87,11 @@ World.render = function() {
         let sandboxElement = document.getElementById("play-sandbox");
 
         function runCode() {
+            console.log(encodeURIComponent(editor.getValue()).length, btoa(editor.getValue()).length);
 
-            let code = editor.getValue();
+            let codeURL = "data:application/javascript;base64," + btoa(editor.getValue());
 
-            sandboxElement.contentWindow.postMessage({ type: "runCode", file: "World.js", code: code }, "*"); // Can't use actual origin for sandboxed frames???
+            sandboxElement.contentWindow.postMessage({ type: "setFile", file: "World.js", url: codeURL }, "*"); // Can't use actual origin for sandboxed frames???
 
         }
 

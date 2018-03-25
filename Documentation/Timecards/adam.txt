@@ -8,3 +8,4 @@ Mar. 09: 2 hours. Integrated editor with engine and site template.
 Mar. 16: 3 hours. Add play page that fits into bootstrap template better. Add resizing canvas to game sandbox.
 Mar. 17: 3 hours. Finished integration of editor/player into template. Started editor/engine integration.
 Mar. 18: 3 hours. Added stuff to render componenet and added editable world component.
+Mar. 24: 1 hour. Tried and failed to get blob URLs to work. Decided to use data URLs.

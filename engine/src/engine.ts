@@ -29,17 +29,22 @@ function clearObject(obj: object) {
 }
 
 // CALLS FROM THE PARENT CONTEXT
-function onMessage(event: MessageEvent) {
+async function onMessage(event: MessageEvent) {
     if (event.origin != location.origin)
         return;
 
     let msg = event.data;
 
-    if (msg.type == "runCode") {
+    if (msg.type == "setFile") {
         if (msg.file="World.js") {
-            // when restarting the game we want to straight-up clear all prototypes and reload their code.
-            // otherwise just run the user code over
-            let f = new Function("World","Render",msg.code);
+            // Not happy with this. At all. I'll refactor it later.
+            
+            console.log(msg.url);
+            let res = await fetch(msg.url);
+            let code = await res.text();
+            console.log(code);
+
+            let f = new Function("World","Render",code);
             f(World,Render);
         }
     }
@@ -48,11 +53,6 @@ function onMessage(event: MessageEvent) {
 addEventListener("message", onMessage, false);
 
 // CONTENT PATH
-function setContentPath(path: string) {
-    Render.setImagePath(path);
-}
-
-setContentPath("/Content/asset_test/");
 
 /*export class Engine{
 
