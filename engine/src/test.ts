@@ -31,10 +31,13 @@ window.onload = () => {
     // a.requestDraw( "test2" );
 
     // Test Input
-    let boundInputTest =  a.isKeyDown.bind( a, "a" );
-    a.registerFunction( boundInputTest );   
-    let boundInputTest2 = a.wasKeyDown.bind( a, "a" );
-    a.registerFunction( boundInputTest2 );
+    // let boundInputTest =  a.isKeyDown.bind( a, "a" );
+    // a.registerFunction( boundInputTest );   
+    // let boundInputTest2 = a.wasKeyDown.bind( a, "a" );
+    // a.registerFunction( boundInputTest2 );
+
+    // Test Time -> print in gameloop
+    
     // Start the game loop
     a.gameLoop();
 }
