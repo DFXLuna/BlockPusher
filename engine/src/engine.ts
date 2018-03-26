@@ -22,8 +22,8 @@ export class Engine{
         window.requestAnimationFrame( this.boundGameLoop );
         this.time.onFrame();
         this.input.onFrame();
-        console.log( "Last Frame time " + this.getLastFrameTime() );
-        console.log( "Delta time " + this.getDeltaTime() );
+        // console.log( "Last Frame time " + this.getLastFrameTime() );
+        // console.log( "Delta time " + this.getDeltaTime() );
         for( let f of this.loopFunctions ){
             f();
         }
