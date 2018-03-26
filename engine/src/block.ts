@@ -1,9 +1,22 @@
-export class Block {
-    private name: string;
-    private image: HTMLImageElement;
+import { Renderer } from "./renderer"
 
-    constructor( name: string, image: HTMLImageElement ){
+export class Block {
+    private blockid: number;
+    private name: string;
+    private imageFilename: string;
+    private renderer: Renderer;
+    private imageName: string;
+
+    constructor( blockid: number, name: string, imageFilename: string, renderer: Renderer ){
+        this.blockid = blockid;
         this.name = name;
-        this.image = image;
+        this.imageFilename = imageFilename;
+        this.renderer = renderer;
+        this.imageName = "$Block" + blockid + name + "$";
+        this.renderer.registerImage( imageFilename, this.imageName );
+    }
+
+    public renderAt( x: number, y: number ){
+        this.renderer.addToQueue( this.imageName, x, y );
     }
 }

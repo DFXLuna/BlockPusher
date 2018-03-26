@@ -25,10 +25,10 @@ window.onload = () => {
     
     // Register an image with the engine
     // Right now every image in the cache gets rendered at 0,0
-    a.registerImage( "/Content/asset_test/test.png", "test" );
-    a.registerImage( "/Content/asset_test/test2.jpg", "test2" );
-    a.requestDraw( "test" );
-    a.requestDraw( "test2" );
+    // a.registerImage( "/Content/asset_test/test.png", "test" );
+    // a.registerImage( "/Content/asset_test/test2.jpg", "test2" );
+    // a.requestDraw( "test" );
+    // a.requestDraw( "test2" );
 
     // Start the game loop
     a.gameLoop();

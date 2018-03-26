@@ -3,7 +3,7 @@ export class Renderer{
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private imageCache: Map< string, HTMLImageElement >;
-    private drawQueue: Array< string >;
+    private drawQueue: Array< [string, number, number] >;
 
     constructor( canvasName:string ){
         this.canvas = <HTMLCanvasElement>document.getElementById(canvasName);
@@ -41,16 +41,16 @@ export class Renderer{
         this.imageCache.set( friendlyName, i );
     }
 
-    public addToQueue( friendlyName: string ){
-        this.drawQueue.push( friendlyName );
+    public addToQueue( friendlyName: string, x: number, y: number ){
+        this.drawQueue.push( [friendlyName, x, y] );
     }
 
-    private drawImage( friendlyName: string ): void {
-        console.log( "Draw called on " + friendlyName );
+    private drawImage( friendlyName: string, x: number, y: number ): void {
+        //console.log( "Draw called on " + friendlyName );
         let i = this.imageCache.get( friendlyName );
         if( i !== undefined ){
-            console.log( "Attempting to draw " + friendlyName );
-            this.context.drawImage( i, 0, 0 );
+            //console.log( "Attempting to draw " + friendlyName );
+            this.context.drawImage( i, x, y );
         }
         else{
             throw "Tried to draw image that does not exist: " + friendlyName;
@@ -60,7 +60,7 @@ export class Renderer{
     public draw() : void{
         this.clear();
         for( let s of this.drawQueue ){
-            this.drawImage( s );
+            this.drawImage( s[0], s[1], s[2] );
         }
     }
 
