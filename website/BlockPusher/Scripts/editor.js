@@ -145,6 +145,27 @@
         }
     }
 
+    window.newFile = function () {
+        let fileName = prompt("New Script Name:");
+        if (fileName === null)
+            return;
+
+        fileName += ".js";
+
+        if (files[fileName] != null) {
+            alert("Script already exists!");
+            return;
+        }
+
+        let blob = new Blob([], { type: "application/javascript" });
+
+        try {
+            updateFile(fileName, blob);
+        } catch (e) {
+            alert("Error creating script: "+e.message);
+        }
+    }
+
     // Monaco editor setup
     require.config({ paths: { "vs": "/Scripts/vs" } });
     require(['vs/editor/editor.main'], function () {
@@ -193,11 +214,11 @@ console.log("meme");
     // TODO: have the engine notify us when it is ready for files.
     setTimeout(function () {
         addFile("World.js", SCRIPT_WORLD);
-        for (var i = 1; i <= 30; i++) {
+        for (var i = 1; i <= 5; i++) {
             addFile("Script"+i+".js", SCRIPT_MEME);
         }
 
-        addFile("Script.js", SCRIPT_MEME);
+        addFile("Script1.js", SCRIPT_MEME);
         addFile("Script2.js", SCRIPT_MEME);
         addFile("Script3.js", null);
         addFile("Script4.js", null);
