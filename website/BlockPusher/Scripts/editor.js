@@ -15,17 +15,23 @@
     let editElement;
     let editor;
 
+    function isTextFile(fileName) {
+        return fileName.endsWith(".js");
+    }
+
     // Call when a file is selected in the list.
     function selectFile(fileName) {
         if (fileName == currentFile)
             return;
 
         let blob = files[fileName];
-        if (blob == null)
+        if (fileName !== null && blob == null)
             return;
 
         // Save the current file.
-        runCode();
+        if (fileName !== null) {
+            runCode();
+        }
 
         // Update the UI
         if (currentFile != null) {
@@ -33,11 +39,13 @@
             oldElement.classList.remove("active");
         }
 
-        let newElement = document.querySelector("#edit-files>li[data-filename='" + fileName + "']");
-        newElement.classList.add("active");
+        if (fileName !== null) {
+            let newElement = document.querySelector("#edit-files>li[data-filename='" + fileName + "']");
+            newElement.classList.add("active");
+        }
 
         // Update the editor
-        if (fileName.endsWith(".js")) {
+        if (fileName !== null && isTextFile(fileName)) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 let code = e.target.result;
@@ -93,8 +101,43 @@
                 listEntry = document.createElement("li");
                 listEntry.innerText = fileName;
                 listEntry.setAttribute("data-filename", fileName);
+
+                // Click Handler
                 listEntry.addEventListener("click", function () { selectFile(fileName); });
+
+                // Icon
+                let iconHTML;
+                if (isTextFile(fileName)) {
+                    iconHTML = "<span class='glyphicon glyphicon-align-justify'></span>";
+                } else {
+                    iconHTML = "<span class='glyphicon glyphicon-cutlery'></span>";
+                }
+                listEntry.innerHTML = iconHTML + " " + listEntry.innerHTML;
+
+                // Delete button (Don't add to some critical files.)
+                if (fileName != "World.js") {
+                    let delButton = document.createElement("button");
+                    delButton.innerHTML = "&#10005;"; // Multiplication X
+                    delButton.classList.add("btn", "btn-danger");
+                    delButton.addEventListener("click", function (e) {
+                        // TODO don't use stock confirm cruft.
+                        if (confirm("Delete " + fileName + "?")) {
+                            // Unselect!
+                            if (currentFile == fileName) {
+                                selectFile(null);
+                            }
+                            updateFile(fileName, null);
+                        }
+                        e.stopPropagation();
+                    });
+                    listEntry.appendChild(delButton);
+                }
+
+
+                // Add to our list
                 filesListElement.appendChild(listEntry);
+            } else {
+                // TODO update image if image!
             }
         } else if (listEntry !== null) {
             // Remove from list.
@@ -123,11 +166,11 @@
             run: function (editor) {
                 runCode();
             }
-        })
+        });
     });
 
     window.runCode = function() {
-        if (currentFile !== null && currentFile.endsWith(".js")) {
+        if (currentFile !== null && isTextFile(currentFile)) {
             let fileBlob = new Blob([editor.getValue()], { type: "application/javascript" });
             updateFile(currentFile, fileBlob);
         }

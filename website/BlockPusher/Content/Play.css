@@ -86,24 +86,42 @@ html, body {
     right: 0;
     bottom: 0;
     list-style-type: none;
-    border: 1px solid black;
+    border: 1px solid #888;
     padding: 0;
-    background: #dddddd;
     overflow: auto;
 }
 
 .edit-list > li {
     margin: 0 !important;
-    padding: 2px;
-    padding-left: 10px;
+    padding: 3px;
     cursor: pointer;
-}
-
-.edit-list > li:nth-child(odd) {
-    background: #ddfdff;
+    border-bottom: 1px solid #888;
 }
 
 .edit-list > li.active {
     color: white;
     background: #428bca;
+}
+
+.edit-list > li > .btn {
+    font-size: 8px;
+    font-weight: bolder;
+    position: absolute;
+    right: 3px;
+    margin-top: 3px !important;
+    padding: 0;
+    width: 15px;
+    height: 15px;
+}
+
+/* Evidently this is not standardized yet. */
+/* From https://stackoverflow.com/a/4407335 */
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
 }
