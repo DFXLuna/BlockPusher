@@ -36,14 +36,16 @@ async function onMessage(event: MessageEvent) {
     let msg = event.data;
 
     if (msg.type == "setFile") {
-        if (msg.file="World.js") {
-            // Not happy with this. At all. I'll refactor it later.
+        if (msg.file=="World.js") {
+            if (msg.url == null) {
+                // The world file was deleted.
+                // We should probably block doing this in the editor.
+                return;
+            }
             
-            console.log(msg.url);
             let res = await fetch(msg.url);
             let code = await res.text();
-            console.log(code);
-
+            
             let f = new Function("World","Render",code);
             f(World,Render);
         }

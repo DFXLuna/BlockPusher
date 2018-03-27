@@ -32,9 +32,10 @@
     <div id="play-content">
         <div id="edit-left">
             <h2 class="text-center">Files</h2>
+            <ul id="edit-files" class="edit-list"></ul>
         </div>
         <div id="edit-center">
-            <div id="edit-code"></div>
+            <div id="edit-code" style="display: none;"></div>
             <div id="edit-player">
                 <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
             </div>
@@ -48,53 +49,6 @@
 @section Scripts{
 
     <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
-
-    <script>
-        // Monaco editor setup
-        var editor;
-
-        require.config({ paths: { "vs": "/Scripts/vs" } });
-        require(['vs/editor/editor.main'], function () {
-            editor = monaco.editor.create(document.getElementById("edit-code"), {
-                value:
-`// Test Code
-World.render = function() {
-	Render.clear("yellow");
-	for(var i = 1; i<10; i++)
-		Render.drawCircleOutline
-		("red", Math.random() * 600, Math.random() * 600, 50, 5);
-}
-`,
-                language: "javascript",
-                automaticLayout: true,
-                theme: "vs-dark"
-            });
-
-            // Add keyboard shortcuts to run code!
-            editor.addAction({
-                id: "blockpusher-run",
-                label: "Run Code",
-                keybindings: [
-                    monaco.KeyCode.F5,
-                    monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
-                ],
-                run: function (editor) {
-                    runCode();
-                }
-            })
-        });
-
-        let sandboxElement = document.getElementById("play-sandbox");
-
-        function runCode() {
-            console.log(encodeURIComponent(editor.getValue()).length, btoa(editor.getValue()).length);
-
-            let codeURL = "data:application/javascript;base64," + btoa(editor.getValue());
-
-            sandboxElement.contentWindow.postMessage({ type: "setFile", file: "World.js", url: codeURL }, "*"); // Can't use actual origin for sandboxed frames???
-
-        }
-
-    </script>
+    <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>
 
 }

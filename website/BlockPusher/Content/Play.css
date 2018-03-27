@@ -30,8 +30,11 @@ html, body {
 }
 
 #play-sandbox {
+    margin: 0;
+    padding: 0;
     width: 100%;
     height: 100%;
+    border: 1px solid black;
 }
 
 #footer {
@@ -71,5 +74,36 @@ html, body {
     position: absolute;
     left: 50%;
     width: 50%;
-    height: 100%
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.edit-list {
+    position: absolute;
+    top: 40px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    list-style-type: none;
+    border: 1px solid black;
+    padding: 0;
+    background: #dddddd;
+    overflow: auto;
+}
+
+.edit-list > li {
+    margin: 0 !important;
+    padding: 2px;
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.edit-list > li:nth-child(odd) {
+    background: #ddfdff;
+}
+
+.edit-list > li.active {
+    color: white;
+    background: #428bca;
 }
