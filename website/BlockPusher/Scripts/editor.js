@@ -134,8 +134,22 @@
                 }
 
 
-                // Add to our list
-                filesListElement.appendChild(listEntry);
+
+                // Add to our list (sort alphabetically)
+                let children = filesListElement.children;
+                let placed = false;
+                for (let i = 0; i < children.length; i++) {
+                    let childName = children[i].getAttribute("data-filename");
+                    // Sort condition:
+                    if (fileName.toLowerCase().charCodeAt(0) < childName.toLowerCase().charCodeAt(0)) {
+                        filesListElement.insertBefore(listEntry, children[i]);
+                        placed = true;
+                        break;
+                    }
+                }
+                if (!placed) {
+                    filesListElement.appendChild(listEntry);
+                }
             } else {
                 // TODO update image if image!
             }
