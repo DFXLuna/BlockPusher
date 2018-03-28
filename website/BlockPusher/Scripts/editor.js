@@ -12,11 +12,21 @@
     let currentFile = null;
 
     // Monaco Editor
-    let editElement;
+    let editElement = document.getElementById("edit-code");
     let editor;
+
+    // Preview elements
+    let previewImage = document.getElementById("edit-pv-img");
 
     function isTextFile(fileName) {
         return fileName.endsWith(".js");
+    }
+
+    function isImageFile(fileName) {
+        return fileName.endsWith(".png")
+            || fileName.endsWith(".gif")
+            || fileName.endsWith(".jpg")
+            || fileName.endsWith(".jpeg");
     }
 
     // Call when a file is selected in the list.
@@ -45,21 +55,33 @@
         }
 
         // Update the editor
-        if (fileName !== null && isTextFile(fileName)) {
+        if (fileName === null) {
+
+            // Display nothing.
+            editElement.style.display = "none";
+            previewImage.src = "";
+            currentFile = fileName;
+        } else if (isTextFile(fileName)) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 let code = e.target.result;
                 editor.setValue(code);
 
                 editElement.style.display = "";
+                previewImage.src = "";
                 currentFile = fileName;
             }
             reader.readAsText(blob);
-        } else {
-            // Just display the file, I guess.
-            editElement.style.display = "none";
+        } else if (isImageFile(fileName)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                let url = e.target.result;
 
-            currentFile = fileName;
+                editElement.style.display = "none";
+                previewImage.src = url;
+                currentFile = fileName;
+            }
+            reader.readAsDataURL(blob);
         }
     }
 
@@ -109,6 +131,9 @@
                 let iconHTML;
                 if (isTextFile(fileName)) {
                     iconHTML = "<span class='glyphicon glyphicon-align-justify'></span>";
+                } else if (isImageFile(fileName)) {
+                    // Make the image element here. It is filled in later.
+                    iconHTML = "<img class='edit-img-icon' />";
                 } else {
                     iconHTML = "<span class='glyphicon glyphicon-cutlery'></span>";
                 }
@@ -133,8 +158,6 @@
                     listEntry.appendChild(delButton);
                 }
 
-
-
                 // Add to our list (sort alphabetically)
                 let children = filesListElement.children;
                 let placed = false;
@@ -150,9 +173,20 @@
                 if (!placed) {
                     filesListElement.appendChild(listEntry);
                 }
-            } else {
-                // TODO update image if image!
             }
+            // Add/Update image icon. Ideally we would scale the image down properly but I am far too lazy for that.
+            if (isImageFile(fileName)) {
+                let img = listEntry.querySelector("img.edit-img-icon");
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    let url = e.target.result;
+
+                    img.src = url;
+                }
+                reader.readAsDataURL(fileBlob);
+            }
+
         } else if (listEntry !== null) {
             // Remove from list.
             listEntry.remove();
@@ -165,7 +199,6 @@
                 throw new Error("Failed to fetch asset @ "+fileURL);
             return res.blob();
         }).then(function (blob) {
-            console.log("rer",blob);
             addFile(fileName, blob);
         });
     }
@@ -194,7 +227,6 @@
     // Monaco editor setup
     require.config({ paths: { "vs": "/Scripts/vs" } });
     require(['vs/editor/editor.main'], function () {
-        editElement = document.getElementById("edit-code");
         editor = monaco.editor.create(editElement, {
             language: "javascript",
             automaticLayout: true,

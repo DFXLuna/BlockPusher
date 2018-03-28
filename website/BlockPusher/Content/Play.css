@@ -75,6 +75,7 @@ html, body {
 #edit-player {
     position: absolute;
     left: 50%;
+    top: 0;
     width: 50%;
     height: 100%;
     margin: 0;
@@ -124,6 +125,16 @@ h2 > .btn {
     padding: 0;
     width: 25px;
     height: 25px;
+}
+
+img.edit-img-icon {
+    width: 20px;
+    height: 20px;
+}
+
+img#edit-pv-img {
+    max-width: 50%;
+    max-height: 100%;
 }
 
 /* Evidently this is not standardized yet. */
