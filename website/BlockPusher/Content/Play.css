@@ -17,7 +17,7 @@ html, body {
     right: 0;
 }
 
-#play-container * {
+#play-container h1, #play-container h2, #play-container p {
     margin: 1px;
 }
 
@@ -68,6 +68,8 @@ html, body {
     position: absolute;
     width: 50%;
     height: 100%;
+    top: 0;
+    left: 0;
 }
 
 #edit-player {
@@ -92,7 +94,7 @@ html, body {
 }
 
 .edit-list > li {
-    margin: 0 !important;
+    margin: 0;
     padding: 3px;
     cursor: pointer;
     border-bottom: 1px solid #888;
@@ -108,7 +110,7 @@ html, body {
     font-weight: bolder;
     position: absolute;
     right: 3px;
-    margin-top: 3px !important;
+    margin-top: 3px;
     padding: 0;
     width: 15px;
     height: 15px;

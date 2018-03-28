@@ -159,6 +159,17 @@
         }
     }
 
+    function fetchFile(fileName, fileURL) {
+        fetch(fileURL).then(function (res) {
+            if (res.status !== 200)
+                throw new Error("Failed to fetch asset @ "+fileURL);
+            return res.blob();
+        }).then(function (blob) {
+            console.log("rer",blob);
+            addFile(fileName, blob);
+        });
+    }
+
     window.newFile = function () {
         let fileName = prompt("New Script Name:");
         if (fileName === null)
@@ -211,30 +222,15 @@
         }
     }
 
-    let SCRIPT_WORLD = new Blob([`// Test Code
-World.render = function () {
-    Render.clear("yellow");
-    for (var i = 1; i < 10; i++)
-        Render.drawCircleOutline
-            ("red", Math.random() * 600, Math.random() * 600, 50, 5);
-}
-`], { type: "application/javascript" });
-
-    let SCRIPT_MEME = new Blob([`// Meme Code
-console.log("meme");
-`], { type: "application/javascript" });
-
     // Not a fan of this at all but we need to wait until the engine loads.
     // TODO: have the engine notify us when it is ready for files.
     setTimeout(function () {
-        addFile("World.js", SCRIPT_WORLD);
-        for (var i = 1; i <= 5; i++) {
-            addFile("Script"+i+".js", SCRIPT_MEME);
-        }
+        fetchFile("World.js", "/Content/AssetTest/World.js");
 
-        addFile("Script1.js", SCRIPT_MEME);
-        addFile("Script2.js", SCRIPT_MEME);
-        addFile("Script3.js", null);
-        addFile("Script4.js", null);
+        fetchFile("test.png", "/Content/AssetTest/test.png");
+        fetchFile("test2.jpg", "/Content/AssetTest/test2.jpg");
+
+        fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
+
     }, 1000);
 })();
