@@ -17,6 +17,7 @@
 
     // Preview elements
     let previewImage = document.getElementById("edit-pv-img");
+    let previewAudio = document.getElementById("edit-pv-audio");
 
     function isTextFile(fileName) {
         return fileName.endsWith(".js");
@@ -27,6 +28,11 @@
             || fileName.endsWith(".gif")
             || fileName.endsWith(".jpg")
             || fileName.endsWith(".jpeg");
+    }
+
+    function isAudioFile(fileName) {
+        return fileName.endsWith(".wav")
+            || fileName.endsWith(".mp3");
     }
 
     // Call when a file is selected in the list.
@@ -60,6 +66,7 @@
             // Display nothing.
             editElement.style.display = "none";
             previewImage.src = "";
+            previewAudio.innerHTML = "";
             currentFile = fileName;
         } else if (isTextFile(fileName)) {
             var reader = new FileReader();
@@ -69,6 +76,7 @@
 
                 editElement.style.display = "";
                 previewImage.src = "";
+                previewAudio.innerHTML = "";
                 currentFile = fileName;
             }
             reader.readAsText(blob);
@@ -79,6 +87,22 @@
 
                 editElement.style.display = "none";
                 previewImage.src = url;
+                previewAudio.innerHTML = "";
+                currentFile = fileName;
+            }
+            reader.readAsDataURL(blob);
+        } else if (isAudioFile(fileName)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                let url = e.target.result;
+                let player = new Audio(url);
+                player.controls = true;
+                player.autoplay = true;
+
+                editElement.style.display = "none";
+                previewImage.src = "";
+                previewAudio.innerHTML = "";
+                previewAudio.appendChild(player);
                 currentFile = fileName;
             }
             reader.readAsDataURL(blob);
@@ -134,6 +158,8 @@
                 } else if (isImageFile(fileName)) {
                     // Make the image element here. It is filled in later.
                     iconHTML = "<img class='edit-img-icon' />";
+                } else if (isAudioFile(fileName)) {
+                    iconHTML = "<span class='glyphicon glyphicon-volume-up'></span>";
                 } else {
                     iconHTML = "<span class='glyphicon glyphicon-cutlery'></span>";
                 }
@@ -261,6 +287,9 @@
 
         fetchFile("test.png", "/Content/AssetTest/test.png");
         fetchFile("test2.jpg", "/Content/AssetTest/test2.jpg");
+
+        fetchFile("moonspeak.wav", "/Content/AssetTest/moonspeak.wav");
+        fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
 
         fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
 
