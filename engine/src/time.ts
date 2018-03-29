@@ -1,24 +1,19 @@
-export class Time{
-    private lastUpdate: number;
-    private deltaTime: number;
+export namespace Time {
+    let startTime = Date.now();
+    let lastUpdate = 0;
+    let deltaTime = 0;
 
-    constructor(){
-        this.lastUpdate = Date.now();
-        this.deltaTime = 0;
+    export function update(): void {
+        let now = Date.now() - startTime;
+        deltaTime = now - lastUpdate;
+        lastUpdate = now;
     }
 
-    public onFrame(): void {
-        let curr = Date.now();
-        this.deltaTime = curr - this.lastUpdate;
-        this.lastUpdate = curr;
+    export function getTime(): number {
+        return lastUpdate / 1000;
     }
 
-    public getLastFrameTime(): number {
-        return this.lastUpdate;
+    export function getDelta(): number {
+        return deltaTime / 1000;
     }
-
-    public getDeltaTime(): number {
-        return this.deltaTime;
-    }
-
 }

@@ -17,7 +17,11 @@ Render.setup(CANVAS_NAME);
 function doFrame( time = 0 ) {
     window.requestAnimationFrame(doFrame);
 
-    World.update(); // <- only call when world is running    
+    { // Only call when game is running
+        Time.update();
+        World.update();
+    }
+    
     World.render();
 }
 doFrame();
@@ -54,8 +58,8 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let res = await fetch(msg.url);
             let code = await res.text();
 
-            let f = new Function("World","Render",code);
-            f(World,Render);
+            let f = new Function("World","Render","Time",code);
+            f(World,Render,Time);
         } else if (isImageFile(msg.file)) {
             Render.registerImage(msg.file,msg.url);
         } else {

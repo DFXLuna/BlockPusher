@@ -1,4 +1,3 @@
-import { Renderer } from "./renderer"
 import { Render } from "./render";
 
 export class Block {
