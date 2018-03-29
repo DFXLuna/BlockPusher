@@ -19,9 +19,10 @@ function doFrame( time = 0 ) {
 
     { // Only call when game is running
         Time.update();
+        Input.update();
         World.update();
     }
-    
+
     World.render();
 }
 doFrame();
@@ -58,8 +59,8 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let res = await fetch(msg.url);
             let code = await res.text();
 
-            let f = new Function("World","Render","Time",code);
-            f(World,Render,Time);
+            let f = new Function("World","Render","Time","Input",code);
+            f(World,Render,Time,Input);
         } else if (isImageFile(msg.file)) {
             Render.registerImage(msg.file,msg.url);
         } else {

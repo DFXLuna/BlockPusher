@@ -1,33 +1,30 @@
 import { copymap } from "./copymap";
 
-export class Input {
-    private currPressed: Map< string, boolean >;
-    private prevPressed: Map< string, boolean >;
+export namespace Input {
+    let currPressed: Map< string, boolean > = new Map();
+    let prevPressed: Map< string, boolean > = new Map();
 
-
-    constructor(){
-        this.currPressed = new Map();
-        this.prevPressed = new Map();
-        window.addEventListener("keydown", ( event ) => { this.onKeyDown( event ); }, false );
-        window.addEventListener("keyup", ( event ) => { this.onKeyUp( event ); }, false );
+    export function update(): void {
+        copymap( currPressed, prevPressed );
     }
     
-    public onFrame(): void {
-        copymap( this.currPressed, this.prevPressed );
+    export function isKeyDown( keyValue: string ): boolean {
+        return currPressed.has( keyValue );
+    }
+    
+    export function wasKeyDown( keyValue: string ): boolean {
+        return prevPressed.has( keyValue );
+    }
+    
+    function onKeyDown( ke: KeyboardEvent ): void {
+        currPressed.set( ke.key, true );
+    }
+    
+    function onKeyUp( ke: KeyboardEvent ): void {
+        currPressed.delete( ke.key );
     }
 
-    public isKeyDown( keyValue: string ): boolean {
-        return this.currPressed.has( keyValue );
-    }
-
-    public wasKeyDown( keyValue: string ): boolean {
-        return this.prevPressed.has( keyValue );
-    }
-
-    private onKeyDown( ke: KeyboardEvent ): void {
-        this.currPressed.set( ke.key, true );
-    }
-    private onKeyUp( ke: KeyboardEvent ): void {
-        this.currPressed.delete( ke.key );
-    }
+    // Add event listeners
+    window.addEventListener("keydown", ( event ) => { onKeyDown( event ); }, false );
+    window.addEventListener("keyup", ( event ) => { onKeyUp( event ); }, false );
 }
