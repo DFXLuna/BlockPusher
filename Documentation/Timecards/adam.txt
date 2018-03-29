@@ -11,3 +11,4 @@ Mar. 18: 3 hours. Added stuff to render component and added editable world compo
 Mar. 24: 1 hour. Tried and failed to get blob URLs to work. Decided to use data URLs.
 Mar. 26: 2 hours. Basic editor file management.
 Mar. 27: 3 hours. Additional editor file management.
+Mar. 28: 5 hours. Mostly finished editor file management.
