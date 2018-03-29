@@ -19,6 +19,9 @@
     let previewImage = document.getElementById("edit-pv-img");
     let previewAudio = document.getElementById("edit-pv-audio");
 
+    let replaceFileButton = document.getElementById("edit-replace-file");
+    let dropElement = document.getElementById("edit-drop");
+
     function isTextFile(fileName) {
         return fileName.endsWith(".js");
     }
@@ -36,16 +39,17 @@
     }
 
     // Call when a file is selected in the list.
-    function selectFile(fileName) {
-        if (fileName == currentFile)
-            return;
+    // Set reload to true to skip writing the editor's contents back to the
+    // saved blob if we are loading the file currently in the editor.
+    function displayFile(fileName,reload) {
+        let doReload = reload && (fileName == currentFile);
 
         let blob = files[fileName];
         if (fileName !== null && blob == null)
             return;
 
         // Save the current file.
-        if (fileName !== null) {
+        if (fileName !== null && !doReload) {
             runCode();
         }
 
@@ -67,6 +71,7 @@
             editElement.style.display = "none";
             previewImage.src = "";
             previewAudio.innerHTML = "";
+            replaceFileButton.style.display = "none";
             currentFile = fileName;
         } else if (isTextFile(fileName)) {
             var reader = new FileReader();
@@ -77,6 +82,7 @@
                 editElement.style.display = "";
                 previewImage.src = "";
                 previewAudio.innerHTML = "";
+                replaceFileButton.style.display = "none";
                 currentFile = fileName;
             }
             reader.readAsText(blob);
@@ -88,6 +94,7 @@
                 editElement.style.display = "none";
                 previewImage.src = url;
                 previewAudio.innerHTML = "";
+                replaceFileButton.style.display = "";
                 currentFile = fileName;
             }
             reader.readAsDataURL(blob);
@@ -103,6 +110,7 @@
                 previewImage.src = "";
                 previewAudio.innerHTML = "";
                 previewAudio.appendChild(player);
+                replaceFileButton.style.display = "";
                 currentFile = fileName;
             }
             reader.readAsDataURL(blob);
@@ -149,7 +157,7 @@
                 listEntry.setAttribute("data-filename", fileName);
 
                 // Click Handler
-                listEntry.addEventListener("click", function () { selectFile(fileName); });
+                listEntry.addEventListener("click", function () { displayFile(fileName); });
 
                 // Icon
                 let iconHTML;
@@ -175,7 +183,7 @@
                         if (confirm("Delete " + fileName + "?")) {
                             // Unselect!
                             if (currentFile == fileName) {
-                                selectFile(null);
+                                displayFile(null);
                             }
                             updateFile(fileName, null);
                         }
@@ -248,6 +256,54 @@
         } catch (e) {
             alert("Error creating script: "+e.message);
         }
+    }
+
+    function replaceFile(fileList) {
+        let oldBlob = files[currentFile];
+        if (currentFile == null || oldBlob == null) {
+            alert("You must select a file to replace.");
+            return;
+        }
+
+        if (isTextFile(currentFile)) {
+            alert("Text files can not be replaced.");
+            return;
+        }
+
+        if (fileList.length != 1) {
+            alert("Please provide a single file for replacement.");
+            return;
+        }
+        let file = fileList[0];
+
+        if (file.type !== oldBlob.type) {
+            alert("Can not replace, file types do not match.");
+            return;
+        }
+
+        updateFile(currentFile, file);
+        displayFile(currentFile, true);
+    }
+
+    // File drop handlers
+    dropElement.ondrop = function (e) {
+        e.preventDefault();
+
+        replaceFile(e.dataTransfer.files);
+    }
+
+    dropElement.ondragover = function (e) {
+        e.preventDefault();
+    }
+
+    window.replaceFile = function () {
+        let uploader = document.createElement("input");
+        uploader.accept = files[currentFile].type;
+        uploader.type = "file";
+        uploader.oninput = function() {
+            replaceFile(this.files);
+        }
+        uploader.click();
     }
 
     // Monaco editor setup

@@ -35,9 +35,12 @@
             <ul id="edit-files" class="edit-list noselect"></ul>
         </div>
         <div id="edit-center">
-            <img id="edit-pv-img" />
-            <div id="edit-pv-audio"></div>
-            <div id="edit-code" style="display: none;"></div>
+            <div id="edit-drop">
+                <img id="edit-pv-img" class="noselect" />
+                <div id="edit-pv-audio"></div>
+                <button id="edit-replace-file" class="btn btn-danger" onclick="replaceFile();" style="display: none;">Replace File</button>
+                <div id="edit-code" style="display: none;"></div>
+            </div>
             <div id="edit-player">
                 <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
             </div>
