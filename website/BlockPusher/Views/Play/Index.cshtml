@@ -1,179 +1,27 @@
-﻿@{
-    ViewBag.Title = "Edit";
+﻿
+@{
+    ViewBag.Title = "Play";
 }
 
 @section Styles {
-
-<style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-    }
-
-    /* Code Editor */
-    div#code {
-        position: absolute;
-        right: 50%;
-        left: 0;
-        height: 100%;
-        /* Use editor background color here. */
-        background: #1e1e1e;
-    }
-
-    /* Game Frame */
-    iframe#sandbox {
-        position: absolute;
-        right: 0;
-        left: 50%;
-        height: 100%;
-        width: 50%;
-        border: none;
-        background: #BBB;
-    }
-
-    /* Everything below the navbar */
-    div#content {
-        position: absolute;
-        top: 100px;
-        bottom: 50px;
-        left: 0;
-        right: 0;
-        border: 1px solid black;
-    }
-
-    /* Main window containing editor and game */
-    div#main {
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        border: 1px solid black;
-    }
-
-    /* Base class for file list and object list. */
-    div.thing_list {
-        position: absolute;
-        width: 200px;
-        height: 100%;
-        z-index: -10;
-    }
-
-    /* File Browser */
-    div#file_list {
-        left: 0;
-        background: yellow;
-    }
-
-    div#object_list {
-        right: 0;
-        background: lime;
-    }
-
-    button#submit {
-        color: green;
-        font-size: 20px;
-    }
-
-    /* I _AM_ sorry about this. */
-    div#toolbar {
-        position: absolute;
-        top: 50px;
-        left: 25%;
-    }
-</style>
-
+    @Styles.Render("~/Content/play")
 }
 
-@section SPAViews {
+<div id="play-container">
+    <div id="play-top">
+        <h1>GameName</h1>
+        <p>by GameAuthor. Based on <b>OtherGame</b> by OtherAuthor.</p>
+        <button class="btn btn-info">Game Info</button>
+        <button class="btn btn-danger">Reset</button>
+        <button class="btn btn-primary">Edit</button>
+        <button class="btn btn-primary">Edit Copy</button>
 
-<div id="toolbar">
-    <button id="submit" class="btn" onclick="submitCode();">►</button>
-    <button class="btn" onclick="toggleFiles();">Toggle Files [Test]</button>
-    <button class="btn" onclick="toggleObjects();">Toggle Objects [Test]</button>
+
+    </div>
+    <div id="play-content">
+        <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
+    </div>
 </div>
 
-<div id="content">
 
-    <div id="main">
-        <div id="code"></div>
-
-        <iframe id="sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
-    </div>
-
-    <div id="file_list" class="thing_list">
-        rerr (files go here)
-    </div>
-
-    <div id="object_list" class="thing_list">
-        rerr (objects go here)
-    </div>
-
-</div>
-
-}
-
-@section Scripts{
-
-<script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
-
-<script>
-    // Monaco editor setup
-    var editor;
-
-    require.config({ paths: { "vs": "/Scripts/vs" } });
-    require(['vs/editor/editor.main'], function () {
-        editor = monaco.editor.create(document.getElementById("code"), {
-            value: '// Test Code!\ndocument.body.style.background = "linear-gradient(135deg,cyan,red)";',
-            language: "javascript",
-            automaticLayout: true,
-            theme: "vs-dark"
-        });
-
-        // Add keyboard shortcuts to run code!
-        editor.addAction({
-            id: "blockpusher-run",
-            label: "Run Code",
-            keybindings: [
-                monaco.KeyCode.F5,
-                monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_S
-            ],
-            run: function (editor) {
-                submitCode();
-            }
-        })
-    });
-
-    let sandboxElement = document.getElementById("sandbox");
-
-    function submitCode() {
-
-        let code = editor.getValue();
-
-        sandboxElement.contentWindow.postMessage({ type: "submitCode", code: code }, "*"); // Can't use actual origin for sandboxed frames???
-
-    }
-
-    let main_window = document.getElementById("main");
-
-    function toggleFiles() {
-        if (main_window.style.left !== "") {
-            main_window.style.left = "";
-        } else {
-            main_window.style.left = "200px";
-        }
-    }
-
-    function toggleObjects() {
-        if (main_window.style.right !== "") {
-            main_window.style.right = "";
-        } else {
-            main_window.style.right = "200px";
-        }
-    }
-
-</script>
-
-}
+@* TODO LOAD THAT GAME! *@    

@@ -41,6 +41,9 @@ namespace BlockPusher
             bundles.Add(new StyleBundle("~/Content/css").Include(
                  "~/Content/bootstrap.css",
                  "~/Content/Site.css"));
+
+            bundles.Add(new StyleBundle("~/Content/play").Include(
+                 "~/Content/Play.css"));
         }
     }
 }

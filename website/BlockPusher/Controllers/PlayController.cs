@@ -12,18 +12,18 @@ namespace BlockPusher.Controllers
         public ActionResult Index()
         {
 			return View();
-			//var result = new FilePathResult("~/Views/Play/Index.html", "text/html");
-			//return result;
-			//return View();
 		}
 
-		// GET: /Play/Sandbox
-		public ActionResult Sandbox()
-		{
+        // GET: /Play/Edit
+        public ActionResult Edit()
+        {
+            return View();
+        }
 
-			var result = new FilePathResult("~/Views/Play/Sandbox.html", "text/html");
-			return result;
-			//return View();
+        // GET: /Play/Sandbox
+        public ActionResult Sandbox()
+		{
+            return new FilePathResult("~/Views/Play/Sandbox.html", "text/html");
 		}
 	}
 }

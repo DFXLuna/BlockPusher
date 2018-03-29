@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Edit";
+}
+
+@section Styles {
+    <style>
+        .body-content {
+            max-width: none;
+        }
+
+        #play-top {
+            margin-left: 200px !important;
+        }
+
+        #footer {
+            margin-left: 200px;
+        }
+    </style>
+    @Styles.Render("~/Content/play")
+}
+
+<div id="play-container">
+    <div id="play-top">
+        <h1>Editing GameName.</h1>
+        <p>Documentation links can go here I guess.</p>
+        <button class="btn btn-info">Edit Name/Description</button>
+        <button class="btn btn-success">Save All</button>
+        <button class="btn btn-primary" onclick="runCode();">Run Code</button>
+        ||
+        <button class="btn btn-primary">Play Level</button>
+    </div>
+    <div id="play-content">
+        <div id="edit-left">
+            <h2 class="text-center">
+                Files
+                <button id="edit-new-file" class="btn btn-success" onclick="newFile();" style="font-size: 30px;">+</button>
+                <button id="edit-upload-file" class="btn btn-warning" onclick="uploadFile();"><span class="glyphicon glyphicon-upload"></span></button>
+            </h2>
+            <ul id="edit-files" class="edit-list noselect"></ul>
+        </div>
+        <div id="edit-center">
+            <div id="edit-drop">
+                <img id="edit-pv-img" class="noselect" />
+                <div id="edit-pv-audio"></div>
+                <button id="edit-replace-file" class="btn btn-danger" onclick="replaceFile();" style="display: none;">Replace File</button>
+                <div id="edit-code" style="display: none;"></div>
+            </div>
+            <div id="edit-player">
+                <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
+            </div>
+        </div>
+        <div id="edit-right">
+            <h2 class="text-center">Objects</h2>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
+    <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>
+
+}

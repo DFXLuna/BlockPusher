@@ -1,48 +1,32 @@
 ﻿<!doctype html>
 <head>
-	<title>߷</title>
-	<meta charset="UTF-8">
-	<meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval' 'self';">
-	<style>
-
-		/* try and make this less ugly for now */
-		html, body {
-			font-family: sans-serif;
-			background: #BBB;
-			width: 100%;
-			height: 100%;
-			margin: 0;
-		}
-
-		canvas {
-			background: #167;
-		}
-	</style>
-	<script src="/Scripts/blockpusher.js"></script>
-	<script>
-		function onMessage(event) {
-			if (event.origin != location.origin)
-				return;
-
-			let msg = event.data;
-
-			if (msg.type == "submitCode") {
-				// IMPORTANT: Must call `window.eval` and not `eval`,
-				// `eval` runs code in same scope as it was called in.
-				// Probably won't keep using `eval` at all, but this is something to keep in mind.
-				window.eval(msg.code);
-			}
-		}
-
-		addEventListener("message", onMessage, false);
-	</script>
-	<script>
-		// Sandboxing attempts
-		delete window.alert;
-	</script>
-</head>
+    <title>BlockPusher Sandbox</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval' 'self' data: *;">
+    <style>
+        html, body {
+            background: black;
+            font-family: sans-serif;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        // Sandboxing attempts
+        delete window.alert;
+    </script></head>
 <body>
-	This frame is (hopefully) sandboxed good. <br>
-	This is where the game engine and user code should live.
-	<canvas id="game-canvas" width="640" height="480"></canvas>
-</body>
+	<canvas id="game-canvas"></canvas>
+    <script src="/Scripts/blockpusher.js"></script>
+    <script>
+        // Canvas resizing
+        function resizeCanvas() {
+            let canvas = document.getElementById("game-canvas");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+    </script></body>
