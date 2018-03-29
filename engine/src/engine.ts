@@ -29,30 +29,43 @@ function clearObject(obj: object) {
 }
 
 // CALLS FROM THE PARENT CONTEXT
-async function onMessage(event: MessageEvent) {
+window.addEventListener("message", async function (event: MessageEvent) {
     if (event.origin != location.origin)
         return;
 
     let msg = event.data;
 
     if (msg.type == "setFile") {
+        // Less trashy than the implementations in the engine.
+        // TODO move this to some util library?
+        function isImageFile(fileName: string) {
+            return fileName.match(/\.(png|gif|jpe?g)$/i) !== null;
+        }
+
         if (msg.file=="World.js") {
             if (msg.url == null) {
                 // The world file was deleted.
-                // We should probably block doing this in the editor.
+                // We block doing this in the editor, so this shouldn't happen.
                 return;
             }
             
             let res = await fetch(msg.url);
             let code = await res.text();
-            
+
             let f = new Function("World","Render",code);
             f(World,Render);
+        } else if (isImageFile(msg.file)) {
+            Render.registerImage(msg.file,msg.url);
+        } else {
+            console.log("Unhandled file: ",msg.file);
         }
+    } else {
+        console.log("Unhandled message: ",msg);
     }
-}
+});
 
-addEventListener("message", onMessage, false);
+// Send a message to the parent window when the engine is ready.
+window.parent.postMessage("engineReady","*");
 
 // CONTENT PATH
 

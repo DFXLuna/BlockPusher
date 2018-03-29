@@ -388,9 +388,8 @@
         }
     }
 
-    // Not a fan of this at all but we need to wait until the engine loads.
-    // TODO: have the engine notify us when it is ready for files.
-    setTimeout(function () {
+    // This is called when the engine is ready to receive messages.
+    function onEngineStart() {
         fetchFile("World.js", "/Content/AssetTest/World.js");
 
         fetchFile("test.png", "/Content/AssetTest/test.png");
@@ -400,6 +399,13 @@
         fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
 
         fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
+    }
 
-    }, 1000);
+    window.addEventListener("message", function (event) {
+        if (event.data == "engineReady") {
+            onEngineStart();
+        } else {
+            console.log("Unhandled message: ", event.data);
+        }
+    });
 })();

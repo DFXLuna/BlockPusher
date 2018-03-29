@@ -83,22 +83,20 @@ export namespace Render {
         context.stroke();
     }
 
-    // Removed this for simplicity's sake.
-    // Might re-add it later because precaching assets is nice.
-    /*public registerImage( filename: string, friendlyName: string ): void {
-        console.log("registering " + friendlyName);
-        let i =  new Image();
-        i.src = filename;
-        this.imageCache.set( friendlyName, i );
-    }*/
+    export function registerImage( imageName: string, url: string ): void {
+        if (url == null) {
+            delete imageCache[ imageName ];
+            return;
+        }
+        let img = new Image();
+        img.src = url;
+        imageCache[ imageName ] = img;
+    }
 
     export function drawImage( imageName: string, x: number, y: number ): void {
-        let fullPath = imagePath + imageName;
-        let img = imageCache[ fullPath ];
-        if( img == undefined ){
-            img = new Image();
-            img.src = fullPath;
-            imageCache[ fullPath ] = img;
+        let img = imageCache[ imageName ];
+        if( img == undefined ) {
+            return;
         }
         context.drawImage( img, x, y );
     }
