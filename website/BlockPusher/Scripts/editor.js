@@ -38,6 +38,12 @@
             || fileName.endsWith(".mp3");
     }
 
+    function isValidFileType(fileName) {
+        return isTextFile(fileName)
+            || isImageFile(fileName)
+            || isAudioFile(fileName);
+    }
+
     // Call when a file is selected in the list.
     // Set reload to true to skip writing the editor's contents back to the
     // saved blob if we are loading the file currently in the editor.
@@ -127,7 +133,7 @@
 
     // Call directly only when setting up files on editor start.
     function addFile(fileName, fileBlob) {
-        if (fileName.match(/^[\w\d]+\.[\w\d]+$/) === null) {
+        if (fileName.match(/^[\w\d_]+\.[\w\d_]+$/) === null) {
             throw new Error("Bad filename.");
         }
 
@@ -285,10 +291,36 @@
         displayFile(currentFile, true);
     }
 
+    function uploadFile(fileList) {
+
+        for (let i = 0; i < fileList.length; i++) {
+            let file = fileList[i];
+
+            if (!isValidFileType(file.name)) {
+                alert("Unsupported file type: "+file.name);
+                continue;
+            }
+
+            if (files[file.name]) {
+                let replace = confirm("File '" + file.name + "' already exists. Replace it?");
+
+                if (replace) {
+                    updateFile(file.name, file);
+                    if (currentFile == file.name) {
+                        displayFile(currentFile, true);
+                    }
+                }
+
+                continue;
+            }
+
+            updateFile(file.name, file);
+        }
+    }
+
     // File drop handlers
     dropElement.ondrop = function (e) {
         e.preventDefault();
-
         replaceFile(e.dataTransfer.files);
     }
 
@@ -296,12 +328,32 @@
         e.preventDefault();
     }
 
+    filesListElement.ondrop = function (e) {
+        e.preventDefault();
+        uploadFile(e.dataTransfer.files);
+    }
+
+    filesListElement.ondragover = function (e) {
+        e.preventDefault();
+    }
+
+    // These functions open a file dialog.
     window.replaceFile = function () {
         let uploader = document.createElement("input");
-        uploader.accept = files[currentFile].type;
         uploader.type = "file";
+        uploader.accept = files[currentFile].type;
         uploader.oninput = function() {
             replaceFile(this.files);
+        }
+        uploader.click();
+    }
+
+    window.uploadFile = function () {
+        let uploader = document.createElement("input");
+        uploader.type = "file";
+        uploader.multiple = true;
+        uploader.oninput = function () {
+            uploadFile(this.files);
         }
         uploader.click();
     }

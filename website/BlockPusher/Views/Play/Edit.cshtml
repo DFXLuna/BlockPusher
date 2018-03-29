@@ -31,7 +31,11 @@
     </div>
     <div id="play-content">
         <div id="edit-left">
-            <h2 class="text-center">Files <button id="edit-new-file" class="btn btn-success" onclick="newFile();">+</button></h2>
+            <h2 class="text-center">
+                Files
+                <button id="edit-new-file" class="btn btn-success" onclick="newFile();" style="font-size: 30px;">+</button>
+                <button id="edit-upload-file" class="btn btn-warning" onclick="uploadFile();"><span class="glyphicon glyphicon-upload"></span></button>
+            </h2>
             <ul id="edit-files" class="edit-list noselect"></ul>
         </div>
         <div id="edit-center">
