@@ -8,7 +8,7 @@ import { Render } from "./render"
 // Base for World.
 export class World {
     private world: number[][]; // Maps coordinates to block type
-    private blockMap: Map< number, Block >; // Maps index to corresponding block features [can probably just use a sparse array for this]
+    private blockMap: Array< Block >; // Maps block id to block type
     private sizeX: number;
     private sizeY: number;
     private currentBlockId: number;
@@ -24,7 +24,7 @@ export class World {
             }
         }
 
-        this.blockMap = new Map< number, Block >();
+        this.blockMap = new Array< Block >();
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         this.currentBlockId = 0;
@@ -49,8 +49,7 @@ export class World {
     }
     
     createBlockType( name: string, imageFilename: string ) {
-        this.blockMap.set( this.currentBlockId, 
-            new Block( this.currentBlockId, name, imageFilename ) );
+        this.blockMap[this.currentBlockId] = new Block( this.currentBlockId, name, imageFilename );
         this.currentBlockId++;
     }
 }
