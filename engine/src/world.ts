@@ -31,11 +31,11 @@ export class World {
         this.blockSize = 25;
     }
 
-    update() {
+    public update(): void {
 
 	}
 
-	render() {
+	public render(): void {
 		// for( let i = 0; i < this.sizeX; i++ ){
         //     for( let j = 0; j < this.sizeY; j++ ){
         //         if( this.world[i][j] != -1 ){
@@ -48,8 +48,15 @@ export class World {
         // }
     }
     
-    createBlockType( name: string, imageFilename: string ) {
+    public createBlockType( name: string, imageFilename: string ): void {
         this.blockMap[this.currentBlockId] = new Block( this.currentBlockId, name, imageFilename );
         this.currentBlockId++;
+    }
+
+    public getBlockType( id: number ): Block | null {
+        if( id >= this.blockMap.length ){
+            return this.blockMap[id];
+        }
+        return null;
     }
 }
