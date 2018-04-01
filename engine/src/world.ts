@@ -53,10 +53,18 @@ export class World {
         this.currentBlockId++;
     }
 
-    public getBlockType( id: number ): Block | null {
-        if( id >= this.blockMap.length ){
+   private getBlockTypeById( id: number ): Block | null {
+        if( id < this.blockMap.length ){
             return this.blockMap[id];
         }
         return null;
     }
+
+    public getBlockAt( x: number, y: number ): Block | null {
+        if( x < this.sizeX && y < this.sizeY ){
+            return this.getBlockTypeById( this.world[x][y] );
+        }
+        return null;
+    }
+    
 }
