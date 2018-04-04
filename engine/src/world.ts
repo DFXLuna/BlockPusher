@@ -7,28 +7,29 @@ import { Render } from "./render"
 
 // Base for World.
 export class World {
-    private world: number[][]; // Maps coordinates to block type
-    private blockMap: Array< Block >; // Maps block id to block type
+    // I am really not a fan of jagged arrays but it's
+    // probably fine here considering they need to be resized.
+    private blockMap: number[][];
+    private blockIdLookup: Array< Block > = []; // Maps block id to block type
+    private blockNameLookup: {[key: string]: Block} = {};
     private sizeX: number;
     private sizeY: number;
-    private currentBlockId: number;
-    private blockSize = 25; // square block size in pixels
+    private currentBlockId = 1;
+    
+    readonly blockScale = 25; // square block size in pixels
     
     constructor( sizeX: number, sizeY: number ) {
-        this.world = new Array( sizeX );
+        this.blockMap = new Array( sizeX );
         
         for( let i = 0; i < sizeX; i++ ){
-            this.world[i] = new Array( sizeY );
+            this.blockMap[i] = new Array( sizeY );
             for( let j = 0; j < sizeY; j++ ){
-                this.world[i].push( -1 );
+                this.blockMap[i].push( 0 );
             }
         }
 
-        this.blockMap = new Array< Block >();
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        this.currentBlockId = 0;
-        this.blockSize = 25;
     }
 
     public update(): void {
@@ -36,35 +37,76 @@ export class World {
 	}
 
 	public render(): void {
-		// for( let i = 0; i < this.sizeX; i++ ){
-        //     for( let j = 0; j < this.sizeY; j++ ){
-        //         if( this.world[i][j] != -1 ){
+        // TODO account for camera position here or in calling function
+		for ( let x = 0; x < this.sizeX; x++ ) {
+            for ( let y = 0; y < this.sizeY; y++ ) {
+                //if( this.world[i][j] != -1 ) {
         //             let b = this.blockMap.get( this.world[i][j] );
         //             if( b !== undefined ){
         //                 b.renderAt( this.blockSize * i, this.blockSize * j );
-        //             }
-        //         }
-        //     }
-        // }
+                //}
+                // don't use any localization trash here because perf
+                let scale = this.blockScale;
+                Render.drawRect("cyan",x*scale,y*scale,scale,scale);
+            }
+        }
     }
     
     public createBlockType( name: string, imageFilename: string ): void {
-        this.blockMap[this.currentBlockId] = new Block( this.currentBlockId, name, imageFilename );
-        this.currentBlockId++;
+
+        let block = this.getBlockTypeInfo(name);
+
+        if (block != null) {
+            // If the block exists, update the image.
+            block.imageFilename = imageFilename;
+        } else {
+            // Otherwise, make a new block.
+            block = new Block( this.currentBlockId++, name, imageFilename );
+
+            this.blockIdLookup[block.blockid] = block;
+            this.blockNameLookup[block.name] = block;
+        }
+    }
+    
+    public getBlockTypeInfo( name: string ): Block | null {
+        return this.blockNameLookup[name];
     }
 
-   private getBlockTypeById( id: number ): Block | null {
-        if( id < this.blockMap.length ){
-            return this.blockMap[id];
+    private getBlockTypeInfoById( id: number ): Block | null {
+        if( id < this.blockIdLookup.length ){
+            return this.blockIdLookup[id];
         }
         return null;
     }
 
-    public getBlockAt( x: number, y: number ): Block | null {
-        if( x < this.sizeX && y < this.sizeY ){
-            return this.getBlockTypeById( this.world[x][y] );
+    public getBlockTypeAt( x: number, y: number ): string | null {
+        x = Math.floor(x);
+        y = Math.floor(y);
+
+        if (x >= 0 && y >= 0 && x < this.sizeX && y < this.sizeY ) {
+            let block = this.getBlockTypeInfoById( this.blockMap[x][y] );
+            if (block != null)
+                return block.name;
         }
         return null;
+    }
+
+    public setBlockTypeAt( x: number, y: number, blockType: string | null ) {
+        x = Math.floor(x);
+        y = Math.floor(y);
+
+        let blockId: number;
+        if (blockType != null) {
+            let block = this.getBlockTypeInfo(blockType);
+            if (block == null) {
+                throw new Error("Attempt to set invalid block in World.");
+            }
+            blockId = block.blockid;
+        } else {
+            blockId = 0;
+        }
+
+        this.blockMap[x][y] = blockId;
     }
     
 }

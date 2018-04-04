@@ -12,3 +12,5 @@ Mar. 24: 1 hour. Tried and failed to get blob URLs to work. Decided to use data 
 Mar. 26: 2 hours. Basic editor file management.
 Mar. 27: 3 hours. Additional editor file management.
 Mar. 28: 5 hours. Mostly finished editor file management.
+Mar. 29: 2 hours. Merged everything, integrated Matt's new components, organized Trello board.
+Apr. 03: 1 hour. Tried to finish world.

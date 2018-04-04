@@ -1,9 +1,9 @@
 import { Render } from "./render";
 
 export class Block {
-    private blockid: number;
-    private name: string;
-    private imageFilename: string;
+    blockid: number;
+    name: string;
+    imageFilename: string;
 
     constructor( blockid: number, name: string, imageFilename: string){
         this.blockid = blockid;
