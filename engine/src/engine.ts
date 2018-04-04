@@ -23,6 +23,7 @@ function doFrame( time = 0 ) {
         World.update();
     }
 
+    Render.clear("grey");
     World.render();
 }
 doFrame();

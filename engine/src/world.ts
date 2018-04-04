@@ -22,7 +22,7 @@ export class World {
         this.blockMap = new Array( sizeX );
         
         for( let i = 0; i < sizeX; i++ ){
-            this.blockMap[i] = new Array( sizeY );
+            this.blockMap[i] = new Array();
             for( let j = 0; j < sizeY; j++ ){
                 this.blockMap[i].push( 0 );
             }
@@ -38,16 +38,13 @@ export class World {
 
 	public render(): void {
         // TODO account for camera position here or in calling function
-		for ( let x = 0; x < this.sizeX; x++ ) {
+        let scale = this.blockScale;
+
+        for ( let x = 0; x < this.sizeX; x++ ) {
             for ( let y = 0; y < this.sizeY; y++ ) {
-                //if( this.world[i][j] != -1 ) {
-        //             let b = this.blockMap.get( this.world[i][j] );
-        //             if( b !== undefined ){
-        //                 b.renderAt( this.blockSize * i, this.blockSize * j );
-                //}
-                // don't use any localization trash here because perf
-                let scale = this.blockScale;
-                Render.drawRect("cyan",x*scale,y*scale,scale,scale);
+                if ( this.blockMap[x][y] != 0 ) {
+                    Render.drawRect("cyan",x*scale,y*scale,scale,scale);
+                }
             }
         }
     }
