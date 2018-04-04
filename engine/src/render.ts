@@ -1,7 +1,7 @@
 export namespace Render {
     
     let canvas: HTMLCanvasElement;
-    let context: CanvasRenderingContext2D;
+    export let context: CanvasRenderingContext2D;
     let imageCache: {[path: string]: HTMLImageElement};
     let imagePath = "";
     let cameraX = 0;
@@ -93,8 +93,13 @@ export namespace Render {
         imageCache[ imageName ] = img;
     }
 
-    export function drawImage( imageName: string, x: number, y: number ): void {
+    export function findImage( imageName: string ) {
         let img = imageCache[ imageName ];
+        return img;
+    }
+
+    export function drawImage( imageName: string, x: number, y: number ): void {
+        let img = findImage( imageName );
         if( img == undefined ) {
             return;
         }

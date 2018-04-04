@@ -36,16 +36,48 @@ export class World {
 
 	}
 
-	public render(): void {
+	public render(drawGrid: boolean): void {
         // TODO account for camera position here or in calling function
         let scale = this.blockScale;
 
+        // Draw the actual world.
         for ( let x = 0; x < this.sizeX; x++ ) {
             for ( let y = 0; y < this.sizeY; y++ ) {
-                if ( this.blockMap[x][y] != 0 ) {
-                    Render.drawRect("cyan",x*scale,y*scale,scale,scale);
+                let blockId = this.blockMap[x][y];
+                if ( blockId != 0 ) {
+                    let block = this.getBlockTypeInfoById(blockId);
+                    if (block != null) {
+                        let img = Render.findImage(block.imageFilename);
+                        if (img != null) {
+                            Render.context.drawImage(img,x*scale,y*scale,scale,scale);
+                        }
+                    }
                 }
             }
+        }
+
+        if (drawGrid) {
+            // Draw a grid, useful for editing
+            let height = this.sizeY*scale;
+            let width = this.sizeX*scale;
+
+            Render.context.strokeStyle = "#222";
+            Render.context.lineWidth = 1;
+            Render.context.beginPath();
+            
+            // Vertical grid lines
+            for ( let x = 0; x < this.sizeX+1; x++ ) {
+                Render.context.moveTo(x*scale,0);
+                Render.context.lineTo(x*scale,height);
+            }
+
+            // Horizontal grid lines
+            for ( let y = 0; y < this.sizeY+1; y++ ) {
+                Render.context.moveTo(0,y*scale);
+                Render.context.lineTo(width,y*scale);
+            }
+
+            Render.context.stroke();
         }
     }
     

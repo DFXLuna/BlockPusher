@@ -8,7 +8,7 @@ const CANVAS_NAME = "game-canvas";
 // With the world, user code is allowed to directly add stuff
 // to the instance of the class. This is fine because
 // there is just one instance.
-let World = new WorldClass(10,10);
+let World = new WorldClass(30,30);
 
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
@@ -23,8 +23,10 @@ function doFrame( time = 0 ) {
         World.update();
     }
 
+    let showGrid = true;
+
     Render.clear("grey");
-    World.render();
+    World.render(showGrid);
 }
 doFrame();
 
