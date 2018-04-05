@@ -25,8 +25,9 @@ function doFrame( time = 0 ) {
 
     let showGrid = true;
 
-    Render.clear("grey");
+    World.drawBackground();
     World.render(showGrid);
+    World.drawForeground();
 }
 doFrame();
 

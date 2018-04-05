@@ -17,6 +17,9 @@ export class World {
     private currentBlockId = 1;
     
     readonly blockScale = 25; // square block size in pixels
+
+    gravityX = 0;
+    gravityY = 0;
     
     constructor( sizeX: number, sizeY: number ) {
         this.blockMap = new Array( sizeX );
@@ -79,6 +82,15 @@ export class World {
 
             Render.context.stroke();
         }
+    }
+
+    
+    public drawBackground() {
+        Render.clear("grey");
+    }
+
+    public drawForeground() {
+
     }
     
     public createBlockType( name: string, imageFilename: string ): void {

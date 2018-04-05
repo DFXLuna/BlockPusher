@@ -105,4 +105,10 @@ export namespace Render {
         }
         context.drawImage( img, x, y );
     }
+
+    export function drawText( text: string, x: number, y: number, style = "black", font = "20px sans-serif") {
+        context.fillStyle = style;
+        context.font = font;
+        context.fillText(text, x, y);
+    }
 }
