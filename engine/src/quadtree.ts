@@ -39,7 +39,8 @@ export class QuadTree {
        this.children[3] = new QuadTree( this.level + 1, { x: x + subWidth, y: y + subHeight, width: subWidth, height: subHeight } );
     }
 
-    private getIndex(): number {}
+    private getIndex(): number { return -1; }
     public insert( go: GameObject ){}
-    public retrievePotentialColliders( returnObjects: Array< GameObject >, go: GameObject ): Array< GameObject >{}
+    public retrievePotentialColliders( returnObjects: Array< GameObject >, go: GameObject ): Array< GameObject >{ 
+        return new Array<GameObject>(); }
 }
