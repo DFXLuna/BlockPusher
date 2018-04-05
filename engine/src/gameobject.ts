@@ -38,12 +38,16 @@ export class GameObject {
     }
 
     public update(): void{}
+
     // Possibly unneeded / wrong
     public render(): void{}
-    public getBoundingBox(): [ number, number, number, number ]{
-        return [ this.x, this.y, this.width, this.height ];
+
+    public getBoundingBox(): { x: number, y: number, width: number, height: number }{
+        return { x: this.x, y: this.y, width: this.width, height: this.height };
     }
+
     public onCollision(): void{}
+    
     public destroy(): void {
         GameObjectManager.removeGameObject( this );
     }

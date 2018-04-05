@@ -7,10 +7,10 @@ export namespace Collision {
         let box1 = go1.getBoundingBox();
         let box2 = go2.getBoundingBox();
 
-        if( box1[0] < box2[0] + box2[2] &&
-            box1[0] + box1[2] < box2[0] &&
-            box1[1] < box2[1] + box2[3] &&
-            box1[1] + box1[3] < box2[1] ){
+        if( box1.x < box2.x + box2.width &&
+            box1.x + box1.width < box2.x &&
+            box1.y < box2.y + box2.height &&
+            box1.y + box1.height < box2.y ){
                 go1.onCollision();
                 go2.onCollision();
         }
