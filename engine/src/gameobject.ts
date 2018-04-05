@@ -24,18 +24,26 @@ export namespace GameObjectManager {
 }
 
 export class GameObject {
-    protected xPos: number;
-    protected yPos: number;
+    protected x: number;
+    protected y: number;
+    protected width: number; // Set these from image?
+    protected height: number;
 
     public constructor() {
-        this.xPos = 0;
-        this.yPos = 0;
+        this.x = 0;
+        this.y = 0;
+        this.width = 0;
+        this.height = 0;
         GameObjectManager.addGameObject( this );
     }
 
     public update(): void{}
     // Possibly unneeded / wrong
     public render(): void{}
+    public getBoundingBox(): [ number, number, number, number ]{
+        return [ this.x, this.y, this.width, this.height ];
+    }
+    public onCollision(): void{}
     public destroy(): void {
         GameObjectManager.removeGameObject( this );
     }
