@@ -20,10 +20,15 @@ Render.setup(CANVAS_NAME);
 function doFrame( time = 0 ) {
     window.requestAnimationFrame(doFrame);
 
-    { // Only call when game is running
-        Time.update();
-        Input.update();
+    // These are both needed when in edit mode.
+    Input.update();
+    Time.update();
+
+    if (isPlaying) { 
+        // Only call when game is running
         World.update();
+    } else {
+        World.updateEdit();
     }
 
     let showGrid = !isPlaying;
@@ -78,6 +83,11 @@ window.addEventListener("message", async function (event: MessageEvent) {
         }
     } else if (msg.type == "setMode") {
         isPlaying = msg.play;
+        // TODO reset logic:
+        // save level if currently in edit mode
+        // reload all classes from saved code
+        // reload saved level
+        Render.setAllowNormalCameraControl(isPlaying);
     } else {
         console.log("Unhandled message: ",msg);
     }

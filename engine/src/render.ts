@@ -10,6 +10,8 @@ export namespace Render {
     let cameraX = 8;
     let cameraY = 8;
 
+    let allowNormalCameraControl = false;
+
     export var blockScale = 25;
 
     export function setup(canvasName: string) {
@@ -30,9 +32,19 @@ export namespace Render {
         imagePath = path;
     }
 
-    export function setCameraPos(x: number, y: number) {
-        cameraX = x;
-        cameraY = y;
+    export function setCameraPos(x: number, y: number, force = false) {
+        if (allowNormalCameraControl || force) {
+            cameraX = x;
+            cameraY = y;
+        }
+    }
+
+    export function getCameraPos() {
+        return {x: cameraX, y: cameraY};
+    }
+
+    export function setAllowNormalCameraControl(allow: boolean) {
+        allowNormalCameraControl = allow;
     }
 
     export function setWorldRenderOffset(worldOffsetX: number, worldOffsetY: number) {
