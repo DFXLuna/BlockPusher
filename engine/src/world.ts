@@ -15,8 +15,6 @@ export class World {
     private sizeX: number;
     private sizeY: number;
     private currentBlockId = 1;
-    
-    readonly blockScale = 25; // square block size in pixels
 
     gravityX = 0;
     gravityY = 0;
@@ -41,7 +39,7 @@ export class World {
 
 	public render(drawGrid: boolean): void {
         // TODO account for camera position here or in calling function
-        let scale = this.blockScale;
+        let scale = Render.blockScale;
 
         // Draw the actual world.
         for ( let x = 0; x < this.sizeX; x++ ) {

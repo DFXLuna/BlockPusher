@@ -1,14 +1,17 @@
 import { Render } from "./render";
 import { Input }    from "./input";
-import { World as WorldClass }    from "./world";
+import { World as WorldBase }    from "./world";
 import { Time }     from "./time";
 
 const CANVAS_NAME = "game-canvas";
 
-// With the world, user code is allowed to directly add stuff
-// to the instance of the class. This is fine because
-// there is just one instance.
-let World = new WorldClass(30,30);
+let isPlaying = false;
+
+// WorldBase = (ctor of) engine-defined base class
+// WorldClass = editor-defined class
+// World = actual instance visible to GameObjects & world's own methods
+let WorldClass = new WorldBase(30,30);
+let World = <WorldBase>Object.create(WorldClass);
 
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
@@ -23,10 +26,13 @@ function doFrame( time = 0 ) {
         World.update();
     }
 
-    let showGrid = true;
+    let showGrid = !isPlaying;
 
     World.drawBackground();
+    Render.setWorldRenderOffset(0,0);
     World.render(showGrid);
+    Render.disableWorldRender();
+    // TODO render objects with offsets
     World.drawForeground();
 }
 doFrame();
@@ -64,12 +70,14 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let code = await res.text();
 
             let f = new Function("World","Render","Time","Input",code);
-            f(World,Render,Time,Input);
+            f(WorldClass,Render,Time,Input);
         } else if (isImageFile(msg.file)) {
             Render.registerImage(msg.file,msg.url);
         } else {
             console.log("Unhandled file: ",msg.file);
         }
+    } else if (msg.type == "setMode") {
+        isPlaying = msg.play;
     } else {
         console.log("Unhandled message: ",msg);
     }
