@@ -10,7 +10,11 @@ World.update = function () {
 }
 
 World.drawBackground = function () {
-    if (Input.wasKeyPressed("X")) {
+    if (Input.isMouseButtonDown(1)) {
+        Render.clear("black");
+    } else if (Input.isMouseButtonDown(2)) {
+        Render.clear("white");
+    } else if (Input.wasKeyPressed("X")) {
         Render.clear("yellow");
     } else if (Input.wasKeyReleased("X")) {
         Render.clear("cyan");
