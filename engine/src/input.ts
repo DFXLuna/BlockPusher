@@ -57,8 +57,10 @@ export namespace Input {
     // Add event listeners
     window.addEventListener("keydown", ( event ) => { onKeyDown( event ); }, false );
     window.addEventListener("keyup", ( event ) => { onKeyUp( event ); }, false );
+
     window.addEventListener("mousemove", ( event ) => { onMouseMove(event); }, false );
     window.addEventListener("mousedown", ( event ) => { onMouseButton(event); }, false );
     window.addEventListener("mouseup", ( event ) => { onMouseButton(event); }, false );
-    
+
+    window.addEventListener("contextmenu", ( event ) => { event.preventDefault(); }, false );
 }
