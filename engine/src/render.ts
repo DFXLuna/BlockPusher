@@ -28,10 +28,6 @@ export namespace Render {
         imageCache = {};
     }
 
-    export function setImagePath(path: string) {
-        imagePath = path;
-    }
-
     export function setCameraPos(x: number, y: number, force = false) {
         if (allowNormalCameraControl || force) {
             cameraX = x;

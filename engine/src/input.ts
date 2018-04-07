@@ -1,4 +1,4 @@
-import { copymap } from "./copymap";
+import { copymap } from "./copymap"; 
 
 export namespace Input {
     let currPressed: Map< string, boolean > = new Map();
@@ -9,11 +9,20 @@ export namespace Input {
     }
     
     export function isKeyDown( keyValue: string ): boolean {
-        return currPressed.has( keyValue.toLowerCase() );
+        keyValue = keyValue.toLowerCase();
+        return currPressed.has( keyValue );
     }
     
-    export function wasKeyDown( keyValue: string ): boolean {
-        return prevPressed.has( keyValue.toLowerCase() );
+    export function wasKeyPressed( keyValue: string ): boolean {
+        keyValue = keyValue.toLowerCase();
+        return currPressed.has( keyValue )
+            && !prevPressed.has( keyValue );
+    }
+
+    export function wasKeyReleased( keyValue: string ): boolean {
+        keyValue = keyValue.toLowerCase();
+        return prevPressed.has( keyValue )
+            && !currPressed.has( keyValue );
     }
     
     function onKeyDown( ke: KeyboardEvent ): void {

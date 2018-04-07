@@ -10,7 +10,13 @@ World.update = function () {
 }
 
 World.drawBackground = function () {
-    Render.clear("pink");
+    if (Input.wasKeyPressed("X")) {
+        Render.clear("yellow");
+    } else if (Input.wasKeyReleased("X")) {
+        Render.clear("cyan");
+    } else {
+        Render.clear("pink");
+    }
 }
 
 World.drawForeground = function () {

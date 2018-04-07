@@ -20,8 +20,6 @@ Render.setup(CANVAS_NAME);
 function doFrame( time = 0 ) {
     window.requestAnimationFrame(doFrame);
 
-    // These are both needed when in edit mode.
-    Input.update();
     Time.update();
 
     if (isPlaying) { 
@@ -39,6 +37,10 @@ function doFrame( time = 0 ) {
     Render.disableWorldRender();
     // TODO render objects with offsets
     World.drawForeground();
+
+    // Input must update here so between-frame inputs
+    // can be collected.
+    Input.update();
 }
 doFrame();
 
