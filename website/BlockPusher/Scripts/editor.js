@@ -3,8 +3,8 @@
     let sandboxElement = document.getElementById("play-sandbox");
 
     // Map of filename -> blob
-    var files = {};
-    var filesChanged = {};
+    let files = {};
+    let filesChanged = {};
 
     let filesListElement = document.getElementById("edit-files");
 
@@ -22,11 +22,17 @@
     let replaceFileButton = document.getElementById("edit-replace-file");
     let dropElement = document.getElementById("edit-drop");
 
+    // Play/Edit button
+    let playEditButton = document.getElementById("edit-toggle-play");
+    let isPlaying = false;
+
     function isTextFile(fileName) {
+        fileName = fileName.toLowerCase();
         return fileName.endsWith(".js");
     }
 
     function isImageFile(fileName) {
+        fileName = fileName.toLowerCase();
         return fileName.endsWith(".png")
             || fileName.endsWith(".gif")
             || fileName.endsWith(".jpg")
@@ -34,6 +40,7 @@
     }
 
     function isAudioFile(fileName) {
+        fileName = fileName.toLowerCase();
         return fileName.endsWith(".wav")
             || fileName.endsWith(".mp3");
     }
@@ -386,6 +393,20 @@
             let fileBlob = new Blob([editor.getValue()], { type: "application/javascript" });
             updateFile(currentFile, fileBlob);
         }
+    }
+
+    window.toggleGamePlayer = function () {
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+            playEditButton.classList.add("btn-danger");
+            playEditButton.classList.remove("btn-primary");
+            playEditButton.innerText = "Edit Level";
+        } else {
+            playEditButton.classList.add("btn-primary");
+            playEditButton.classList.remove("btn-danger");
+            playEditButton.innerText = "Play Level";
+        }
+        sandboxElement.contentWindow.postMessage({ type: "setMode", play: isPlaying }, "*");
     }
 
     // This is called when the engine is ready to receive messages.

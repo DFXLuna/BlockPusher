@@ -15,3 +15,4 @@ Mar. 28: 5 hours. Mostly finished editor file management.
 Mar. 29: 2 hours. Merged everything, integrated Matt's new components, organized Trello board.
 Apr. 03: 1 hour. Tried to finish world.
 Apr. 04: 2 hours. World mostly done, added text rendering to Render component.
+Apr. 06: 3 hours. Start on world editing and supporting rendering/input functionality.

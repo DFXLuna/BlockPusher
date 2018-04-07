@@ -1,11 +1,18 @@
+import { World } from "./world";
+
 export namespace Render {
     
     let canvas: HTMLCanvasElement;
     export let context: CanvasRenderingContext2D;
     let imageCache: {[path: string]: HTMLImageElement};
     let imagePath = "";
-    let cameraX = 0;
-    let cameraY = 0;
+    // TODO set these to sane defaults based on world scale @ startup???
+    let cameraX = 8;
+    let cameraY = 8;
+
+    let allowNormalCameraControl = false;
+
+    export var blockScale = 25;
 
     export function setup(canvasName: string) {
         canvas = <HTMLCanvasElement>document.getElementById(canvasName);
@@ -21,18 +28,26 @@ export namespace Render {
         imageCache = {};
     }
 
-    export function setImagePath(path: string) {
-        imagePath = path;
+    export function setCameraPos(x: number, y: number, force = false) {
+        if (allowNormalCameraControl || force) {
+            cameraX = x;
+            cameraY = y;
+        }
     }
 
-    export function setCameraPos(x: number, y: number) {
-        cameraX = x;
-        cameraY = y;
+    export function getCameraPos() {
+        return {x: cameraX, y: cameraY};
+    }
+
+    export function setAllowNormalCameraControl(allow: boolean) {
+        allowNormalCameraControl = allow;
     }
 
     export function setWorldRenderOffset(worldOffsetX: number, worldOffsetY: number) {
         // TODO offset correctly
-        context.setTransform(1,0,0,1,-cameraX,-cameraY);
+        context.setTransform(1,0,0,1,
+            -cameraX * blockScale + canvas.width/2,
+            -cameraY * blockScale + canvas.height/2);
     }
 
     export function disableWorldRender() {

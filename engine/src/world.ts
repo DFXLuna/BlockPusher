@@ -1,5 +1,7 @@
-import { Block } from "./block"
-import { Render } from "./render"
+import { Block } from "./block";
+import { Render } from "./render";
+import { Input } from "./input";
+import { Time } from "./time";
 
 // TODO
 // Allow user strings to map into block features
@@ -15,8 +17,6 @@ export class World {
     private sizeX: number;
     private sizeY: number;
     private currentBlockId = 1;
-    
-    readonly blockScale = 25; // square block size in pixels
 
     gravityX = 0;
     gravityY = 0;
@@ -36,12 +36,38 @@ export class World {
     }
 
     public update(): void {
+        // Nothing much happens here, user code is free to do stuff though.
+    }
+    
+    public updateEdit() {
+        const EDIT_CAMERA_SPEED = 500;
 
-	}
+        let cameraMoveX = 0;
+        let cameraMoveY = 0;
+
+        if (Input.isKeyDown("W") || Input.isKeyDown("ArrowUp")) {
+            cameraMoveY -= 1;
+        } else if (Input.isKeyDown("S") || Input.isKeyDown("ArrowDown")) {
+            cameraMoveY += 1;
+        }
+
+        if (Input.isKeyDown("A") || Input.isKeyDown("ArrowLeft")) {
+            cameraMoveX -= 1;
+        } else if (Input.isKeyDown("D") || Input.isKeyDown("ArrowRight")) {
+            cameraMoveX += 1;
+        }
+
+        if (cameraMoveY != 0 || cameraMoveX != 0) {
+            let cameraPos = Render.getCameraPos();
+            cameraPos.x += cameraMoveX * Time.getDelta() * EDIT_CAMERA_SPEED / Render.blockScale;
+            cameraPos.y += cameraMoveY * Time.getDelta() * EDIT_CAMERA_SPEED / Render.blockScale;
+            Render.setCameraPos(cameraPos.x,cameraPos.y,true);
+        }
+    }
 
 	public render(drawGrid: boolean): void {
         // TODO account for camera position here or in calling function
-        let scale = this.blockScale;
+        let scale = Render.blockScale;
 
         // Draw the actual world.
         for ( let x = 0; x < this.sizeX; x++ ) {
