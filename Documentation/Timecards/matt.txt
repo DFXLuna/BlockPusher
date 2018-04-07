@@ -12,4 +12,5 @@ Mar. 26: 4 hours.  World and block prototypes.
 Apr. 1:  2 hours.  World block retrieval.  
 Apr. 3:  1 hour.   Gameobject base prototype. 
 Apr. 5:  3 hours.  AABB collision and start on quadtree.
- 
+Apr. 6:  1 hour.   More Quadtree work.
+Apr. 7:  3 hour.   Finish and test quadtree, add debug drawing for game object and quadtree.
