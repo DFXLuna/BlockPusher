@@ -1,3 +1,5 @@
+import { Render } from "./render"
+
 export namespace GameObjectManager {
     let gameObjects: Set< GameObject > = new Set< GameObject >();
 
@@ -21,6 +23,16 @@ export namespace GameObjectManager {
             g.render();
         }
     }
+
+    export function getAllGameObjects(): Set< GameObject > {
+        return gameObjects;
+    }
+
+    export function drawAllAABB( canvasName: string ){
+        for( let g of gameObjects ){
+            g.drawAABB( canvasName );
+        }
+    }
 }
 
 export class GameObject {
@@ -29,11 +41,11 @@ export class GameObject {
     protected width: number; // Set these from image?
     protected height: number;
 
-    public constructor() {
-        this.x = 0;
-        this.y = 0;
-        this.width = 0;
-        this.height = 0;
+    public constructor( x: number, y: number, width: number, height: number ) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         GameObjectManager.addGameObject( this );
     }
 
@@ -50,5 +62,9 @@ export class GameObject {
     
     public destroy(): void {
         GameObjectManager.removeGameObject( this );
+    }
+
+    public drawAABB( canvasName: string ){
+        Render.drawRectOutline( "#FF0000", this.x, this.y, this.width, this.height );
     }
 }
