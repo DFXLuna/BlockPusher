@@ -1,4 +1,5 @@
-import { copymap } from "./copymap"; 
+import { copymap } from "./copymap";
+import { Render } from "./render";
 
 export namespace Input {
     let currPressed: Map< string, boolean > = new Map();
@@ -45,9 +46,10 @@ export namespace Input {
     }
 
     function onMouseMove( me: MouseEvent ): void {
-        // TODO translate these coords back to world coords
-        cursorPos.x = me.clientX;
-        cursorPos.y = me.clientY;
+        let canvas = Render.context.canvas;
+        let camPos = Render.getCameraPos();
+        cursorPos.x = (me.clientX - canvas.width/2) / Render.blockScale + camPos.x;
+        cursorPos.y = (me.clientY - canvas.height/2) / Render.blockScale + camPos.y;
     }
 
     function onMouseButton( me: MouseEvent ): void {

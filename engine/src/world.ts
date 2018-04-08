@@ -40,6 +40,7 @@ export class World {
     }
     
     public updateEdit() {
+        // CAMERA MOVEMENT
         const EDIT_CAMERA_SPEED = 500;
 
         let cameraMoveX = 0;
@@ -62,6 +63,12 @@ export class World {
             cameraPos.x += cameraMoveX * Time.getDelta() * EDIT_CAMERA_SPEED / Render.blockScale;
             cameraPos.y += cameraMoveY * Time.getDelta() * EDIT_CAMERA_SPEED / Render.blockScale;
             Render.setCameraPos(cameraPos.x,cameraPos.y,true);
+        }
+
+        let cursor = Input.getCursorPos();
+
+        if (Input.isMouseButtonDown(2)) {
+            this.setBlockTypeAt(cursor.x,cursor.y,null);
         }
     }
 

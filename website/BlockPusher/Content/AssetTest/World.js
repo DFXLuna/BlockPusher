@@ -25,4 +25,6 @@ World.drawBackground = function () {
 
 World.drawForeground = function () {
     Render.drawText("Frame time:" + Time.getDelta() * 1000 + "ms", 10, 50, "navy", "50px serif");
+    let cursor = Input.getCursorPos();
+    Render.drawText("===> " + cursor.x + " " + cursor.y,10,100);
 }
