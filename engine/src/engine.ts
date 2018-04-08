@@ -2,6 +2,7 @@ import { Render } from "./render";
 import { Input }    from "./input";
 import { World as WorldBase }    from "./world";
 import { Time }     from "./time";
+import { AudioComponent as Audio } from "./audio";
 
 const CANVAS_NAME = "game-canvas";
 
@@ -66,6 +67,10 @@ window.addEventListener("message", async function (event: MessageEvent) {
             return fileName.match(/\.(png|gif|jpe?g)$/i) !== null;
         }
 
+        function isAudioFile(fileName: string) {
+            return fileName.match(/\.(wav|mp3)$/i) !== null;
+        }
+
         if (msg.file=="World.js") {
             if (msg.url == null) {
                 // The world file was deleted.
@@ -76,10 +81,12 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let res = await fetch(msg.url);
             let code = await res.text();
 
-            let f = new Function("World","Render","Time","Input",code);
-            f(WorldClass,Render,Time,Input);
+            let f = new Function("World","Render","Audio","Time","Input",code);
+            f(WorldClass,Render,Audio,Time,Input);
         } else if (isImageFile(msg.file)) {
             Render.registerImage(msg.file,msg.url);
+        } else if (isAudioFile(msg.file)) {
+            Audio.registerSound(msg.file, msg.url);
         } else {
             console.log("Unhandled file: ",msg.file);
         }

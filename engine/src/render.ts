@@ -4,7 +4,7 @@ export namespace Render {
     
     let canvas: HTMLCanvasElement;
     export let context: CanvasRenderingContext2D;
-    let imageCache: {[path: string]: HTMLImageElement};
+    let imageCache: {[path: string]: HTMLImageElement} = {};
     let imagePath = "";
     // TODO set these to sane defaults based on world scale @ startup???
     let cameraX = 8;
@@ -24,8 +24,6 @@ export namespace Render {
         else{
             throw new Error("Could not get context from canvas");
         }
-
-        imageCache = {};
     }
 
     export function setCameraPos(x: number, y: number, force = false) {

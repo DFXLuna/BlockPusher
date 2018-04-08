@@ -11,13 +11,16 @@ World.update = function () {
 
 World.drawBackground = function () {
     if (Input.isMouseButtonDown(1)) {
+        Audio.stopAll();
         Render.clear("black");
     } else if (Input.isMouseButtonDown(2)) {
         Render.clear("white");
     } else if (Input.wasKeyPressed("X")) {
         Render.clear("yellow");
+        Audio.playSound("moonspeak.wav");
     } else if (Input.wasKeyReleased("X")) {
         Render.clear("cyan");
+        Audio.playSound("zinger.wav");
     } else {
         Render.clear("pink");
     }
