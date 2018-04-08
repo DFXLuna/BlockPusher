@@ -9,6 +9,9 @@ export namespace Render {
     // TODO set these to sane defaults based on world scale @ startup???
     let cameraX = 8;
     let cameraY = 8;
+    // TEMPORARY
+    let cameraWidth = 0;
+    let cameraHeight = 0;
 
     let allowNormalCameraControl = false;
 
@@ -20,6 +23,8 @@ export namespace Render {
         let temp = canvas.getContext("2d");
         if( temp !== null ){
             context = temp;
+            cameraWidth = context.canvas.width / blockScale;
+            cameraHeight = context.canvas.height / blockScale;
         }
         else{
             throw new Error("Could not get context from canvas");

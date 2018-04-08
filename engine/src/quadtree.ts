@@ -4,7 +4,7 @@ import { GameObject } from "./gameobject";
 import { Render } from "./render"
 
 export class QuadTree {
-    private readonly maxObjects = 10; // may change
+    private readonly maxObjects = 10;
     private readonly maxLevel = 5
     private level: number;
     private gameObjects: Array< GameObject >;
@@ -114,8 +114,12 @@ export class QuadTree {
     }
 
     public drawQuadTree( canvasName: string ){
+        let blockSizepx = Render.blockScale;
         let bounds = this.bounds;
-        Render.drawRectOutline( "#00000", bounds.x, bounds.y, bounds.width, bounds.height );
+        Render.drawRectOutline( "#00000", bounds.x * blockSizepx, 
+                                           bounds.y * blockSizepx, 
+                                           bounds.width * blockSizepx,
+                                           bounds.height * blockSizepx );
         if( this.children[0] != null ){
             for( let c of this.children ){
                 c.drawQuadTree( canvasName );
