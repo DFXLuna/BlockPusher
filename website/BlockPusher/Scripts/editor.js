@@ -7,6 +7,7 @@
     let filesChanged = {};
 
     let filesListElement = document.getElementById("edit-files");
+    let objectsListElement = document.getElementById("edit-objects");
 
     // Currently selected file
     let currentFile = null;
@@ -344,7 +345,7 @@
         e.preventDefault();
     }
 
-    // These functions open a file dialog.
+    // These two functions open a file dialog.
     window.replaceFile = function () {
         let uploader = document.createElement("input");
         uploader.type = "file";
@@ -364,6 +365,27 @@
         }
         uploader.click();
     }
+
+    // This is garbage tier code copypasted from the file list.
+    function setObjectList(list) {
+        
+        let objectName = "A";
+
+        let listEntry = document.createElement("li");
+        listEntry.innerText = objectName;
+        listEntry.setAttribute("data-objectname", objectName);
+
+        // Click Handler
+        listEntry.addEventListener("click", function () { alert(objectName); });
+
+        // Icon
+        let iconHTML = "<span class='glyphicon glyphicon-cutlery'></span>";
+        //iconHTML = "<img class='edit-img-icon' />";
+        listEntry.innerHTML = iconHTML + " " + listEntry.innerHTML;
+
+        objectsListElement.appendChild(listEntry);
+    }
+    setObjectList();
 
     // Monaco editor setup
     require.config({ paths: { "vs": "/Scripts/vs" } });

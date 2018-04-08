@@ -43,10 +43,7 @@ html, body {
 }
 
 #edit-left {
-    position: absolute;
     left: 0;
-    width: 200px;
-    height: 100%;
 }
 
 #edit-center {
@@ -58,10 +55,16 @@ html, body {
 }
 
 #edit-right {
-    position: absolute;
     right: 0;
+}
+
+#edit-left, #edit-right {
+    overflow: auto;
+    position: absolute;
     width: 200px;
     height: 100%;
+    border-top: 1px solid #888;
+    border-bottom: 1px solid #888;
 }
 
 #edit-drop {
@@ -91,15 +94,11 @@ html, body {
 }
 
 .edit-list {
-    position: absolute;
-    top: 40px;
-    left: 0;
-    right: 0;
-    bottom: 0;
     list-style-type: none;
     border: 1px solid #888;
     padding: 0;
-    overflow: auto;
+    border-bottom: none;
+    margin: 0;
 }
 
 .edit-list > li {
@@ -137,6 +136,11 @@ h2 > .btn {
 
 button#edit-replace-file {
     margin: 10px;
+}
+
+button#edit-toggle-play {
+    position: absolute;
+    left: 50%;
 }
 
 img.edit-img-icon {
