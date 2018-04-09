@@ -17,3 +17,4 @@ Apr. 03: 1 hour. Tried to finish world.
 Apr. 04: 2 hours. World mostly done, added text rendering to Render component.
 Apr. 06: 3 hours. Start on world editing and supporting rendering/input functionality.
 Apr. 07: 2 hours. Level editor mouse functionality, audio.
+APr. 08. 3 hours. Level editor object list done.

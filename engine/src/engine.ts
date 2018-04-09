@@ -45,6 +45,18 @@ function doFrame( time = 0 ) {
 }
 doFrame();
 
+// Sends our object list to the editor.
+// Call on any update to a file, or after a reload.
+function updateEditorObjectList() {
+
+    let list = {
+        blocks: World.getBlockTypes(),
+        objects: {}
+    };
+
+    window.parent.postMessage({type: "setObjectList", list: list},"*");
+}
+
 // For clearing prototypes.
 function clearObject(obj: object) {
     for (var k in obj) {
@@ -90,6 +102,8 @@ window.addEventListener("message", async function (event: MessageEvent) {
         } else {
             console.log("Unhandled file: ",msg.file);
         }
+
+        updateEditorObjectList();
     } else if (msg.type == "setMode") {
         isPlaying = msg.play;
         // TODO reset logic:
@@ -97,10 +111,12 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // reload all classes from saved code
         // reload saved level
         Render.setAllowNormalCameraControl(isPlaying);
+    } else if (msg.type == "selectObject") {
+        World.setEditorObject(msg.obj_type, msg.name);
     } else {
         console.log("Unhandled message: ",msg);
     }
 });
 
 // Send a message to the parent window when the engine is ready.
-window.parent.postMessage("engineReady","*");
+window.parent.postMessage({type: "engineReady"},"*");

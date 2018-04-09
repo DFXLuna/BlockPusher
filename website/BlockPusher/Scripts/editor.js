@@ -4,11 +4,15 @@
 
     // Map of filename -> blob
     let files = {};
+    // Map of filename -> bool [essentially a set]
     let filesChanged = {};
 
     let filesListElement = document.getElementById("edit-files");
     let blocksListElement = document.getElementById("edit-blocks");
     let objectsListElement = document.getElementById("edit-objects");
+
+    // Currently selected object element
+    let currentObjectElement = null;
 
     // Currently selected file
     let currentFile = null;
@@ -379,7 +383,16 @@
                 listEntry.setAttribute("data-entryname", entryName);
 
                 // Click Handler
-                listEntry.addEventListener("click", function () { alert("todo select " + type + " " + entryName); });
+                listEntry.addEventListener("click", function () {
+                    if (currentObjectElement != null) {
+                        currentObjectElement.classList.remove("active");
+                    }
+                    listEntry.classList.add("active");
+
+                    currentObjectElement = listEntry;
+
+                    sandboxElement.contentWindow.postMessage({ type: "selectObject", obj_type: type, name: entryName }, "*");
+                });
 
                 // Icon
                 let iconHTML = "<img class='edit-img-icon' />";
@@ -488,37 +501,17 @@
         fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
 
         fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
-
-        setTimeout(function () {
-            setObjectList({
-                blocks: {
-                    aaa: "test.png",
-                    ccc: "test2.jpg",
-                    ddd: ""
-                },
-                objects: {
-                    bbb: "test.png"
-                }
-            });
-        }, 1000);
-
-        setTimeout(function () {
-            setObjectList({
-                blocks: {
-                    aaa: "test.png"
-                },
-                objects: {
-                    bbb: ""
-                }
-            });
-        }, 2000);
     }
 
     window.addEventListener("message", function (event) {
-        if (event.data == "engineReady") {
+        let msg = event.data;
+
+        if (msg.type == "engineReady") {
             onEngineStart();
+        } else if (msg.type == "setObjectList") {
+            setObjectList(msg.list);
         } else {
-            console.log("Unhandled message: ", event.data);
+            console.log("Unhandled message: ", msg);
         }
     });
 })();

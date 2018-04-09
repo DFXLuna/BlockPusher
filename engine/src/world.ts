@@ -18,6 +18,9 @@ export class World {
     private sizeY: number;
     private currentBlockId = 1;
 
+    private editObjectType: string | null = null;
+    private editObjectName: string | null = null;
+
     gravityX = 0;
     gravityY = 0;
     
@@ -67,9 +70,21 @@ export class World {
 
         let cursor = Input.getCursorPos();
 
-        if (Input.isMouseButtonDown(2)) {
+        if (Input.isMouseButtonDown(1)) {
+            if (this.editObjectName != null) {
+                if (this.editObjectType == "block") {
+                    this.setBlockTypeAt(cursor.x,cursor.y,this.editObjectName);
+                }
+            }
+        }
+        else if (Input.isMouseButtonDown(2)) {
             this.setBlockTypeAt(cursor.x,cursor.y,null);
         }
+    }
+
+    public setEditorObject(type: string, name:string) {
+        this.editObjectType = type;
+        this.editObjectName = name;
     }
 
 	public render(drawGrid: boolean): void {
@@ -169,18 +184,29 @@ export class World {
         x = Math.floor(x);
         y = Math.floor(y);
 
-        let blockId: number;
-        if (blockType != null) {
-            let block = this.getBlockTypeInfo(blockType);
-            if (block == null) {
-                throw new Error("Attempt to set invalid block in World.");
+        if (x >= 0 && y >= 0 && x < this.sizeX && y < this.sizeY ) {
+            let blockId: number;
+            if (blockType != null) {
+                let block = this.getBlockTypeInfo(blockType);
+                if (block == null) {
+                    throw new Error("Attempt to set invalid block in World.");
+                }
+                blockId = block.blockid;
+            } else {
+                blockId = 0;
             }
-            blockId = block.blockid;
-        } else {
-            blockId = 0;
-        }
 
-        this.blockMap[x][y] = blockId;
+            this.blockMap[x][y] = blockId;
+        }
+    }
+
+    public getBlockTypes() {
+        let types: {[key: string]: string} = {};
+
+        this.blockIdLookup.forEach((info,i)=>{
+            types[info.name] = info.imageFilename;
+        });
+        return types;
     }
     
 }
