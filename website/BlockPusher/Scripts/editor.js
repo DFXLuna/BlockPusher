@@ -7,6 +7,7 @@
     let filesChanged = {};
 
     let filesListElement = document.getElementById("edit-files");
+    let blocksListElement = document.getElementById("edit-blocks");
     let objectsListElement = document.getElementById("edit-objects");
 
     // Currently selected file
@@ -69,12 +70,12 @@
 
         // Update the UI
         if (currentFile != null) {
-            let oldElement = document.querySelector("#edit-files>li[data-filename='" + currentFile + "']");
+            let oldElement = filesListElement.querySelector("li[data-filename='" + currentFile + "']");
             oldElement.classList.remove("active");
         }
 
         if (fileName !== null) {
-            let newElement = document.querySelector("#edit-files>li[data-filename='" + fileName + "']");
+            let newElement = filesListElement.querySelector("li[data-filename='" + fileName + "']");
             newElement.classList.add("active");
         }
 
@@ -162,7 +163,7 @@
             sandboxElement.contentWindow.postMessage({ type: "setFile", file: fileName, url: null }, "*");
         }
 
-        let listEntry = document.querySelector("#edit-files>li[data-filename='" + fileName + "']");
+        let listEntry = filesListElement.querySelector("li[data-filename='" + fileName + "']");
         if (fileBlob !== null) {
             // Add to the list.
             if (listEntry === null) {
@@ -366,26 +367,71 @@
         uploader.click();
     }
 
-    // This is garbage tier code copypasted from the file list.
     function setObjectList(list) {
         
-        let objectName = "A";
+        function setListEntry(entryName, entryImage, listElement, type) {
+            // This is garbage tier code copypasted from the file list.
 
-        let listEntry = document.createElement("li");
-        listEntry.innerText = objectName;
-        listEntry.setAttribute("data-objectname", objectName);
+            let listEntry = listElement.querySelector("li[data-entryname='" + entryName + "']");
+            if (listEntry === null) {
+                listEntry = document.createElement("li");
+                listEntry.innerText = entryName;
+                listEntry.setAttribute("data-entryname", entryName);
 
-        // Click Handler
-        listEntry.addEventListener("click", function () { alert(objectName); });
+                // Click Handler
+                listEntry.addEventListener("click", function () { alert("todo select " + type + " " + entryName); });
 
-        // Icon
-        let iconHTML = "<span class='glyphicon glyphicon-cutlery'></span>";
-        //iconHTML = "<img class='edit-img-icon' />";
-        listEntry.innerHTML = iconHTML + " " + listEntry.innerHTML;
+                // Icon
+                let iconHTML = "<img class='edit-img-icon' />";
+                listEntry.innerHTML = iconHTML + " " + listEntry.innerHTML;
 
-        objectsListElement.appendChild(listEntry);
+                listElement.appendChild(listEntry);
+            }
+
+            // Update icon
+            let img = listEntry.querySelector("img.edit-img-icon");
+
+            let imgBlob = files[entryImage];
+
+            if (imgBlob != null) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    let url = e.target.result;
+
+                    img.src = url;
+                }
+                reader.readAsDataURL(imgBlob);
+            } else {
+                img.removeAttribute("src");
+            }
+        }
+
+        // Add block entries
+        for (let key in list.blocks) {
+            setListEntry(key, list.blocks[key], blocksListElement, "block");
+        }
+
+        // Remove block entries
+        for (let i = blocksListElement.childElementCount-1; i >= 0; i--) {
+            let listEntry = blocksListElement.children[i];
+            if (list.blocks[listEntry.getAttribute("data-entryname")] == null) {
+                listEntry.remove();
+            }
+        }
+
+        // Add object entries
+        for (let key in list.objects) {
+            setListEntry(key, list.objects[key], objectsListElement, "object");
+        }
+
+        // Remove object entries
+        for (let i = objectsListElement.childElementCount - 1; i >= 0; i--) {
+            let listEntry = objectsListElement.children[i];
+            if (list.objects[listEntry.getAttribute("data-entryname")] == null) {
+                listEntry.remove();
+            }
+        }
     }
-    setObjectList();
 
     // Monaco editor setup
     require.config({ paths: { "vs": "/Scripts/vs" } });
@@ -442,6 +488,30 @@
         fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
 
         fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
+
+        setTimeout(function () {
+            setObjectList({
+                blocks: {
+                    aaa: "test.png",
+                    ccc: "test2.jpg",
+                    ddd: ""
+                },
+                objects: {
+                    bbb: "test.png"
+                }
+            });
+        }, 1000);
+
+        setTimeout(function () {
+            setObjectList({
+                blocks: {
+                    aaa: "test.png"
+                },
+                objects: {
+                    bbb: ""
+                }
+            });
+        }, 2000);
     }
 
     window.addEventListener("message", function (event) {
