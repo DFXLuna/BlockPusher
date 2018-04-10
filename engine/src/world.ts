@@ -11,11 +11,11 @@ import { Time } from "./time";
 export class World {
     // I am really not a fan of jagged arrays but it's
     // probably fine here considering they need to be resized.
-    private blockMap: number[][];
+    private blockMap: number[][] = [];
     private blockIdLookup: Array< Block > = []; // Maps block id to block type
     private blockNameLookup: {[key: string]: Block} = {};
-    private sizeX: number;
-    private sizeY: number;
+    private sizeX = 0;
+    private sizeY = 0;
     private currentBlockId = 1;
 
     private editObjectType: string | null = null;
@@ -25,6 +25,12 @@ export class World {
     gravityY = 0;
     
     constructor( sizeX: number, sizeY: number ) {
+        this.resize( sizeX, sizeY );
+    }
+
+    public resize( sizeX: number, sizeY: number ) {
+        // WARNING: Currently does not preserve block data.
+
         this.blockMap = new Array( sizeX );
         
         for( let i = 0; i < sizeX; i++ ){
@@ -209,13 +215,33 @@ export class World {
         return types;
     }
 
-    public serialize() {
-        let json_soup: any = {};
-        json_soup.width = this.sizeX;
-        json_soup.height = this.sizeY;
-        json_soup.blockTypes = this.blockIdLookup.map((info)=> info.name);
-        json_soup.blockMap = this.blockMap;
-        return JSON.stringify(json_soup);
+    public save() {
+        let save_obj: any = {};
+        save_obj.width = this.sizeX;
+        save_obj.height = this.sizeY;
+        save_obj.blockTypes = this.blockIdLookup.map((info)=> info.name);
+        save_obj.blockMap = this.blockMap;
+        return save_obj;
+    }
+
+    public load(save_obj: any) {
+        // Set world size.
+        this.resize( save_obj.width, save_obj.height);
+
+        // Make sure all block types used by the save exist.
+        save_obj.blockTypes.forEach((name: string)=>{
+            if (this.blockNameLookup[name] == null) {
+                this.createBlockType(name,"?");
+            }
+        });
+
+        // Place all blocks.
+        for( let x = 0; x < this.sizeX; x++ ){
+            for( let y = 0; y < this.sizeY; y++ ){
+                let blockName: string = save_obj.blockTypes[ save_obj.blockMap[x][y] ];
+                this.setBlockTypeAt(x,y,blockName);
+            }
+        }
     }
     
 }

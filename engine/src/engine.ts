@@ -110,7 +110,8 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // save level if currently in edit mode
         // reload all classes from saved code
         // reload saved level
-        console.log(World.serialize());
+        let saved = World.save();
+        World.load(saved);
 
         Render.setAllowNormalCameraControl(isPlaying);
     } else if (msg.type == "selectObject") {
