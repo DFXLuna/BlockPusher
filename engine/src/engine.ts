@@ -110,6 +110,9 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // save level if currently in edit mode
         if (!isPlaying) {
             savedState = World.save();
+
+            // Send saved level state to editor.
+            window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");
         }
 
         // TODO reset logic:

@@ -24,6 +24,16 @@ export namespace Render {
         else{
             throw new Error("Could not get context from canvas");
         }
+        
+        // Canvas resizing
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        resizeCanvas();
+
+        window.addEventListener("resize", resizeCanvas);
     }
 
     export function setCameraPos(x: number, y: number, force = false) {

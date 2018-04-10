@@ -235,6 +235,7 @@
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
+    <None Include="Content\AssetTest\level.json" />
     <Content Include="Content\AssetTest\moonspeak.wav" />
     <Content Include="Content\AssetTest\test.png" />
     <Content Include="Content\AssetTest\test2.jpg" />
