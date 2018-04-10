@@ -110,9 +110,11 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // save level if currently in edit mode
         // reload all classes from saved code
         // reload saved level
+        console.log(World.serialize());
+
         Render.setAllowNormalCameraControl(isPlaying);
     } else if (msg.type == "selectObject") {
-        World.setEditorObject(msg.obj_type, msg.name);
+        World.setEditorPlacementObject(msg.obj_type, msg.name);
     } else {
         console.log("Unhandled message: ",msg);
     }

@@ -82,7 +82,7 @@ export class World {
         }
     }
 
-    public setEditorObject(type: string, name:string) {
+    public setEditorPlacementObject(type: string, name:string) {
         this.editObjectType = type;
         this.editObjectName = name;
     }
@@ -207,6 +207,15 @@ export class World {
             types[info.name] = info.imageFilename;
         });
         return types;
+    }
+
+    public serialize() {
+        let json_soup: any = {};
+        json_soup.width = this.sizeX;
+        json_soup.height = this.sizeY;
+        json_soup.blockTypes = this.blockIdLookup.map((info)=> info.name);
+        json_soup.blockMap = this.blockMap;
+        return JSON.stringify(json_soup);
     }
     
 }
