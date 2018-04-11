@@ -15,7 +15,7 @@ let savedState: any = null;
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
 CodeManager.setup();
-Collision.setup(CodeManager.World);
+Collision.setup();
 
 // GAME 'LOOP'
 function doFrame(time = 0) {
