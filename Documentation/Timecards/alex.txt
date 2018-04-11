@@ -6,3 +6,4 @@ Apr. 05: .5 hours: Database hosting research
 Apr. 06: 1.5 hours: Database setup
 Apr. 07: 2.5 hours: Database setup
 Apr. 08: 4 hours: Database setup complete, configured website to use new database and changed user attributes
+Apr. 10: 3 hours: API endpoints, db work, conn string research
