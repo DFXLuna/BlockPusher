@@ -1,0 +1,82 @@
+import { World as WorldBase } from "./world";
+import { GameObject as GameObjectBase } from "./gameobject";
+import { Render } from "./render";
+import { Time } from "./time";
+import { Input } from "./input";
+
+interface GameObjectClassInfo {
+    setupFunction: Function;
+    objectClass: typeof GameObjectBase;
+}
+
+export namespace CodeManager {
+    
+    // We just pass user code an instance of the
+    // world class to edit. There are a lot of weird
+    // games we can play with prototype chains but they
+    // can get very messy.
+    var WorldSetupFunction: Function = ()=>{};
+    export var World: WorldBase;
+
+    // For object classes, we store the class and a setup function for each.
+    // The setup function is built from user code and is used to populate the class.
+    var gameObjectClasses: {[className: string]: GameObjectClassInfo} = {};
+    
+    export function setup() {
+        World = new WorldBase();
+        callSetupFunction(WorldSetupFunction);
+        
+        // TODO reset all those game object classes
+    }
+
+    function callSetupFunction(f: Function, objClass?: typeof GameObjectBase) {
+        if (objClass != null)
+            f(World,Render,Audio,Time,Input,objClass);
+        else
+            f(World,Render,Audio,Time,Input);
+    }
+
+    function makeSetupFunction(code: string, isObjectSetupFunc = false) {
+        if (isObjectSetupFunc)
+            return new Function("World","Render","Audio","Time","Input","GameObject",code);
+        else
+            return new Function("World","Render","Audio","Time","Input",code);
+    }
+
+    export function runScript(name: string, code: string | null) {
+        if (name == "World.js") {
+            if (code == null) {
+                // Deleting the world script doesn't make sense.
+                // Just give up.
+                return;
+            }
+
+            WorldSetupFunction = makeSetupFunction(code);
+            callSetupFunction(WorldSetupFunction);
+        } else {
+            let objClassName = name.split(".")[0];
+
+            if (code == null) {
+                delete gameObjectClasses[objClassName];
+                return;
+            }
+
+            let classInfo = gameObjectClasses[objClassName];
+
+            if (classInfo == null) {
+                classInfo = {
+                    objectClass: (class _ extends GameObjectBase {}),
+                    setupFunction: ()=>{}
+                }
+                gameObjectClasses[objClassName] = classInfo;
+            }
+
+            classInfo.setupFunction = makeSetupFunction(code,true);
+            callSetupFunction(classInfo.setupFunction, classInfo.objectClass);
+        }
+    }
+
+    export function getGameObjectClass(name: string) {
+        return gameObjectClasses[name].objectClass;
+    }
+}

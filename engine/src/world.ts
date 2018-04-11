@@ -23,15 +23,11 @@ export class World {
 
     gravityX = 0;
     gravityY = 0;
-    
-    constructor( sizeX: number, sizeY: number ) {
-        this.resize( sizeX, sizeY );
-    }
 
     public resize( sizeX: number, sizeY: number ) {
         // WARNING: Currently does not preserve block data.
 
-        this.blockMap = new Array( sizeX );
+        this.blockMap.length = sizeX;
         
         for( let i = 0; i < sizeX; i++ ){
             this.blockMap[i] = new Array();

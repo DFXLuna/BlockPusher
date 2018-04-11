@@ -1,10 +1,10 @@
 import { AudioComponent as Audio } from "./audio";
-import { World as WorldBase } from "./world";
 import { GameObjectManager } from "./gameobject";
 import { Collision } from "./collision"
 import { Render } from "./render";
 import { Input } from "./input";
 import { Time } from "./time";
+import { CodeManager } from "./codemanager";
 
 
 const CANVAS_NAME = "game-canvas";
@@ -18,15 +18,16 @@ let savedState: any = null;
 // Until we have a way to change / get world size, these are here for the collision
 const WORLDWIDTH = 30;
 const WORLDHEIGHT = 30
-let WorldClass = new WorldBase(WORLDWIDTH, WORLDHEIGHT);
-let World = <WorldBase>Object.create(WorldClass);
 
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
 Collision.setup(WORLDWIDTH, WORLDHEIGHT);
+CodeManager.setup();
 
 // GAME 'LOOP'
 function doFrame(time = 0) {
+    let World = CodeManager.World;
+    
     window.requestAnimationFrame(doFrame);
 
     Time.update();
@@ -61,7 +62,7 @@ doFrame();
 function updateEditorObjectList() {
 
     let list = {
-        blocks: World.getBlockTypes(),
+        blocks: CodeManager.World.getBlockTypes(),
         objects: {}
     };
 
@@ -94,6 +95,10 @@ window.addEventListener("message", async function (event: MessageEvent) {
             return fileName.match(/\.(wav|mp3)$/i) !== null;
         }
 
+        function isScriptFile(fileName: string) {
+            return fileName.match(/\.(js)$/i) !== null;
+        }
+
         if (msg.file=="level.json") {
             if (msg.url == null) {
                 // The level was deleted.
@@ -104,19 +109,16 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let res = await fetch(msg.url);
             let levelData = await res.text();
 
-            World.load(JSON.parse(levelData));
-        } else if (msg.file=="World.js") {
-            if (msg.url == null) {
-                // The world file was deleted.
-                // We block doing this in the editor, so this shouldn't happen.
-                return;
-            }
+            CodeManager.World.load(JSON.parse(levelData));
+        } else if (isScriptFile(msg.file)) {
+            let code = null;
             
-            let res = await fetch(msg.url);
-            let code = await res.text();
+            if (msg.url != null) {
+                let res = await fetch(msg.url);
+                code = await res.text();
+            }
 
-            let f = new Function("World","Render","Audio","Time","Input",code);
-            f(WorldClass,Render,Audio,Time,Input);
+            CodeManager.runScript(msg.file, code);
         } else if (isImageFile(msg.file)) {
             Render.registerImage(msg.file,msg.url);
         } else if (isAudioFile(msg.file)) {
@@ -130,7 +132,7 @@ window.addEventListener("message", async function (event: MessageEvent) {
         
         // save level if currently in edit mode
         if (!isPlaying) {
-            savedState = World.save();
+            savedState = CodeManager.World.save();
 
             // Send saved level state to editor.
             window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");
@@ -140,7 +142,7 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // reload all classes from saved code
 
         // reload saved level
-        World.load(savedState);
+        CodeManager.World.load(savedState);
 
         isPlaying = msg.play;
         
