@@ -14,15 +14,12 @@ let isPlaying = false;
 // WorldBase = (ctor of) engine-defined base class
 // WorldClass = editor-defined class
 // World = actual instance visible to GameObjects & world's own methods
-// Until we have a way to change / get world size, these are here for the collision
-const WORLDWIDTH = 30;
-const WORLDHEIGHT = 30
-let WorldClass = new WorldBase(WORLDWIDTH, WORLDHEIGHT);
+let WorldClass = new WorldBase(30, 30);
 let World = <WorldBase>Object.create(WorldClass);
 
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
-Collision.setup(WORLDWIDTH, WORLDHEIGHT);
+Collision.setup(World);
 
 // GAME 'LOOP'
 function doFrame(time = 0) {

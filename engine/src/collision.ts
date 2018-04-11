@@ -1,24 +1,38 @@
 import { GameObject, GameObjectManager } from "./gameobject"
 import { QuadTree } from "./quadtree"
 import { Render } from "./render"
+import { World } from "./world"
 
 export namespace Collision {
     let qt314: QuadTree;
     let isSetup: boolean = false;
+    let world: World;
+    let toDelete: Array< GameObject >;
 
-    export function setup( worldHeight: number, worldWidth: number ){
+    export function setup( worldin: World ){
         let cameraPos = Render.getCameraPos();
-        qt314 = new QuadTree( 0, { x: cameraPos.x , y: cameraPos.y, width: worldWidth, height: worldHeight } );
+        world = worldin;
+        toDelete = [];
+        qt314 = new QuadTree( 0, { x: cameraPos.x , y: cameraPos.y, width: world.getSizeX(), height: world.getSizeY() } );
         isSetup = true;
     }
 
     // not optimal?
     export function doCollision(): void {
         if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::doCollision )"); }
-        // Game object collision
-        qt314.clear()
+        qt314.clear();
+        clean();
         for( let go of GameObjectManager.getAllGameObjects() ){
             qt314.insert( go );
+        }
+        // Adam, Alex, God: I'm sorry
+        let blockmap = world.getBlockMap();
+        for( let i = 0; i < blockmap.length; i++ ){
+            for( let j = 0; j < blockmap[i].length; j++ ){
+                if( blockmap[i][j] != 0 ){
+                    insertBlock( i , j );
+                }
+            }
         }
         for( let go of GameObjectManager.getAllGameObjects() ){
             for( let go2 of qt314.retrievePotentialColliders( go ) ){
@@ -53,9 +67,22 @@ export namespace Collision {
             GameObjectManager.removeGameObject( point );
             return null;
         }
-        // This might cause errors
-        // GameObjectManager.removeGameObject( point ); 
+        toDelete.push( point );
         return ret;   
+    }
+
+    function insertBlock( x: number , y: number ){
+        // create a gameobject at the block's location and insert it
+        let go = new GameObject( x, y, 1, 1 );
+        toDelete.push( go );
+        GameObjectManager.addGameObject( go );
+    }
+
+    function clean(){
+        for( let go of toDelete ){
+            GameObjectManager.removeGameObject( go );
+        }
+        toDelete = [];
     }
 
     function rayCast(){}

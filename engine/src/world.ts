@@ -183,4 +183,15 @@ export class World {
         this.blockMap[x][y] = blockId;
     }
     
+    public getBlockMap(){
+        return this.blockMap;
+    }
+
+    public getSizeX(): number {
+        return this.sizeX;
+    }
+
+    public getSizeY(): number {
+        return this.sizeY;
+    }
 }
