@@ -1,24 +1,39 @@
 import { GameObject, GameObjectManager } from "./gameobject"
 import { QuadTree } from "./quadtree"
 import { Render } from "./render"
+import { CodeManager } from "./codemanager";
 
 export namespace Collision {
     let qt314: QuadTree;
     let isSetup: boolean = false;
+    let toDelete: Array< GameObject >;
 
-    export function setup( worldHeight: number, worldWidth: number ){
+    export function setup( ){
         let cameraPos = Render.getCameraPos();
-        qt314 = new QuadTree( 0, { x: cameraPos.x , y: cameraPos.y, width: worldWidth, height: worldHeight } );
+        toDelete = [];
+
+        let world = CodeManager.World; // NOTE: World size can't change. If it ever can change, we might have some issues here.
+        qt314 = new QuadTree( 0, { x: cameraPos.x , y: cameraPos.y, width: world.getSizeX(), height: world.getSizeY() } );
         isSetup = true;
     }
 
     // not optimal?
     export function doCollision(): void {
         if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::doCollision )"); }
-        // Game object collision
-        qt314.clear()
+        qt314.clear();
+        clean();
         for( let go of GameObjectManager.getAllGameObjects() ){
             qt314.insert( go );
+        }
+        // Adam, Alex, God: I'm sorry
+        // Matt: I'm disowning you
+        let blockmap = CodeManager.World.getBlockMap();
+        for( let i = 0; i < blockmap.length; i++ ){
+            for( let j = 0; j < blockmap[i].length; j++ ){
+                if( blockmap[i][j] != 0 ){
+                    insertBlock( i , j );
+                }
+            }
         }
         for( let go of GameObjectManager.getAllGameObjects() ){
             for( let go2 of qt314.retrievePotentialColliders( go ) ){
@@ -44,15 +59,33 @@ export namespace Collision {
     function checkPoint( x: number , y: number ): Array< GameObject > | null {
         if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::checkPoint )"); }
         // collision always clears itself before the next check so this won't hurt anything
-        let point = new GameObject( x, y, 1, 1 );
+        let point = new GameObject( x, y );
         qt314.insert( point );
 
         let ret = qt314.retrievePotentialColliders( point );
-        if( ret.length === 1 ){ return null; } // The only potential collider is itself
-        return ret;
-        
+        if( ret.length === 1 ){
+            // The only potential collider is itself
+            GameObjectManager.removeGameObject( point );
+            return null;
+        }
+        toDelete.push( point );
+        return ret;   
+    }
+
+    function insertBlock( x: number , y: number ){
+        // create a gameobject at the block's location and insert it
+        let go = new GameObject( x, y );
+        toDelete.push( go );
+        GameObjectManager.addGameObject( go );
+    }
+
+    function clean(){
+        for( let go of toDelete ){
+            GameObjectManager.removeGameObject( go );
+        }
+        toDelete = [];
     }
 
     function rayCast(){}
-    function AABBCast(){}
+    // Maybe someday function AABBCast(){}
 }

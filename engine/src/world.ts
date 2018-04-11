@@ -247,4 +247,16 @@ export class World {
 
         let obj = new objClass(x,y);
     }
+    
+    public getBlockMap(){
+        return this.blockMap;
+    }
+
+    public getSizeX(): number {
+        return this.sizeX;
+    }
+
+    public getSizeY(): number {
+        return this.sizeY;
+    }
 }

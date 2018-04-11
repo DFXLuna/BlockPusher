@@ -59,7 +59,11 @@
 </div>
 
 @section Scripts{
-
+    <script>
+        window.onbeforeunload = function () {
+            return 'You have unsaved changes, are you sure you want to leave?';
+        }
+    </script>
     <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
     <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>
 
