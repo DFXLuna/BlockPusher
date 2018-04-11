@@ -1,7 +1,7 @@
 ﻿function HomeViewModel(app, dataModel) {
     var self = this;
 
-    self.myHometown = ko.observable("");
+    self.myName = ko.observable("");
 
     Sammy(function () {
         this.get('#home', function () {
@@ -14,7 +14,7 @@
                     'Authorization': 'Bearer ' + app.dataModel.getAccessToken()
                 },
                 success: function (data) {
-                    self.myHometown('Your Hometown is : ' + data.hometown);
+                    self.myName('Your Name is : ' + data.Name);
                 }
             });
         });

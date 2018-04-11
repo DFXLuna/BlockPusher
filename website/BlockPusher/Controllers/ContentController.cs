@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BlockPusher.Models;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -118,7 +121,41 @@ namespace BlockPusher.Controllers
             }
 
             return fileNames;
+        }
 
+        public bool SaveNewGame(int gameId, string title, string description)
+        {
+            //int gameId = 12;
+            //string title = "test title";
+            //string description = "test desc";
+            var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
+            using (SqlConnection myConnection = new SqlConnection(con))
+            {
+                // Check to make sure game ID doesn't already exist.
+                string getString = "select count(GameId) from Games where GameId=@gameid";
+                SqlCommand getCmd = new SqlCommand(getString, myConnection);
+                getCmd.Parameters.AddWithValue("@gameid", gameId);
+                myConnection.Open();
+                
+                // If game ID is found, return false.
+                if ((int)getCmd.ExecuteScalar() > 0)
+                {
+                    return false;
+                }
+
+                // Insert new game.
+                string oString = "insert into Games (GameId, Title, Author, GameDescription) values (@gameid, @title, @author, @description)";
+                SqlCommand cmd = new SqlCommand(oString, myConnection);
+
+                cmd.Parameters.AddWithValue("@title", title);
+                cmd.Parameters.AddWithValue("@author", User.Identity.Name);
+                cmd.Parameters.AddWithValue("@description", description);
+                cmd.Parameters.AddWithValue("@gameid", gameId);
+                int inserts = cmd.ExecuteNonQuery();
+                myConnection.Close();
+
+                return inserts > 0;
+            }
         }
     }
 }
