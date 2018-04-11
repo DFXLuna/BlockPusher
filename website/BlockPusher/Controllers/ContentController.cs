@@ -180,5 +180,26 @@ namespace BlockPusher.Controllers
                 return changes > 0;
             }
         }
+
+        public bool ChangeGameDescription(int gameId, string description)
+        {
+            //int gameId = 12;
+            //string description = "test changing title";
+            var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
+            using (SqlConnection myConnection = new SqlConnection(con))
+            {
+                string editString = "update Games set GameDescription=@description where GameId=@gameid";
+                myConnection.Open();
+
+                // Change game's description.
+                SqlCommand cmd = new SqlCommand(editString, myConnection);
+                cmd.Parameters.AddWithValue("@description", description);
+                cmd.Parameters.AddWithValue("@gameid", gameId);
+                int changes = cmd.ExecuteNonQuery();
+                myConnection.Close();
+
+                return changes > 0;
+            }
+        }
     }
 }
