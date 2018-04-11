@@ -48,11 +48,16 @@ export namespace Collision {
         qt314.insert( point );
 
         let ret = qt314.retrievePotentialColliders( point );
-        if( ret.length === 1 ){ return null; } // The only potential collider is itself
-        return ret;
-        
+        if( ret.length === 1 ){
+            // The only potential collider is itself
+            GameObjectManager.removeGameObject( point );
+            return null;
+        }
+        // This might cause errors
+        // GameObjectManager.removeGameObject( point ); 
+        return ret;   
     }
 
     function rayCast(){}
-    function AABBCast(){}
+    // Maybe someday function AABBCast(){}
 }
