@@ -1,9 +1,0 @@
-Meeting Time: 1hr
-Agenda: Discuss next steps for prototypes created last week
-
-Plan:
-Adam: Finish implementing code evalutor security
-Alex: Polish website, consider design for storing user data
-Matt: Add rendering component to engine, possibly fix documentation to reflect this
-
-All: Possibly begin integrating components

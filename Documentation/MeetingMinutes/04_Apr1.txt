@@ -1,0 +1,7 @@
+Meeting Time: 1hr
+Agenda: Resync and discuss next steps
+
+Plan:
+Adam: Engine / editor integration
+Alex: Game database. filling in engine components
+Matt: world rendering, gameobject base class

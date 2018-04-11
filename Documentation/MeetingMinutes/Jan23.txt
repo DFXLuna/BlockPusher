@@ -1,7 +1,0 @@
-Meeting Time: 1hr
-Agenda: Discuss initial moves to being work on BlockPusher
-
-Plan:
-Adam: Create basic prototype for evaluating user submitted code in browser
-Alex: Create basic framework for website
-Matt: Create wrapper for game loop
