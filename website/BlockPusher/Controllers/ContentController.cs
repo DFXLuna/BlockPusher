@@ -123,6 +123,8 @@ namespace BlockPusher.Controllers
             return fileNames;
         }
 
+        
+
         public bool SaveNewGame(int gameId, string title, string description)
         {
             //int gameId = 12;
@@ -155,6 +157,27 @@ namespace BlockPusher.Controllers
                 myConnection.Close();
 
                 return inserts > 0;
+            }
+        }
+
+        public bool RenameGame(int gameId, string title)
+        {
+            //int gameId = 12;
+            //string title = "test changing title";
+            var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
+            using (SqlConnection myConnection = new SqlConnection(con))
+            {
+                string editString = "update Games set Title=@title where GameId=@gameid";
+                myConnection.Open();
+
+                // Change game's title.
+                SqlCommand cmd = new SqlCommand(editString, myConnection);
+                cmd.Parameters.AddWithValue("@title", title);
+                cmd.Parameters.AddWithValue("@gameid", gameId);
+                int changes = cmd.ExecuteNonQuery();
+                myConnection.Close();
+
+                return changes > 0;
             }
         }
     }
