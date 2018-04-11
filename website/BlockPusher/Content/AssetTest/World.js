@@ -1,21 +1,20 @@
 World.createBlockType("a", "test.png");
 World.createBlockType("b", "test2.jpg");
 
-for (var x = 0; x < 15; x++)
-    for (var y = 0; y < 15; y++)
-        World.setBlockTypeAt(x, y, (x + y) % 2 == 0 ? "a" : "b");
+Render.blockScale = 32
 
 World.update = function () {
-    Render.blockScale = 200 + Math.sin(Time.getTime()) * 190;
+    if (Math.random() > .9) {
+        let x = Math.random() * 10;
+        let y = Math.random() * 10;
+
+        let btype = Math.random() > .5 ? "a" : "b";
+        this.setBlockTypeAt(x, y, btype);
+    }
 }
 
 World.drawBackground = function () {
-    if (Input.isMouseButtonDown(1)) {
-        Audio.stopAll();
-        Render.clear("black");
-    } else if (Input.isMouseButtonDown(2)) {
-        Render.clear("white");
-    } else if (Input.wasKeyPressed("X")) {
+    if (Input.wasKeyPressed("X")) {
         Render.clear("yellow");
         Audio.playSound("moonspeak.wav");
     } else if (Input.wasKeyReleased("X")) {

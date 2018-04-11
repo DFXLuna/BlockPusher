@@ -11,17 +11,26 @@ import { Time } from "./time";
 export class World {
     // I am really not a fan of jagged arrays but it's
     // probably fine here considering they need to be resized.
-    private blockMap: number[][];
+    private blockMap: number[][] = [];
     private blockIdLookup: Array< Block > = []; // Maps block id to block type
     private blockNameLookup: {[key: string]: Block} = {};
-    private sizeX: number;
-    private sizeY: number;
+    private sizeX = 0;
+    private sizeY = 0;
     private currentBlockId = 1;
+
+    private editObjectType: string | null = null;
+    private editObjectName: string | null = null;
 
     gravityX = 0;
     gravityY = 0;
     
     constructor( sizeX: number, sizeY: number ) {
+        this.resize( sizeX, sizeY );
+    }
+
+    public resize( sizeX: number, sizeY: number ) {
+        // WARNING: Currently does not preserve block data.
+
         this.blockMap = new Array( sizeX );
         
         for( let i = 0; i < sizeX; i++ ){
@@ -67,9 +76,21 @@ export class World {
 
         let cursor = Input.getCursorPos();
 
-        if (Input.isMouseButtonDown(2)) {
+        if (Input.isMouseButtonDown(1)) {
+            if (this.editObjectName != null) {
+                if (this.editObjectType == "block") {
+                    this.setBlockTypeAt(cursor.x,cursor.y,this.editObjectName);
+                }
+            }
+        }
+        else if (Input.isMouseButtonDown(2)) {
             this.setBlockTypeAt(cursor.x,cursor.y,null);
         }
+    }
+
+    public setEditorPlacementObject(type: string, name:string) {
+        this.editObjectType = type;
+        this.editObjectName = name;
     }
 
 	public render(drawGrid: boolean): void {
@@ -169,18 +190,58 @@ export class World {
         x = Math.floor(x);
         y = Math.floor(y);
 
-        let blockId: number;
-        if (blockType != null) {
-            let block = this.getBlockTypeInfo(blockType);
-            if (block == null) {
-                throw new Error("Attempt to set invalid block in World.");
+        if (x >= 0 && y >= 0 && x < this.sizeX && y < this.sizeY ) {
+            let blockId: number;
+            if (blockType != null) {
+                let block = this.getBlockTypeInfo(blockType);
+                if (block == null) {
+                    throw new Error("Attempt to set invalid block in World.");
+                }
+                blockId = block.blockid;
+            } else {
+                blockId = 0;
             }
-            blockId = block.blockid;
-        } else {
-            blockId = 0;
-        }
 
-        this.blockMap[x][y] = blockId;
+            this.blockMap[x][y] = blockId;
+        }
+    }
+
+    public getBlockTypes() {
+        let types: {[key: string]: string} = {};
+
+        this.blockIdLookup.forEach((info,i)=>{
+            types[info.name] = info.imageFilename;
+        });
+        return types;
+    }
+
+    public save() {
+        let save_obj: any = {};
+        save_obj.width = this.sizeX;
+        save_obj.height = this.sizeY;
+        save_obj.blockTypes = this.blockIdLookup.map((info)=> info.name);
+        save_obj.blockMap = this.blockMap;
+        return save_obj;
+    }
+
+    public load(save_obj: any) {
+        // Set world size.
+        this.resize( save_obj.width, save_obj.height);
+
+        // Make sure all block types used by the save exist.
+        save_obj.blockTypes.forEach((name: string)=>{
+            if (this.blockNameLookup[name] == null) {
+                this.createBlockType(name,"?");
+            }
+        });
+
+        // Place all blocks.
+        for( let x = 0; x < this.sizeX; x++ ){
+            for( let y = 0; y < this.sizeY; y++ ){
+                let blockName: string = save_obj.blockTypes[ save_obj.blockMap[x][y] ];
+                this.setBlockTypeAt(x,y,blockName);
+            }
+        }
     }
     
     public getBlockMap(){

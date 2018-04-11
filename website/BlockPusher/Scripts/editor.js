@@ -4,9 +4,15 @@
 
     // Map of filename -> blob
     let files = {};
+    // Map of filename -> bool [essentially a set]
     let filesChanged = {};
 
     let filesListElement = document.getElementById("edit-files");
+    let blocksListElement = document.getElementById("edit-blocks");
+    let objectsListElement = document.getElementById("edit-objects");
+
+    // Currently selected object element
+    let currentObjectElement = null;
 
     // Currently selected file
     let currentFile = null;
@@ -68,17 +74,17 @@
 
         // Update the UI
         if (currentFile != null) {
-            let oldElement = document.querySelector("#edit-files>li[data-filename='" + currentFile + "']");
+            let oldElement = filesListElement.querySelector("li[data-filename='" + currentFile + "']");
             oldElement.classList.remove("active");
         }
 
         if (fileName !== null) {
-            let newElement = document.querySelector("#edit-files>li[data-filename='" + fileName + "']");
+            let newElement = filesListElement.querySelector("li[data-filename='" + fileName + "']");
             newElement.classList.add("active");
         }
 
         // Update the editor
-        if (fileName === null) {
+        if (fileName === null || fileName == "level.json") {
 
             // Display nothing.
             editElement.style.display = "none";
@@ -132,14 +138,14 @@
 
     // Call when you add or change a file using the *editor*.
     // Just pass in null if a file is deleted.
-    function updateFile(fileName, fileBlob) {
-        addFile(fileName, fileBlob);
+    function updateFile(fileName, fileBlob, sendToEngine = true) {
+        addFile(fileName, fileBlob, sendToEngine);
 
         filesChanged[fileName] = true;
     }
 
     // Call directly only when setting up files on editor start.
-    function addFile(fileName, fileBlob) {
+    function addFile(fileName, fileBlob, sendToEngine = true) {
         if (fileName.match(/^[\w\d_]+\.[\w\d_]+$/) === null) {
             throw new Error("Bad filename.");
         }
@@ -147,21 +153,23 @@
         // Save file data
         files[fileName] = fileBlob;
 
-        if (fileBlob !== null) {
-            // Generate data URL
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                // Send file to the engine.
-                let url = e.target.result;
-                sandboxElement.contentWindow.postMessage({ type: "setFile", file: fileName, url: url }, "*");
+        if (sendToEngine) {
+            if (fileBlob !== null) {
+                // Generate data URL
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    // Send file to the engine.
+                    let url = e.target.result;
+                    sandboxElement.contentWindow.postMessage({ type: "setFile", file: fileName, url: url }, "*");
+                }
+                reader.readAsDataURL(fileBlob);
+            } else {
+                // Let the engine know the file was deleted.
+                sandboxElement.contentWindow.postMessage({ type: "setFile", file: fileName, url: null }, "*");
             }
-            reader.readAsDataURL(fileBlob);
-        } else {
-            // Let the engine know the file was deleted.
-            sandboxElement.contentWindow.postMessage({ type: "setFile", file: fileName, url: null }, "*");
         }
 
-        let listEntry = document.querySelector("#edit-files>li[data-filename='" + fileName + "']");
+        let listEntry = filesListElement.querySelector("li[data-filename='" + fileName + "']");
         if (fileBlob !== null) {
             // Add to the list.
             if (listEntry === null) {
@@ -181,13 +189,15 @@
                     iconHTML = "<img class='edit-img-icon' />";
                 } else if (isAudioFile(fileName)) {
                     iconHTML = "<span class='glyphicon glyphicon-volume-up'></span>";
+                } else if (fileName == "level.json") {
+                    iconHTML = "<span class='glyphicon glyphicon-globe'></span>";
                 } else {
                     iconHTML = "<span class='glyphicon glyphicon-cutlery'></span>";
                 }
                 listEntry.innerHTML = iconHTML + " " + listEntry.innerHTML;
 
                 // Delete button (Don't add to some critical files.)
-                if (fileName != "World.js") {
+                if (fileName != "World.js" && fileName != "level.json") {
                     let delButton = document.createElement("button");
                     delButton.innerHTML = "&#10005;"; // Multiplication X
                     delButton.classList.add("btn", "btn-danger");
@@ -344,7 +354,7 @@
         e.preventDefault();
     }
 
-    // These functions open a file dialog.
+    // These two functions open a file dialog.
     window.replaceFile = function () {
         let uploader = document.createElement("input");
         uploader.type = "file";
@@ -363,6 +373,81 @@
             uploadFile(this.files);
         }
         uploader.click();
+    }
+
+    function setObjectList(list) {
+        
+        function setListEntry(entryName, entryImage, listElement, type) {
+            // This is garbage tier code copypasted from the file list.
+
+            let listEntry = listElement.querySelector("li[data-entryname='" + entryName + "']");
+            if (listEntry === null) {
+                listEntry = document.createElement("li");
+                listEntry.innerText = entryName;
+                listEntry.setAttribute("data-entryname", entryName);
+
+                // Click Handler
+                listEntry.addEventListener("click", function () {
+                    if (currentObjectElement != null) {
+                        currentObjectElement.classList.remove("active");
+                    }
+                    listEntry.classList.add("active");
+
+                    currentObjectElement = listEntry;
+
+                    sandboxElement.contentWindow.postMessage({ type: "selectObject", obj_type: type, name: entryName }, "*");
+                });
+
+                // Icon
+                let iconHTML = "<img class='edit-img-icon' />";
+                listEntry.innerHTML = iconHTML + " " + listEntry.innerHTML;
+
+                listElement.appendChild(listEntry);
+            }
+
+            // Update icon
+            let img = listEntry.querySelector("img.edit-img-icon");
+
+            let imgBlob = files[entryImage];
+
+            if (imgBlob != null) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    let url = e.target.result;
+
+                    img.src = url;
+                }
+                reader.readAsDataURL(imgBlob);
+            } else {
+                img.removeAttribute("src");
+            }
+        }
+
+        // Add block entries
+        for (let key in list.blocks) {
+            setListEntry(key, list.blocks[key], blocksListElement, "block");
+        }
+
+        // Remove block entries
+        for (let i = blocksListElement.childElementCount-1; i >= 0; i--) {
+            let listEntry = blocksListElement.children[i];
+            if (list.blocks[listEntry.getAttribute("data-entryname")] == null) {
+                listEntry.remove();
+            }
+        }
+
+        // Add object entries
+        for (let key in list.objects) {
+            setListEntry(key, list.objects[key], objectsListElement, "object");
+        }
+
+        // Remove object entries
+        for (let i = objectsListElement.childElementCount - 1; i >= 0; i--) {
+            let listEntry = objectsListElement.children[i];
+            if (list.objects[listEntry.getAttribute("data-entryname")] == null) {
+                listEntry.remove();
+            }
+        }
     }
 
     // Monaco editor setup
@@ -420,13 +505,22 @@
         fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
 
         fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
+
+        fetchFile("level.json", "/Content/AssetTest/level.json");
     }
 
     window.addEventListener("message", function (event) {
-        if (event.data == "engineReady") {
+        let msg = event.data;
+
+        if (msg.type == "engineReady") {
             onEngineStart();
+        } else if (msg.type == "setObjectList") {
+            setObjectList(msg.list);
+        } else if (msg.type == "saveLevel") {
+            let fileBlob = new Blob([msg.data], { type: "application/json" });
+            updateFile("level.json", fileBlob, false);
         } else {
-            console.log("Unhandled message: ", event.data);
+            console.log("Unhandled message: ", msg);
         }
     });
 })();
