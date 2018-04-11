@@ -84,7 +84,18 @@ window.addEventListener("message", async function (event: MessageEvent) {
             return fileName.match(/\.(wav|mp3)$/i) !== null;
         }
 
-        if (msg.file=="World.js") {
+        if (msg.file=="level.json") {
+            if (msg.url == null) {
+                // The level was deleted.
+                // We block doing this in the editor, so this shouldn't happen.
+                return;
+            }
+            
+            let res = await fetch(msg.url);
+            let levelData = await res.text();
+
+            World.load(JSON.parse(levelData));
+        } else if (msg.file=="World.js") {
             if (msg.url == null) {
                 // The world file was deleted.
                 // We block doing this in the editor, so this shouldn't happen.
