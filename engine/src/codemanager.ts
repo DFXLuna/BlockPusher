@@ -3,6 +3,7 @@ import { GameObject as GameObjectBase } from "./gameobject";
 import { Render } from "./render";
 import { Time } from "./time";
 import { Input } from "./input";
+import { AudioComponent as Audio } from "./audio";
 
 interface GameObjectClassInfo {
     setupFunction: Function;
@@ -29,7 +30,7 @@ export namespace CodeManager {
         // TODO reset all those game object classes
     }
 
-    function callSetupFunction(f: Function, objClass?: typeof GameObjectBase) {
+    function callSetupFunction(f: Function, objClass?: typeof GameObjectBase | undefined) {
         if (objClass != null)
             f(World,Render,Audio,Time,Input,objClass);
         else
@@ -65,14 +66,14 @@ export namespace CodeManager {
 
             if (classInfo == null) {
                 classInfo = {
-                    objectClass: (class _ extends GameObjectBase {}),
+                    objectClass: (class GameObject extends GameObjectBase {}),
                     setupFunction: ()=>{}
                 }
                 gameObjectClasses[objClassName] = classInfo;
             }
 
             classInfo.setupFunction = makeSetupFunction(code,true);
-            callSetupFunction(classInfo.setupFunction, classInfo.objectClass);
+            callSetupFunction(classInfo.setupFunction, classInfo.objectClass.prototype);
         }
     }
 

@@ -2,6 +2,7 @@ import { Block } from "./block";
 import { Render } from "./render";
 import { Input } from "./input";
 import { Time } from "./time";
+import { CodeManager } from "./codemanager";
 
 // TODO
 // Allow user strings to map into block features
@@ -27,7 +28,7 @@ export class World {
     public resize( sizeX: number, sizeY: number ) {
         // WARNING: Currently does not preserve block data.
 
-        this.blockMap.length = sizeX;
+        this.blockMap = [];
         
         for( let i = 0; i < sizeX; i++ ){
             this.blockMap[i] = new Array();
@@ -239,5 +240,11 @@ export class World {
             }
         }
     }
-    
+
+    public createObject(className: string, x: number, y: number) {
+
+        let objClass = CodeManager.getGameObjectClass(className);
+
+        let obj = new objClass(x,y);
+    }
 }

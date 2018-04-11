@@ -45,10 +45,14 @@ function doFrame(time = 0) {
     let showGrid = !isPlaying;
 
     World.drawBackground();
+
     Render.setWorldRenderOffset(0,0);
     World.render(showGrid);
+
+    GameObjectManager.renderGameObjects();
+
     Render.disableWorldRender();
-    // TODO render objects with offsets
+
     World.drawForeground();
 
     // Input must update here so between-frame inputs
@@ -148,7 +152,7 @@ window.addEventListener("message", async function (event: MessageEvent) {
         
         Render.setAllowNormalCameraControl(isPlaying);
     } else if (msg.type == "selectObject") {
-        World.setEditorPlacementObject(msg.obj_type, msg.name);
+        CodeManager.World.setEditorPlacementObject(msg.obj_type, msg.name);
     } else {
         console.log("Unhandled message: ",msg);
     }

@@ -37,23 +37,24 @@ export namespace GameObjectManager {
 }
 
 export class GameObject {
-    protected x: number;
-    protected y: number;
-    protected width: number; // Set these from image?
-    protected height: number;
+    x: number;
+    y: number;
+    width = 1; // Set these from image?
+    height = 1;
+    image = "?";
 
-    public constructor( x: number, y: number, width: number, height: number ) {
+    public constructor( x: number, y: number) {
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
         GameObjectManager.addGameObject( this );
     }
 
     public update(): void{}
 
     // Possibly unneeded / wrong
-    public render(): void{}
+    public render(): void{
+
+    }
 
     public getBoundingBox(): { x: number, y: number, width: number, height: number }{
         return { x: this.x, y: this.y, width: this.width, height: this.height };

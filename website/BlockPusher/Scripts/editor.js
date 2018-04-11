@@ -504,7 +504,7 @@
         fetchFile("moonspeak.wav", "/Content/AssetTest/moonspeak.wav");
         fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
 
-        fetchFile("xxxx.jpg", "/Content/AssetTest/xxxx.jpg");
+        fetchFile("Thing.js", "/Content/AssetTest/Thing.js");
 
         fetchFile("level.json", "/Content/AssetTest/level.json");
     }
