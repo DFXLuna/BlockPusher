@@ -1,8 +1,11 @@
-import { Render } from "./render";
-import { Input }    from "./input";
-import { World as WorldBase }    from "./world";
-import { Time }     from "./time";
 import { AudioComponent as Audio } from "./audio";
+import { World as WorldBase } from "./world";
+import { GameObjectManager } from "./gameobject";
+import { Collision } from "./collision"
+import { Render } from "./render";
+import { Input } from "./input";
+import { Time } from "./time";
+
 
 const CANVAS_NAME = "game-canvas";
 
@@ -12,14 +15,18 @@ let savedState: any = null;
 // WorldBase = (ctor of) engine-defined base class
 // WorldClass = editor-defined class
 // World = actual instance visible to GameObjects & world's own methods
-let WorldClass = new WorldBase(30,30);
+// Until we have a way to change / get world size, these are here for the collision
+const WORLDWIDTH = 30;
+const WORLDHEIGHT = 30
+let WorldClass = new WorldBase(WORLDWIDTH, WORLDHEIGHT);
 let World = <WorldBase>Object.create(WorldClass);
 
 // COMPONENT SETUP
 Render.setup(CANVAS_NAME);
+Collision.setup(WORLDWIDTH, WORLDHEIGHT);
 
 // GAME 'LOOP'
-function doFrame( time = 0 ) {
+function doFrame(time = 0) {
     window.requestAnimationFrame(doFrame);
 
     Time.update();
@@ -27,6 +34,9 @@ function doFrame( time = 0 ) {
     if (isPlaying) { 
         // Only call when game is running
         World.update();
+        // This is maybe where this belongs
+        GameObjectManager.updateGameObjects();
+        Collision.doCollision();
     } else {
         World.updateEdit();
     }

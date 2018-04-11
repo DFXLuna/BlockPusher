@@ -33,6 +33,7 @@ export namespace GameObjectManager {
             g.drawAABB( canvasName );
         }
     }
+
 }
 
 export class GameObject {
@@ -65,6 +66,10 @@ export class GameObject {
     }
 
     public drawAABB( canvasName: string ){
-        Render.drawRectOutline( "#FF0000", this.x, this.y, this.width, this.height );
+        let blockSizepx = Render.blockScale;
+        Render.drawRectOutline( "#FF0000", this.x * blockSizepx, 
+                                            this.y * blockSizepx, 
+                                            this.width * blockSizepx,
+                                            this.height * blockSizepx );
     }
 }
