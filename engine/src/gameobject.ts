@@ -20,6 +20,7 @@ export namespace GameObjectManager {
 
     export function renderGameObjects(): void {
         for( let g of gameObjects ){
+            Render.setWorldRenderOffset(g.x, g.y);
             g.render();
         }
     }
@@ -39,6 +40,8 @@ export namespace GameObjectManager {
 export class GameObject {
     x: number;
     y: number;
+    velX = 0;
+    velY = 0;
     width = 1; // Set these from image?
     height = 1;
     image = "?";
@@ -46,10 +49,24 @@ export class GameObject {
     public constructor( x: number, y: number) {
         this.x = x;
         this.y = y;
+
+        this.setup();
+
         GameObjectManager.addGameObject( this );
     }
 
-    public update(): void{}
+    public setup() {
+
+    }
+
+    public updatePhysics() {
+        this.x += this.velX;
+        this.y += this.velY;
+    }
+
+    public update(): void {
+        this.updatePhysics();
+    }
 
     // Possibly unneeded / wrong
     public render(): void{

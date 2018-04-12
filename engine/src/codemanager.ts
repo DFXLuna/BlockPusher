@@ -32,7 +32,7 @@ export namespace CodeManager {
 
     function callSetupFunction(f: Function, objClass?: typeof GameObjectBase | undefined) {
         if (objClass != null)
-            f(World,Render,Audio,Time,Input,objClass);
+            f(World,Render,Audio,Time,Input,objClass.prototype);
         else
             f(World,Render,Audio,Time,Input);
     }
@@ -73,7 +73,7 @@ export namespace CodeManager {
             }
 
             classInfo.setupFunction = makeSetupFunction(code,true);
-            callSetupFunction(classInfo.setupFunction, classInfo.objectClass.prototype);
+            callSetupFunction(classInfo.setupFunction, classInfo.objectClass);
         }
     }
 

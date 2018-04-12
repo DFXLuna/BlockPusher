@@ -7,8 +7,8 @@ export namespace Render {
     let imageCache: {[path: string]: HTMLImageElement} = {};
     let imagePath = "";
     // TODO set these to sane defaults based on world scale @ startup???
-    let cameraX = 8;
-    let cameraY = 8;
+    let cameraX = 4;
+    let cameraY = 4;
     // TEMPORARY
     let cameraWidth = 0;
     let cameraHeight = 0;
@@ -59,8 +59,8 @@ export namespace Render {
     export function setWorldRenderOffset(worldOffsetX: number, worldOffsetY: number) {
         // TODO offset correctly
         context.setTransform(1,0,0,1,
-            -cameraX * blockScale + canvas.width/2,
-            -cameraY * blockScale + canvas.height/2);
+            (worldOffsetX - cameraX) * blockScale + canvas.width/2,
+            (worldOffsetY - cameraY) * blockScale + canvas.height/2);
     }
 
     export function disableWorldRender() {
