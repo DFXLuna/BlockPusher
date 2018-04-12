@@ -28,5 +28,32 @@
     <p>@Model.Description</p>
 </div>
 
+@section Scripts {
+    <script>
+        (function () {
+            let gameId = @Model.GameId;
 
+            let sandboxElement = document.getElementById("play-sandbox");
+
+            async function onEngineStart() {
+                console.log("engine start");
+                let res = await fetch("/Content/GetFileNames?gameId=" + gameId);
+                let files = await res.json();
+
+                sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
+                files.forEach((file) => {
+                    let url = "/Content/Game/" + gameId + "/" + file;
+                    sandboxElement.contentWindow.postMessage({ type: "setFile", file: file, url: url }, "*");
+                });
+            }
+
+            window.addEventListener("message", function (event) {
+                let msg = event.data;
+                if (msg.type == "engineReady") {
+                    onEngineStart();
+                }
+            });
+        })();
+    </script>
+}
 @* TODO LOAD THAT GAME! *@    

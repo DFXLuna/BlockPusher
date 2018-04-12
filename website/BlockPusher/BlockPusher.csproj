@@ -237,13 +237,20 @@
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
-    <None Include="Content\AssetTest\level.json" />
+    <Content Include="Content\AssetTest\level.json" />
+    <None Include="Content\Game\2\level.json" />
     <Content Include="Content\AssetTest\moonspeak.wav" />
     <Content Include="Content\AssetTest\test.png" />
     <Content Include="Content\AssetTest\test2.jpg" />
     <Content Include="Content\AssetTest\Thing.js" />
     <Content Include="Content\AssetTest\World.js" />
     <Content Include="Content\AssetTest\zinger.wav" />
+    <Content Include="Content\Game\2\moonspeak.wav" />
+    <Content Include="Content\Game\2\test.png" />
+    <Content Include="Content\Game\2\test2.jpg" />
+    <Content Include="Content\Game\2\Thing.js" />
+    <Content Include="Content\Game\2\World.js" />
+    <Content Include="Content\Game\2\zinger.wav" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Play.css" />
@@ -336,7 +343,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Game\" />
     <Folder Include="Views\Content\" />
   </ItemGroup>
   <ItemGroup>

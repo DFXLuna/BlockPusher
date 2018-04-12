@@ -103,7 +103,7 @@ namespace BlockPusher.Controllers
         /// </summary>
         /// <param name="gameId">Id of the game currently being edited</param>
         /// <returns>List of string file names</returns>
-        public List<string> GetFileNames(int gameId)
+        public JsonResult GetFileNames(int gameId)
         {
             // testing only
             //int gameId = 2;
@@ -111,16 +111,20 @@ namespace BlockPusher.Controllers
             string path = Server.MapPath("~/Content/Game/" + gameId + "/");
 
             // Grab all files from current game directory
-            string[] fileArray = System.IO.Directory.GetFiles(path);
             List<string> fileNames = new List<string>();
-
-            // Add each file's name to list.
-            foreach(string file in fileArray)
+            try
             {
-                 fileNames.Add(Path.GetFileName(file));
-            }
+                string[] fileArray = System.IO.Directory.GetFiles(path);
 
-            return fileNames;
+                // Add each file's name to list.
+                foreach (string file in fileArray)
+                {
+                    fileNames.Add(Path.GetFileName(file));
+                }
+            }
+            catch (Exception) { }
+
+            return Json(fileNames, JsonRequestBehavior.AllowGet);
         }
 
         
