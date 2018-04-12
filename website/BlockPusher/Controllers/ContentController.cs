@@ -124,8 +124,13 @@ namespace BlockPusher.Controllers
         }
 
         
-
-        public bool SaveNewGame(int gameId, string title, string description)
+        /// <summary>
+        /// Saves a new game. 
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <returns>Game ID</returns>
+        public int SaveNewGame(string title, string description)
         {
             //int gameId = 12;
             //string title = "test title";
@@ -133,30 +138,20 @@ namespace BlockPusher.Controllers
             var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
             using (SqlConnection myConnection = new SqlConnection(con))
             {
-                // Check to make sure game ID doesn't already exist.
-                string getString = "select count(GameId) from Games where GameId=@gameid";
-                SqlCommand getCmd = new SqlCommand(getString, myConnection);
-                getCmd.Parameters.AddWithValue("@gameid", gameId);
                 myConnection.Open();
                 
-                // If game ID is found, return false.
-                if ((int)getCmd.ExecuteScalar() > 0)
-                {
-                    return false;
-                }
-
                 // Insert new game.
-                string oString = "insert into Games (GameId, Title, Author, GameDescription) values (@gameid, @title, @author, @description)";
+                string oString = "insert into Games (Title, Author, GameDescription) output inserted.GameId values (@title, @author, @description)";
                 SqlCommand cmd = new SqlCommand(oString, myConnection);
 
                 cmd.Parameters.AddWithValue("@title", title);
                 cmd.Parameters.AddWithValue("@author", User.Identity.Name);
                 cmd.Parameters.AddWithValue("@description", description);
-                cmd.Parameters.AddWithValue("@gameid", gameId);
-                int inserts = cmd.ExecuteNonQuery();
+                //cmd.Parameters.AddWithValue("@gameid", gameId);
+                int newId = (int)cmd.ExecuteScalar();
                 myConnection.Close();
 
-                return inserts > 0;
+                return newId;
             }
         }
 
