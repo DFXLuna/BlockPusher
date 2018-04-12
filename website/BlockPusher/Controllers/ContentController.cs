@@ -125,7 +125,7 @@ namespace BlockPusher.Controllers
 
         
         /// <summary>
-        /// Saves a new game. 
+        /// Saves a new game. Title and description optional.
         /// </summary>
         /// <param name="title"></param>
         /// <param name="description"></param>
@@ -135,6 +135,16 @@ namespace BlockPusher.Controllers
             //int gameId = 12;
             //string title = "test title";
             //string description = "test desc";
+
+            if (String.IsNullOrEmpty(title))
+            {
+                title = "New Game";
+            }
+            if (String.IsNullOrEmpty(description))
+            {
+                description = "Description placeholder";
+            }
+
             var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
             using (SqlConnection myConnection = new SqlConnection(con))
             {
@@ -147,7 +157,6 @@ namespace BlockPusher.Controllers
                 cmd.Parameters.AddWithValue("@title", title);
                 cmd.Parameters.AddWithValue("@author", User.Identity.Name);
                 cmd.Parameters.AddWithValue("@description", description);
-                //cmd.Parameters.AddWithValue("@gameid", gameId);
                 int newId = (int)cmd.ExecuteScalar();
                 myConnection.Close();
 
@@ -155,6 +164,12 @@ namespace BlockPusher.Controllers
             }
         }
 
+        /// <summary>
+        /// Renames game title in db.
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="title"></param>
+        /// <returns>Bool indicating whether entry was changed.</returns>
         public bool RenameGame(int gameId, string title)
         {
             //int gameId = 12;
@@ -176,6 +191,12 @@ namespace BlockPusher.Controllers
             }
         }
 
+        /// <summary>
+        /// Changes game description in db.
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="description"></param>
+        /// <returns>Bool indicating whether entry was changed.</returns>
         public bool ChangeGameDescription(int gameId, string description)
         {
             //int gameId = 12;
