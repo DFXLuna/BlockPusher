@@ -1,12 +1,15 @@
 ﻿body {
     padding-top: 50px;
     padding-bottom: 20px;
+    background-color: #293f50;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    background-color: #293f50;
+    color: #fff;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -27,6 +30,11 @@ textarea {
 .padding-error {
     padding-top: 20px;
 }
+
+.jumbotron {
+     background-color: #293f50;
+}
+
 
 @media only screen and (max-width: 767px) {
     .nofloat {
