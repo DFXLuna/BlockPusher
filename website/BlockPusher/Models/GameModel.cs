@@ -15,4 +15,9 @@ namespace BlockPusher.Models
 
         public int GameId { get; set; }
     }
+
+    public class GameListModel
+    {
+        public List<GameModel> Games { get; set; }
+    }
 }

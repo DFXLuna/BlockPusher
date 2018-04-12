@@ -1,0 +1,62 @@
+﻿@model BlockPusher.Models.GameListModel
+@{
+    ViewBag.Title = "Index";
+}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    @*<link href="css/jquery.dataTables.css" rel="stylesheet" type="text/css" />*@
+    <link rel="stylesheet"
+          href="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/plug-ins/9dcbecd42ad/integration/jqueryui/dataTables.jqueryui.css">
+
+</head>
+<body>
+    <h2>Blockpusher games available: </h2>
+
+    <table id="gameTable" class="table table-bordered table-responsive table-hover">
+        <thead>
+            <tr>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Author
+                </th>
+                <th>
+                    Description
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var game in Model.Games)
+            {
+            <tr>
+                <td>@game.Title</td>
+                <td>@game.Author</td>
+                <td>@game.Description</td>
+            </tr>
+            }
+        </tbody>
+    </table>
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/9dcbecd42ad/integration/jqueryui/dataTables.jqueryui.js">
+    </script>
+
+    
+
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $('#gameTable').dataTable();
+    });
+    </script>
+
+
+</body>
+
+
+</html>

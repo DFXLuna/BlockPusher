@@ -9,7 +9,7 @@
     @RenderSection("Styles", required: false)
     @Scripts.Render("~/bundles/modernizr")
 </head>
-<body style="background-color: cornflowerblue">
+<body >
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -23,7 +23,9 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("Play", "Index", "Play", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("API", "Index", "Help", new { area = "HelpPage" }, null)</li>
+                    @*<li>@Html.ActionLink("API", "Index", "Help", new { area = "HelpPage" }, null)</li>*@
+                    <li>@Html.ActionLink("Games", "Index", "GameList", new { area = "" }, null)</li>
+
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -42,6 +44,9 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
+    <script src="https://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/9dcbecd42ad/integration/jqueryui/dataTables.jqueryui.js">
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
