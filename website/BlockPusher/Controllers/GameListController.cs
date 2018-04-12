@@ -20,7 +20,7 @@ namespace BlockPusher.Controllers
             var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
             using (SqlConnection myConnection = new SqlConnection(con))
             {
-                string editString = "select * from games";
+                string editString = "SELECT Games.GameId,Games.Title,AspNetUsers.Name,Games.GameDescription FROM Games, AspNetUsers WHERE Games.Author = AspNetUsers.UserName";
                 myConnection.Open();
 
                 DataSet ds = new DataSet();          

@@ -14,6 +14,8 @@ namespace BlockPusher.Models
         public string Description { get; set; }
 
         public int GameId { get; set; }
+
+        public bool CanEdit { get; set; }
     }
 
     public class GameListModel

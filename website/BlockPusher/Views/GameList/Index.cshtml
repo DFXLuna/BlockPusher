@@ -35,7 +35,7 @@
             @foreach (var game in Model.Games)
             {
             <tr>
-                <td>@game.Title</td>
+                <td>@Html.ActionLink(game.Title, "Index", "Play", new { gameId = game.GameId }, null)</td>
                 <td>@game.Author</td>
                 <td>@game.Description</td>
             </tr>

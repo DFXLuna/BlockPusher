@@ -9,11 +9,14 @@
 
 <div id="play-container">
     <div id="play-top">
-        <h1>BlockPusher</h1>
-        <p>by Adam, Alex, and Matt.
+        <h1>@Model.Title</h1>
+        <p>by @Model.Author</p>
         <button class="btn btn-info">Game Info</button>
         <button class="btn btn-danger">Reset</button>
-        <a href="/Play/edit" button class="btn btn-primary">Edit</a>
+        @if (Model.CanEdit)
+        {
+            <a href="/Play/edit" button class="btn btn-primary">Edit</a>
+        }
         <button class="btn btn-primary">Edit Copy</button>
         @*@Html.ActionLink("test", "SaveNewGame", "Content")*@
 
@@ -22,6 +25,7 @@
     <div id="play-content">
         <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
     </div>
+    <p>@Model.Description</p>
 </div>
 
 
