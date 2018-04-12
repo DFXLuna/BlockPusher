@@ -60,9 +60,17 @@
 
 @section Scripts{
     <script>
+        // Leaving notification
         window.onbeforeunload = function () {
             return 'You have unsaved changes, are you sure you want to leave?';
         }
+        // Prevent ctrl s
+        document.addEventListener("keydown", function (ke) {
+            console.log(ke);
+            if (ke.key === "s" && (ke.ctrlKey === true || ke.metaKey === true)) {
+                ke.preventDefault();
+            }
+        }, false);
     </script>
     <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
     <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>
