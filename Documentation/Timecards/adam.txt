@@ -20,3 +20,4 @@ Apr. 07: 2 hours. Level editor mouse functionality, audio.
 Apr. 08: 3 hours. Level editor object list done.
 Apr. 09: 2 hours. Level save/load functionality.
 Apr. 10: 1 hour. Add file to store level, move canvas resize logic into engine.
+Apr. 11: 6 hours. Load level from file, game object management, 3 hours of database troubleshooting.

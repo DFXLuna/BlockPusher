@@ -240,6 +240,7 @@
     <Content Include="Content\AssetTest\moonspeak.wav" />
     <Content Include="Content\AssetTest\test.png" />
     <Content Include="Content\AssetTest\test2.jpg" />
+    <Content Include="Content\AssetTest\Thing.js" />
     <Content Include="Content\AssetTest\World.js" />
     <Content Include="Content\AssetTest\zinger.wav" />
     <Content Include="Content\bootstrap.css" />
