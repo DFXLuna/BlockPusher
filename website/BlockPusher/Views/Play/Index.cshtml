@@ -12,7 +12,7 @@
         <h1>@Model.Title</h1>
         <p>by @Model.Author</p>
         <button class="btn btn-info">Game Info</button>
-        <button class="btn btn-danger">Reset</button>
+        <button class="btn btn-danger" onclick="resetGame();">Reset</button>
         @if (Model.CanEdit)
         {
             <a href="/Play/edit" button class="btn btn-primary">Edit</a>
@@ -40,11 +40,11 @@
                 let res = await fetch("/Content/GetFileNames?gameId=" + gameId);
                 let files = await res.json();
 
-                sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
                 files.forEach((file) => {
                     let url = "/Content/Game/" + gameId + "/" + file;
                     sandboxElement.contentWindow.postMessage({ type: "setFile", file: file, url: url }, "*");
                 });
+                resetGame();
             }
 
             window.addEventListener("message", function (event) {
@@ -53,6 +53,10 @@
                     onEngineStart();
                 }
             });
+
+            window.resetGame = function () {
+                sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
+            }
         })();
     </script>
 }

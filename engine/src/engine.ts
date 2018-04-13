@@ -106,7 +106,9 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let res = await fetch(msg.url);
             let levelData = await res.text();
 
-            CodeManager.World.load(JSON.parse(levelData));
+            savedState = JSON.parse(levelData);
+
+            CodeManager.World.load(savedState);
         } else if (isScriptFile(msg.file)) {
             let code = null;
             
