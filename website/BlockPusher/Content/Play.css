@@ -65,6 +65,8 @@ html, body {
     height: 100%;
     border-top: 1px solid #888;
     border-bottom: 1px solid #888;
+    background: #fff;
+    color: #000;
 }
 
 #edit-drop {
