@@ -15,3 +15,5 @@ Apr. 5:  3 hours.  AABB collision and start on quadtree.
 Apr. 6:  1 hour.   More Quadtree work.
 Apr. 7:  3 hours.  Finish and test quadtree, add debug drawing for game object and quadtree.
 Apr. 8:  2 hours.  Implement game object collision and add to engine, set quadtree and gameobject sizes to block scale, fix small collision error, added camera size to render.
+Apr. 11: 2 hours.  Collision bug fixes, add world collision, notification on user leave page
+Apr. 12: 1 hours.  Generate documentation, prevent ctrl s on webpage
