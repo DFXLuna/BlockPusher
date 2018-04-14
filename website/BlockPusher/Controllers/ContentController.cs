@@ -100,7 +100,6 @@ namespace BlockPusher.Controllers
             }
         }
 
-        [HttpPost]
         /// <summary>
         /// Returns all file names for the current game.
         /// </summary>
@@ -108,12 +107,6 @@ namespace BlockPusher.Controllers
         /// <returns>List of string file names</returns>
         public JsonResult GetFileNames(int gameId)
         {
-            if (CheckGameOwnership(gameId) == false)
-            {
-                // this should maybe be changed? unsure
-                return null;
-            }
-
             string path = Server.MapPath("~/Content/Game/" + gameId + "/");
 
             // Grab all files from current game directory
