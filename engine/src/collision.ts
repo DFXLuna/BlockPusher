@@ -3,24 +3,77 @@ import { QuadTree } from "./quadtree"
 import { Render } from "./render"
 import { CodeManager } from "./codemanager";
 
+
+interface Bounds {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+
+interface ObjectBounds extends Bounds {
+    object: GameObject;
+}
+
+namespace BoundsUtils {
+    export function makeObjectBounds(obj: GameObject): ObjectBounds {
+        return {
+            x: obj.x,
+            y: obj.y,
+            width: obj.width,
+            height: obj.height,
+            object: obj
+        };
+    }
+
+    // Returns an array of keys that can be used to index into the grid.
+    export function getBoundsCells(bounds: Bounds): string[] {
+        let results = [];
+
+        for (let x = Math.floor(bounds.x); x <= Math.floor(bounds.x + bounds.width); x++) {
+            for (let y = Math.floor(bounds.y); y <= Math.floor(bounds.y + bounds.height); y++) {
+                results.push(x+":"+y);
+            }
+        }
+
+        return results;
+    }
+
+    export function getPointCell(x: number, y: number) {
+        return Math.floor(x)+":"+Math.floor(y);
+    }
+
+    export function checkPoint(bounds: Bounds, x: number, y: number) {
+        return (x > bounds.x && x < bounds.x + bounds.width
+            &&  y > bounds.y && y < bounds.y + bounds.height);
+    }
+}
+
+// Now uses a sparse grid instead of a broken quadtree for broadphase.
+// Grid is indexed using string keys, which is really disgusting, but it works okay.
+
 export namespace Collision {
-    let qt314: QuadTree;
-    let isSetup: boolean = false;
-    let toDelete: Array< GameObject >;
+    //let qt314: QuadTree;
+    //let isSetup: boolean = false;
+    //let toDelete: Array< GameObject > = [];
+    let broadphaseGrid: {[key: string]: ObjectBounds[]} = {};
 
     export function setup( ){
-        let cameraPos = Render.getCameraPos();
-        toDelete = [];
+        //let world = CodeManager.World; // NOTE: World size can't change. If it ever can change, we might have some issues here.
+        //qt314 = new QuadTree( 0, { x: 0 , y: 0, width: world.getSizeX(), height: world.getSizeY() } );
+        //isSetup = true;
+    }
 
-        let world = CodeManager.World; // NOTE: World size can't change. If it ever can change, we might have some issues here.
-        qt314 = new QuadTree( 0, { x: cameraPos.x , y: cameraPos.y, width: world.getSizeX(), height: world.getSizeY() } );
-        isSetup = true;
+    export function dumpGrid() {
+        console.log(broadphaseGrid);
     }
 
     // not optimal?
-    export function doCollision(): void {
-        if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::doCollision )"); }
-        qt314.clear();
+    /*export function doCollision(): void {
+        //if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::doCollision )"); }
+        // Just make a new QT every frame that is the correct size.
+        let world = CodeManager.World;
+        qt314 = new QuadTree( 0, { x: 0 , y: 0, width: world.getSizeX(), height: world.getSizeY() } );
         clean();
         for( let go of GameObjectManager.getAllGameObjects() ){
             qt314.insert( go );
@@ -40,6 +93,30 @@ export namespace Collision {
                 checkCollision( go, go2 );
             }    
         }
+    }*/
+
+    export function update() {
+        // Reset bp
+        broadphaseGrid = {};
+
+        for ( let go of GameObjectManager.getAllGameObjects() ) {
+            // Insert object into each cell it overlaps.
+            let objBounds = BoundsUtils.makeObjectBounds(go);
+            let cellKeys = BoundsUtils.getBoundsCells(objBounds);
+            cellKeys.forEach((key)=>{
+                let boundsArray = broadphaseGrid[key];
+                if (boundsArray == null) {
+                    boundsArray = [];
+                    broadphaseGrid[key] = boundsArray;
+                }
+                boundsArray.push(objBounds);
+            });
+        }
+    }
+
+    export function debugDraw() {
+        //if (qt314 != null)
+        //    qt314.drawQuadTree();
     }
 
     // Checks for collision and calls both gameobjects callback
@@ -56,22 +133,33 @@ export namespace Collision {
         }
     }
 
-    function checkPoint( x: number , y: number ): Array< GameObject > | null {
-        if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::checkPoint )"); }
-        // collision always clears itself before the next check so this won't hurt anything
-        let point = new GameObject( x, y );
-        qt314.insert( point );
+    export function checkPoint( x: number , y: number ): Array< GameObject | string > {
+        let world = CodeManager.World;
 
-        let ret = qt314.retrievePotentialColliders( point );
-        if( ret.length === 1 ){
-            // The only potential collider is itself
-            GameObjectManager.removeGameObject( point );
-            return null;
+        let results = [ ];
+        
+        // First, get the block at this position.
+        let blockType = world.getBlockTypeAt(x, y);
+
+        if (blockType != null)
+            results.push(blockType);
+        
+        // Now get any objects in this cell.
+        let cellKey = BoundsUtils.getPointCell(x, y);
+        let boundsArray = broadphaseGrid[cellKey];
+        if (boundsArray != null) {
+            boundsArray.forEach((bounds) => {
+                // Check point for each object.
+                if (BoundsUtils.checkPoint(bounds, x, y)) {
+                    results.push(bounds.object);
+                }
+            });
         }
-        toDelete.push( point );
-        return ret;   
-    }
 
+        return results;
+    }
+}
+/*
     function insertBlock( x: number , y: number ){
         // create a gameobject at the block's location and insert it
         let go = new GameObject( x, y );
@@ -84,8 +172,8 @@ export namespace Collision {
             GameObjectManager.removeGameObject( go );
         }
         toDelete = [];
-    }
+    }*/
 
-    function rayCast(){}
+    //function rayCast(){}
     // Maybe someday function AABBCast(){}
-}
+//}

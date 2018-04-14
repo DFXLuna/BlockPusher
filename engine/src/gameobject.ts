@@ -96,6 +96,10 @@ export class GameObject {
 
     }
 
+    public remove() {
+        GameObjectManager.removeGameObject(this);
+    }
+
     public updatePhysics() {
         this.x += this.velX;
         this.y += this.velY;

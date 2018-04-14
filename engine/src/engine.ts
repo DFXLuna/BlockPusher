@@ -24,17 +24,20 @@ function doFrame(time = 0) {
     window.requestAnimationFrame(doFrame);
 
     Time.update();
-
+    
+    Collision.update();
+    
     if (isPlaying) { 
         // Only call when game is running
         World.update();
         // This is maybe where this belongs
         GameObjectManager.updateGameObjects();
-        Collision.doCollision();
     } else {
         World.updateEdit();
     }
 
+
+    // Draw stuff.
     let showGrid = !isPlaying;
 
     World.drawBackground();
@@ -46,8 +49,11 @@ function doFrame(time = 0) {
     if (showGrid)
         GameObjectManager.drawAllAABB();
 
+        
+    Render.setWorldRenderOffset(0,0);
+    Collision.debugDraw();
+        
     Render.disableWorldRender();
-
     World.drawForeground();
 
     // Input must update here so between-frame inputs

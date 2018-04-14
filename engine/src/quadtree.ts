@@ -113,16 +113,16 @@ export class QuadTree {
         return returnObjects;
     }
 
-    public drawQuadTree( canvasName: string ){
+    public drawQuadTree( ){
         let blockSizepx = Render.blockScale;
         let bounds = this.bounds;
-        Render.drawRectOutline( "#00000", bounds.x * blockSizepx, 
+        Render.drawRectOutline( "lime", bounds.x * blockSizepx, 
                                            bounds.y * blockSizepx, 
                                            bounds.width * blockSizepx,
                                            bounds.height * blockSizepx );
         if( this.children[0] != null ){
             for( let c of this.children ){
-                c.drawQuadTree( canvasName );
+                c.drawQuadTree( );
             }
         }
     }
