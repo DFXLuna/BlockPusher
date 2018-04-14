@@ -10,7 +10,10 @@ Rather than giving users a complex interface and a number of pre-existing compon
 This project required a combination of web and game programming and involved a number of challenges. Documentation of the engine is important for anyone wishing to use it. Security is another major concern because the engine allows users to run arbitrary javascript code, so care was taken to ensure game code was isolated and unable to take malicious actions.
 
 
-[Documentation](../blob/master/Documentation/README.md)
+[Documentation](../master/Documentation/README.md)
+
 [Presentation](INSERTLINKHERE)
+
 [Poster](INSERTLINKHERE)
-[Planning Documentation](../blob/master/Documentation/DesignSpec.pdf)
+
+[Planning Documentation](../master/Documentation/DesignSpec.pdf)
