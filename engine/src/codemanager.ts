@@ -62,15 +62,7 @@ export namespace CodeManager {
                 return;
             }
 
-            let classInfo = gameObjectClasses[objClassName];
-
-            if (classInfo == null) {
-                classInfo = {
-                    objectClass: (class GameObject extends GameObjectBase {}),
-                    setupFunction: ()=>{}
-                }
-                gameObjectClasses[objClassName] = classInfo;
-            }
+            let classInfo = createObjectClassIfNotExist(objClassName);
 
             classInfo.setupFunction = makeSetupFunction(code,true);
             callSetupFunction(classInfo.setupFunction, classInfo.objectClass);
@@ -79,5 +71,34 @@ export namespace CodeManager {
 
     export function getGameObjectClass(name: string) {
         return gameObjectClasses[name].objectClass;
+    }
+
+    export function getGameObjectClassName(obj: GameObjectBase) {
+        for (let className in gameObjectClasses) {
+            if (obj instanceof gameObjectClasses[className].objectClass)
+                return className;
+        }
+    }
+
+    export function getClassList() {
+        let result: {[key: string]: string} = {};
+        for (let className in gameObjectClasses) {
+            result[className] = <string>gameObjectClasses[className].objectClass.prototype.image;
+        }
+        return result;
+    }
+
+    export function createObjectClassIfNotExist(objClassName: string) {
+        let classInfo = gameObjectClasses[objClassName];
+
+        if (classInfo == null) {
+            classInfo = {
+                objectClass: (class GameObject extends GameObjectBase {}),
+                setupFunction: ()=>{}
+            }
+            gameObjectClasses[objClassName] = classInfo;
+        }
+
+        return classInfo;
     }
 }

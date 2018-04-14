@@ -6,9 +6,11 @@ export namespace Input {
     let prevPressed: Map< string, boolean > = new Map();
 
     let cursorPos = {x: 0, y: 0};
+    let prevMouseButtons = 0;
     let mouseButtons = 0;
 
     export function update(): void {
+        prevMouseButtons = mouseButtons;
         copymap( currPressed, prevPressed );
     }
     
@@ -35,6 +37,10 @@ export namespace Input {
 
     export function isMouseButtonDown(button: number) {
         return ((mouseButtons>>(button-1))&1) == 1;
+    }
+
+    export function wasMouseButtonPressed(button: number) {
+        return ((mouseButtons>>(button-1))&1) == 1 && ((prevMouseButtons>>(button-1))&1) == 0;
     }
     
     function onKeyDown( ke: KeyboardEvent ): void {

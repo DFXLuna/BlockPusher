@@ -3,6 +3,7 @@ import { Render } from "./render";
 import { Input } from "./input";
 import { Time } from "./time";
 import { CodeManager } from "./codemanager";
+import { GameObjectManager } from "./gameobject";
 
 // TODO
 // Allow user strings to map into block features
@@ -71,16 +72,18 @@ export class World {
             Render.setCameraPos(cameraPos.x,cameraPos.y,true);
         }
 
+        // Object placement/deletion
         let cursor = Input.getCursorPos();
 
-        if (Input.isMouseButtonDown(1)) {
-            if (this.editObjectName != null) {
-                if (this.editObjectType == "block") {
-                    this.setBlockTypeAt(cursor.x,cursor.y,this.editObjectName);
-                }
+        if (this.editObjectName != null) {
+            if (this.editObjectType == "block" && Input.isMouseButtonDown(1)) {
+                this.setBlockTypeAt(cursor.x,cursor.y,this.editObjectName);
+            } else if (this.editObjectType == "object" && Input.wasMouseButtonPressed(1)) {
+                this.createObject(this.editObjectName,cursor.x,cursor.y);
             }
         }
-        else if (Input.isMouseButtonDown(2)) {
+
+        if (Input.isMouseButtonDown(2)) {
             this.setBlockTypeAt(cursor.x,cursor.y,null);
         }
     }
@@ -217,7 +220,9 @@ export class World {
         save_obj.width = this.sizeX;
         save_obj.height = this.sizeY;
         save_obj.blockTypes = this.blockIdLookup.map((info)=> info.name);
-        save_obj.blockMap = this.blockMap;
+        save_obj.blockMap = JSON.parse(JSON.stringify(this.blockMap));
+        save_obj.objects = GameObjectManager.saveObjects();
+
         return save_obj;
     }
 
@@ -227,6 +232,8 @@ export class World {
 
         // Make sure all block types used by the save exist.
         save_obj.blockTypes.forEach((name: string)=>{
+            if (name == null)
+                return;
             if (this.blockNameLookup[name] == null) {
                 this.createBlockType(name,"?");
             }
@@ -239,13 +246,17 @@ export class World {
                 this.setBlockTypeAt(x,y,blockName);
             }
         }
+
+        // Place objects.
+        GameObjectManager.loadObjects(save_obj.objects);
     }
 
     public createObject(className: string, x: number, y: number) {
 
         let objClass = CodeManager.getGameObjectClass(className);
-
-        let obj = new objClass(x,y);
+        if (objClass != null) {
+            let obj = new objClass(x,y);
+        }
     }
     
     public getBlockMap(){

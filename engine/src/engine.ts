@@ -43,6 +43,8 @@ function doFrame(time = 0) {
     World.render(showGrid);
 
     GameObjectManager.renderGameObjects();
+    if (showGrid)
+        GameObjectManager.drawAllAABB();
 
     Render.disableWorldRender();
 
@@ -60,7 +62,7 @@ function updateEditorObjectList() {
 
     let list = {
         blocks: CodeManager.World.getBlockTypes(),
-        objects: {}
+        objects: CodeManager.getClassList()
     };
 
     window.parent.postMessage({type: "setObjectList", list: list},"*");
@@ -132,6 +134,7 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // save level if currently in edit mode
         if (!isPlaying) {
             savedState = CodeManager.World.save();
+            //console.log(JSON.stringify(savedState));
 
             // Send saved level state to editor.
             window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");

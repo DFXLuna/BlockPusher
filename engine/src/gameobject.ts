@@ -1,4 +1,5 @@
 import { Render } from "./render"
+import { CodeManager } from "./codemanager";
 
 export namespace GameObjectManager {
     let gameObjects: Set< GameObject > = new Set< GameObject >();
@@ -29,9 +30,38 @@ export namespace GameObjectManager {
         return gameObjects;
     }
 
-    export function drawAllAABB( canvasName: string ){
+    export function saveObjects() {
+        let save_obj: any = [];
+
         for( let g of gameObjects ){
-            g.drawAABB( canvasName );
+            let classname = CodeManager.getGameObjectClassName(g);
+            save_obj.push([classname, g.x, g.y]);
+        }
+
+        return save_obj;
+    }
+
+    export function loadObjects(save_obj: [any]) {
+        gameObjects.clear();
+        
+        if (save_obj == null) {
+            return;
+        }
+
+        save_obj.forEach(record => {
+            let classname = record[0];
+            let x = record[1];
+            let y = record[2];            
+
+            let objClass = CodeManager.createObjectClassIfNotExist(classname).objectClass;
+            new objClass(x,y);
+        });
+    }
+
+    export function drawAllAABB() {
+        for( let g of gameObjects ) {
+            Render.setWorldRenderOffset(g.x, g.y);
+            g.drawAABB();
         }
     }
 
@@ -42,13 +72,20 @@ export class GameObject {
     y: number;
     velX = 0;
     velY = 0;
-    width = 1; // Set these from image?
-    height = 1;
-    image = "?";
+
+    // Defaults for these are set below using a dumb hack.
+    image: string;
+    width: number;
+    height: number;
 
     public constructor( x: number, y: number) {
         this.x = x;
         this.y = y;
+
+        // Dumb hack part 1. Stops the compiler from complaining.
+        this.image = ""; delete this.image;
+        this.width = 0;  delete this.width;
+        this.height = 0; delete this.height;
 
         this.setup();
 
@@ -68,9 +105,8 @@ export class GameObject {
         this.updatePhysics();
     }
 
-    // Possibly unneeded / wrong
     public render(): void{
-
+        Render.drawImage(this.image,0,0);
     }
 
     public getBoundingBox(): { x: number, y: number, width: number, height: number }{
@@ -83,11 +119,15 @@ export class GameObject {
         GameObjectManager.removeGameObject( this );
     }
 
-    public drawAABB( canvasName: string ){
+    public drawAABB() {
         let blockSizepx = Render.blockScale;
-        Render.drawRectOutline( "#FF0000", this.x * blockSizepx, 
-                                            this.y * blockSizepx, 
-                                            this.width * blockSizepx,
-                                            this.height * blockSizepx );
+        Render.drawRectOutline( "#FF0000", 0, 0, 
+            this.width * blockSizepx,
+            this.height * blockSizepx );
     }
 }
+
+// Dumb hack part 2.
+(<any>GameObject.prototype).image = "?";
+(<any>GameObject.prototype).width = 1;
+(<any>GameObject.prototype).height = 1;
