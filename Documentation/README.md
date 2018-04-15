@@ -18,7 +18,7 @@
 
 * Collision
     * [collision.ts](../engine/src/collision.ts)
-    * [Documentation](http://htmlpreview.github.io/?https://github.com/DFXLuna/BlockPusher/blob/master/Documentation/Typedoc/modules/_collison_.html)
+    * [Documentation](http://htmlpreview.github.io/?https://github.com/DFXLuna/BlockPusher/blob/master/Documentation/Typedoc/modules/_collision_.html)
     
     * [quadtree.ts](../engine/src/quadtree.ts)
     * [Documentation](http://htmlpreview.github.io/?https://github.com/DFXLuna/BlockPusher/blob/master/Documentation/Typedoc/modules/_quadtree_.html)
@@ -43,6 +43,6 @@
     * [world.ts](../engine/src/world.ts)
     * [Documentation](http://htmlpreview.github.io/?https://github.com/DFXLuna/BlockPusher/blob/master/Documentation/Typedoc/modules/_world_.html)
 
-[Documentation root](http://htmlpreview.github.io/?https://github.com/DFXLuna/BlockPusher/blob/master/Documentation/Typedoc/index.html)
+[Engine Documentation Root](http://htmlpreview.github.io/?https://github.com/DFXLuna/BlockPusher/blob/master/Documentation/Typedoc/index.html)
 
 ## Website
