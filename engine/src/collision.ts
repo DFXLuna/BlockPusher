@@ -15,26 +15,6 @@ interface ObjectBounds extends Bounds {
     object: GameObject;
 }
 
-/*
-class BlockResult {
-    constructor (blockType: string, x: number, y: number) {
-        this.blockType = blockType;
-        this.blockX = Math.floor(x);
-        this.blockY = Math.floor(y);
-    }
-    blockType: string;
-    blockX: number;
-    blockY: number;
-
-    public isGameObject() {
-        return false;
-    }
-
-    public isBlock() {
-        return true;
-    }
-}*/
-
 namespace BoundsUtils {
     export function makeObjectBounds(obj: GameObject): ObjectBounds {
         return {
@@ -78,47 +58,15 @@ namespace BoundsUtils {
 // Grid is indexed using string keys, which is really disgusting, but it works okay.
 
 export namespace Collision {
-    //let qt314: QuadTree;
-    //let isSetup: boolean = false;
-    //let toDelete: Array< GameObject > = [];
     let broadphaseGrid: {[key: string]: ObjectBounds[]} = {};
 
     export function setup( ){
-        //let world = CodeManager.World; // NOTE: World size can't change. If it ever can change, we might have some issues here.
-        //qt314 = new QuadTree( 0, { x: 0 , y: 0, width: world.getSizeX(), height: world.getSizeY() } );
-        //isSetup = true;
+        // This doesn't really do anything anymore.
     }
 
     export function dumpGrid() {
         console.log(broadphaseGrid);
     }
-
-    // not optimal?
-    /*export function doCollision(): void {
-        //if( !isSetup ){ throw new Error("Collision not setup! ( called from collision::doCollision )"); }
-        // Just make a new QT every frame that is the correct size.
-        let world = CodeManager.World;
-        qt314 = new QuadTree( 0, { x: 0 , y: 0, width: world.getSizeX(), height: world.getSizeY() } );
-        clean();
-        for( let go of GameObjectManager.getAllGameObjects() ){
-            qt314.insert( go );
-        }
-        // Adam, Alex, God: I'm sorry
-        // Matt: I'm disowning you
-        let blockmap = CodeManager.World.getBlockMap();
-        for( let i = 0; i < blockmap.length; i++ ){
-            for( let j = 0; j < blockmap[i].length; j++ ){
-                if( blockmap[i][j] != 0 ){
-                    insertBlock( i , j );
-                }
-            }
-        }
-        for( let go of GameObjectManager.getAllGameObjects() ){
-            for( let go2 of qt314.retrievePotentialColliders( go ) ){
-                checkCollision( go, go2 );
-            }    
-        }
-    }*/
 
     export function update() {
         // Reset bp
@@ -206,21 +154,3 @@ export namespace Collision {
         return results;
     }
 }
-/*
-    function insertBlock( x: number , y: number ){
-        // create a gameobject at the block's location and insert it
-        let go = new GameObject( x, y );
-        toDelete.push( go );
-        GameObjectManager.addGameObject( go );
-    }
-
-    function clean(){
-        for( let go of toDelete ){
-            GameObjectManager.removeGameObject( go );
-        }
-        toDelete = [];
-    }*/
-
-    //function rayCast(){}
-    // Maybe someday function AABBCast(){}
-//}
