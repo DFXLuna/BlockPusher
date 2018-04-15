@@ -502,7 +502,7 @@
 
         let gameId = window.EDIT_GAMEID;
 
-        var formData = new FormData();
+        let formData = new FormData();
         formData.append("gameId", gameId);
 
         // Add our modified files to the form.
@@ -522,7 +522,7 @@
             credentials: "include"
         });
         let success = await res.text();
-        if (!!success) {
+        if (success == "True") {
             alert("Save complete!");
             filesChanged = {};
         } else {
@@ -537,16 +537,24 @@
         sandboxElement.contentWindow.postMessage({ type: "requestLevel" }, "*");
     }
 
-    window.openGameInfo = function () {
-        let nameInput = document.getElementById("edit-info-name");
-        let descInput = document.getElementById("edit-info-desc");
+    window.submitGameInfo = async function (ev) {
+        let formData = new FormData(ev.target);
 
-        nameInput.value = document.getElementById("edit-game-title").innerText;
-        descInput.value = window.EDIT_DESC;
-    }
+        // Send request.
+        let res = await fetch("/Content/UpdateGameInfo", {
+            method: "POST",
+            body: formData,
+            credentials: "include"
+        });
+        let success = await res.text();
+        if (success=="True") {
+            alert("Save complete!");
 
-    window.submitGameInfo = function(ev) {
-        console.log("A",ev);
+            // Update our displayed title.
+            document.getElementById("edit-game-title").innerText = formData.get("title");
+        } else {
+            alert("Save failed!");
+        }
     }
 
 

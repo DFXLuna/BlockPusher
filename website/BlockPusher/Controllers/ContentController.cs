@@ -274,13 +274,15 @@ namespace BlockPusher.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         /// <summary>
-        /// Renames game title in db.
+        /// Updates a game's title + description.
         /// </summary>
         /// <param name="gameId"></param>
         /// <param name="title"></param>
+        /// <param name="description"></param>
         /// <returns>Bool indicating whether entry was changed.</returns>
-        public bool RenameGame(int gameId, string title)
+        public bool UpdateGameInfo(int gameId, string title, string description)
         {
             if (CheckGameOwnership(gameId) == false)
             {
@@ -290,42 +292,12 @@ namespace BlockPusher.Controllers
             var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
             using (SqlConnection myConnection = new SqlConnection(con))
             {
-                string editString = "update Games set Title=@title where GameId=@gameid";
+                string editString = "update Games set Title=@title, GameDescription=@description where GameId=@gameid";
                 myConnection.Open();
 
                 // Change game's title.
                 SqlCommand cmd = new SqlCommand(editString, myConnection);
                 cmd.Parameters.AddWithValue("@title", title);
-                cmd.Parameters.AddWithValue("@gameid", gameId);
-                int changes = cmd.ExecuteNonQuery();
-                myConnection.Close();
-
-                return changes > 0;
-            }
-        }
-
-        [HttpPost]
-        /// <summary>
-        /// Changes game description in db.
-        /// </summary>
-        /// <param name="gameId"></param>
-        /// <param name="description"></param>
-        /// <returns>Bool indicating whether entry was changed.</returns>
-        public bool ChangeGameDescription(int gameId, string description)
-        {
-            if (CheckGameOwnership(gameId) == false)
-            {
-                return false;
-            }
-
-            var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
-            using (SqlConnection myConnection = new SqlConnection(con))
-            {
-                string editString = "update Games set GameDescription=@description where GameId=@gameid";
-                myConnection.Open();
-
-                // Change game's description.
-                SqlCommand cmd = new SqlCommand(editString, myConnection);
                 cmd.Parameters.AddWithValue("@description", description);
                 cmd.Parameters.AddWithValue("@gameid", gameId);
                 int changes = cmd.ExecuteNonQuery();

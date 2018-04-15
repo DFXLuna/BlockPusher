@@ -23,7 +23,7 @@
     <div id="play-top">
         <h1>Editing '<span id="edit-game-title">@Model.Title</span>'.</h1>
         <p>Documentation links can go here I guess.</p>
-        <button class="btn btn-info" data-toggle="modal" data-target="#edit-info" onclick="openGameInfo();">Edit Name / Description</button>
+        <button class="btn btn-info" data-toggle="modal" data-target="#edit-info">Edit Name / Description</button>
         <button class="btn btn-success" onclick="startSaveToServer();">Save All</button>
         <button class="btn btn-primary" onclick="runCode();">Run Code</button>
 
@@ -66,13 +66,14 @@
             <div class="modal-body">
                 <form onsubmit="submitGameInfo(event); return false;">
                     <div class="form-group">
-                        <label for="edit-info-name">Name</label>
-                        <input name="name" id="edit-info-name" type="text" class="form-control" />
+                        <label for="edit-info-title">Title</label>
+                        <input name="title" id="edit-info-title" type="text" class="form-control" value="@Model.Title" />
                     </div>
                     <div class="form-group">
                         <label for="edit-info-desc">Description</label>
-                        <textarea name="description" id="edit-info-desc" class="form-control"></textarea>
+                        <textarea name="description" id="edit-info-desc" class="form-control">@Model.Description</textarea>
                     </div>
+                    <input name="gameId" type="hidden" value=@Model.GameId />
                     <input type="submit" class="btn btn-primary" value="Save" />
                 </form>
             </div>
@@ -87,7 +88,6 @@
     <script src="~/Scripts/nosave.js"></script>
     <script>
         window.EDIT_GAMEID = @Model.GameId;
-        window.EDIT_DESC = "@Model.Description";
     </script>
     <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
     <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>
