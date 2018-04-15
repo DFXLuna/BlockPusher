@@ -495,18 +495,17 @@
     }
 
     // This is called when the engine is ready to receive messages.
-    function onEngineStart() {
-        fetchFile("World.js", "/Content/AssetTest/World.js");
+    async function onEngineStart() {
+        let gameId = window.EDIT_GAMEID;
 
-        fetchFile("test.png", "/Content/AssetTest/test.png");
-        fetchFile("test2.jpg", "/Content/AssetTest/test2.jpg");
+        console.log("engine start");
+        let res = await fetch("/Content/GetFileNames?gameId=" + gameId);
+        let files = await res.json();
 
-        fetchFile("moonspeak.wav", "/Content/AssetTest/moonspeak.wav");
-        fetchFile("zinger.wav", "/Content/AssetTest/zinger.wav");
+        files.forEach((file) => {
+            fetchFile(file, "/Content/Game/" + gameId + "/" + file);
+        });
 
-        fetchFile("Thing.js", "/Content/AssetTest/Thing.js");
-
-        fetchFile("level.json", "/Content/AssetTest/level.json");
     }
 
     window.addEventListener("message", function (event) {

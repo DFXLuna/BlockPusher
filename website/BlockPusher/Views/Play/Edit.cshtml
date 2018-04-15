@@ -21,7 +21,7 @@
 
 <div id="play-container">
     <div id="play-top">
-        <h1>Editing GameName.</h1>
+        <h1>Editing '<span id="edit-game-title">@Model.Title</span>'.</h1>
         <p>Documentation links can go here I guess.</p>
         <button class="btn btn-info">Edit Name/Description</button>
         <button class="btn btn-success">Save All</button>
@@ -71,6 +71,9 @@
                 ke.preventDefault();
             }
         }, false);
+    </script>
+    <script>
+        window.EDIT_GAMEID = @Model.GameId;
     </script>
     <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
     <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>
