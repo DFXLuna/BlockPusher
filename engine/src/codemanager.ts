@@ -4,6 +4,7 @@ import { Render } from "./render";
 import { Time } from "./time";
 import { Input } from "./input";
 import { AudioComponent as Audio } from "./audio";
+import { Collision } from "./collision";
 
 interface GameObjectClassInfo {
     setupFunction: Function;
@@ -32,16 +33,16 @@ export namespace CodeManager {
 
     function callSetupFunction(f: Function, objClass?: typeof GameObjectBase | undefined) {
         if (objClass != null)
-            f(World,Render,Audio,Time,Input,objClass.prototype);
+            f(World,Render,Audio,Time,Input,Collision,objClass.prototype);
         else
-            f(World,Render,Audio,Time,Input);
+            f(World,Render,Audio,Time,Input,Collision);
     }
 
     function makeSetupFunction(code: string, isObjectSetupFunc = false) {
         if (isObjectSetupFunc)
-            return new Function("World","Render","Audio","Time","Input","GameObject",code);
+            return new Function("World","Render","Audio","Time","Input","Collision","GameObject",code);
         else
-            return new Function("World","Render","Audio","Time","Input",code);
+            return new Function("World","Render","Audio","Time","Input","Collision",code);
     }
 
     export function runScript(name: string, code: string | null) {

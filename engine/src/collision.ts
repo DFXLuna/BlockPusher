@@ -15,6 +15,26 @@ interface ObjectBounds extends Bounds {
     object: GameObject;
 }
 
+/*
+class BlockResult {
+    constructor (blockType: string, x: number, y: number) {
+        this.blockType = blockType;
+        this.blockX = Math.floor(x);
+        this.blockY = Math.floor(y);
+    }
+    blockType: string;
+    blockX: number;
+    blockY: number;
+
+    public isGameObject() {
+        return false;
+    }
+
+    public isBlock() {
+        return true;
+    }
+}*/
+
 namespace BoundsUtils {
     export function makeObjectBounds(obj: GameObject): ObjectBounds {
         return {
@@ -37,6 +57,11 @@ namespace BoundsUtils {
         }
 
         return results;
+    }
+
+    export function checkBounds(bounds1: Bounds, bounds2: Bounds) {
+        return (bounds1.x < bounds2.x + bounds2.width && bounds1.x + bounds1.width > bounds2.x
+            &&  bounds1.y < bounds2.y + bounds2.height && bounds1.y + bounds1.height > bounds2.y);
     }
 
     export function getPointCell(x: number, y: number) {
@@ -133,16 +158,11 @@ export namespace Collision {
         }
     }
 
-    export function checkPoint( x: number , y: number ): Array< GameObject | string > {
+    // Checks for GameObjects ONLY.
+    export function checkPoint( x: number , y: number ): Array< GameObject > {
         let world = CodeManager.World;
 
         let results = [ ];
-        
-        // First, get the block at this position.
-        let blockType = world.getBlockTypeAt(x, y);
-
-        if (blockType != null)
-            results.push(blockType);
         
         // Now get any objects in this cell.
         let cellKey = BoundsUtils.getPointCell(x, y);
@@ -156,6 +176,33 @@ export namespace Collision {
             });
         }
 
+        return results;
+    }
+
+    // Checks for GameObjects ONLY.
+    export function checkBounds( x: number, y: number, width: number, height: number) {
+        let world = CodeManager.World;
+
+        let bounds1: Bounds = {x,y,width,height};
+
+        // This set prevents us from adding any
+        // object more than once.
+        let resultObjects = new Set<GameObject>();
+
+        // Now get any objects in bounds1's cells.
+        BoundsUtils.getBoundsCells(bounds1).forEach((cellKey)=>{
+            let boundsArray = broadphaseGrid[cellKey];
+            if (boundsArray != null) {
+                boundsArray.forEach((bounds2) => {
+                    // Check bounds for each object.
+                    if (BoundsUtils.checkBounds(bounds1, bounds2)) {
+                        resultObjects.add(bounds2.object);
+                    }
+                });
+            }
+        });
+
+        let results = Array.from(resultObjects);
         return results;
     }
 }

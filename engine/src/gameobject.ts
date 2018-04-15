@@ -1,5 +1,6 @@
 import { Render } from "./render"
 import { CodeManager } from "./codemanager";
+import { Time } from "./time";
 
 export namespace GameObjectManager {
     let gameObjects: Set< GameObject > = new Set< GameObject >();
@@ -15,6 +16,7 @@ export namespace GameObjectManager {
     // mess with it.
     export function updateGameObjects(): void {
         for( let g of gameObjects ){
+            g.updatePhysics();
             g.update();
         }
     }
@@ -101,12 +103,12 @@ export class GameObject {
     }
 
     public updatePhysics() {
-        this.x += this.velX;
-        this.y += this.velY;
+        this.x += this.velX * Time.getDelta();
+        this.y += this.velY * Time.getDelta();
     }
 
     public update(): void {
-        this.updatePhysics();
+
     }
 
     public render(): void{

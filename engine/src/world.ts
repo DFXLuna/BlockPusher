@@ -85,12 +85,10 @@ export class World {
         }
 
         if (Input.isMouseButtonDown(2)) {
+            this.setBlockTypeAt(cursor.x,cursor.y,null);
+            
             Collision.checkPoint(cursor.x,cursor.y).forEach((result)=>{
-                if (result instanceof GameObject) {
-                    result.remove();
-                } else {
-                    this.setBlockTypeAt(cursor.x,cursor.y,null);
-                }
+                result.remove();
             });
         }
     }
