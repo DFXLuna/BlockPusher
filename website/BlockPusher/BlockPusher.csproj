@@ -252,6 +252,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\blockpusher.js" />
     <Content Include="Scripts\editor.js" />
+    <Content Include="Scripts\nosave.js" />
     <Content Include="Views\Play\Sandbox.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />

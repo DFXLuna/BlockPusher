@@ -105,6 +105,7 @@ namespace BlockPusher.Controllers
         }*/
 
         [HttpPost]
+        [Authorize]
         /// <summary>
         /// Adds/updates/removes a game's content files.
         /// </summary>
