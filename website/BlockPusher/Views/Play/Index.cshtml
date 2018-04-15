@@ -12,12 +12,16 @@
         <h1>@Model.Title</h1>
         <p>by @Model.Author</p>
         <button class="btn btn-info" data-toggle="modal" data-target="#play-info">Show Info</button>
+
         <button class="btn btn-danger" onclick="resetGame();">Reset</button>
-        @if (Model.CanEdit)
+        @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
         {
-            <a href="/Play/edit" button class="btn btn-primary">Edit</a>
+            if (Model.CanEdit)
+            {
+                <a href="/Play/edit" button class="btn btn-primary">Edit</a>
+            }
+            <button class="btn btn-primary">Edit Copy</button>
         }
-        <button class="btn btn-primary">Edit Copy</button>
     </div>
     <div id="play-content">
         <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>

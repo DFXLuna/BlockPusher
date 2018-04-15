@@ -10,7 +10,6 @@ using System.Web.Mvc;
 
 namespace BlockPusher.Controllers
 {
-    [Authorize]
     public class GameListController : Controller
     {
         public ActionResult Index()

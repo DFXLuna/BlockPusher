@@ -10,7 +10,6 @@ using System.Web.Mvc;
 
 namespace BlockPusher.Controllers
 {
-    [Authorize]
     public class PlayController : Controller
     {
         // GET: /Play
@@ -49,6 +48,7 @@ namespace BlockPusher.Controllers
 		}
 
         // GET: /Play/Edit
+        [Authorize]
         public ActionResult Edit()
         {
             return View();

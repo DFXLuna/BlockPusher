@@ -10,7 +10,6 @@ using System.Web.Mvc;
 
 namespace BlockPusher.Controllers
 {
-    [Authorize]
     public class ContentController : Controller
     {
         [HttpPost]
@@ -107,12 +106,13 @@ namespace BlockPusher.Controllers
         /// <returns>List of string file names</returns>
         public JsonResult GetFileNames(int gameId)
         {
-            string path = Server.MapPath("~/Content/Game/" + gameId + "/");
 
             // Grab all files from current game directory
             List<string> fileNames = new List<string>();
             try
             {
+                string path = Server.MapPath("~/Content/Game/" + gameId + "/");
+
                 string[] fileArray = System.IO.Directory.GetFiles(path);
 
                 // Add each file's name to list.
