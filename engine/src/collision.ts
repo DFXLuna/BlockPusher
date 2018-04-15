@@ -107,10 +107,10 @@ export namespace Collision {
     }
 
     // Checks for GameObjects ONLY.
-    export function checkPoint( x: number , y: number ): Array< GameObject > {
+    export function checkPoint( x: number , y: number ) {
         let world = CodeManager.World;
 
-        let results = [ ];
+        let results = new Array< GameObject >();
         
         // Now get any objects in this cell.
         let cellKey = BoundsUtils.getPointCell(x, y);

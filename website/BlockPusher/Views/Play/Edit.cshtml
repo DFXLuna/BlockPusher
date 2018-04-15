@@ -24,7 +24,7 @@
         <h1>Editing '<span id="edit-game-title">@Model.Title</span>'.</h1>
         <p>Documentation links can go here I guess.</p>
         <button class="btn btn-info">Edit Name/Description</button>
-        <button class="btn btn-success">Save All</button>
+        <button class="btn btn-success" onclick="startSaveToServer();">Save All</button>
         <button class="btn btn-primary" onclick="runCode();">Run Code</button>
 
         <button id="edit-toggle-play" class="btn btn-primary" onclick="toggleGamePlayer();">Play Level</button>
@@ -66,8 +66,9 @@
         }
         // Prevent ctrl s
         document.addEventListener("keydown", function (ke) {
-            console.log(ke);
-            if (ke.key === "s" && (ke.ctrlKey === true || ke.metaKey === true)) {
+            if  (ke.key == "F5" ||
+                (ke.key === "s" && (ke.ctrlKey === true || ke.metaKey === true)))
+            {
                 ke.preventDefault();
             }
         }, false);

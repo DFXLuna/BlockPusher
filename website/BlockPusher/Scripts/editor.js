@@ -32,6 +32,9 @@
     let playEditButton = document.getElementById("edit-toggle-play");
     let isPlaying = false;
 
+    // This is set when the user wants to save the project.
+    let saveToServerRequested = false;
+
     function isTextFile(fileName) {
         fileName = fileName.toLowerCase();
         return fileName.endsWith(".js");
@@ -494,6 +497,46 @@
         sandboxElement.contentWindow.postMessage({ type: "setMode", play: isPlaying }, "*");
     }
 
+    // This is called after we have received the latest version of the level from the engine.
+    async function saveToServer() {
+
+        let gameId = window.EDIT_GAMEID;
+
+        var formData = new FormData();
+        formData.append("gameId", gameId);
+
+        // Add our modified files to the form.
+        for (let fileName in filesChanged) {
+            let content = files[fileName];
+            if (content == null) {
+                formData.append("deleted", fileName);
+            } else {
+                formData.append("updated", new File([content], fileName));
+            }
+        }
+
+        // Send request.
+        let res = await fetch("/Content/UpdateGameFiles", {
+            method: "POST",
+            body: formData,
+            credentials: "include"
+        });
+        let success = await res.text();
+        if (!!success) {
+            alert("Save complete!");
+            filesChanged = {};
+        } else {
+            alert("Save failed!");
+        }
+
+        saveToServerRequested = false;
+    }
+
+    window.startSaveToServer = function() {
+        saveToServerRequested = true;
+        sandboxElement.contentWindow.postMessage({ type: "requestLevel" }, "*");
+    }
+
     // This is called when the engine is ready to receive messages.
     async function onEngineStart() {
         let gameId = window.EDIT_GAMEID;
@@ -505,7 +548,6 @@
         files.forEach((file) => {
             fetchFile(file, "/Content/Game/" + gameId + "/" + file);
         });
-
     }
 
     window.addEventListener("message", function (event) {
@@ -518,6 +560,10 @@
         } else if (msg.type == "saveLevel") {
             let fileBlob = new Blob([msg.data], { type: "application/json" });
             updateFile("level.json", fileBlob, false);
+
+            if (saveToServerRequested) {
+                saveToServer();
+            }
         } else {
             console.log("Unhandled message: ", msg);
         }

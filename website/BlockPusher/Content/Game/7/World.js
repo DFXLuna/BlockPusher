@@ -14,16 +14,7 @@ World.update = function () {
 }
 
 World.drawBackground = function () {
-    if (Input.wasKeyPressed("X")) {
-        Render.clear("yellow");
-        World.createObject("Thing", 2, 2);
-        //Audio.playSound("moonspeak.wav");
-    } else if (Input.wasKeyReleased("X")) {
-        Render.clear("cyan");
-        //Audio.playSound("zinger.wav");
-    } else {
-        Render.clear("pink");
-    }
+    Render.clear("cyan");
 }
 
 World.drawForeground = function () {

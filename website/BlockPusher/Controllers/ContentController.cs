@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,6 +13,8 @@ namespace BlockPusher.Controllers
 {
     public class ContentController : Controller
     {
+        /* DO NOT SANITIZE FILENAMES CORRECTLY
+
         [HttpPost]
         /// <summary>
         /// Upload a file to the website's Content/Game/[ID] folder.
@@ -83,11 +86,11 @@ namespace BlockPusher.Controllers
         /// </summary>
         /// <param name="fileName">Name of the file to be deleted.</param>
         /// <param name="gameId">Id of the game currently being edited</param>
-        public void Delete(string fileName, int gameId)
+        public string Delete(string fileName, int gameId)
         {
             if (CheckGameOwnership(gameId) == false)
             {
-                return;
+                return false;
             }
 
             string path = Server.MapPath("~/Content/Game/" + gameId + "/" + fileName);
@@ -96,7 +99,70 @@ namespace BlockPusher.Controllers
             if (System.IO.File.Exists(path))
             {
                 System.IO.File.Delete(path);
+                return true;
             }
+            return false;
+        }*/
+
+        [HttpPost]
+        /// <summary>
+        /// Adds/updates/removes a game's content files.
+        /// </summary>
+        /// <param name="gameId">Id of the game currently being edited.</param>
+        /// <param name="deleted">Files to delete.</param>
+        /// <param name="updated">Files to update.</param>
+        public bool UpdateGameFiles(int gameId, string[] deleted, IEnumerable<HttpPostedFileBase> updated)
+        {
+            if (CheckGameOwnership(gameId) == false)
+            {
+                return false;
+            }
+
+            if (deleted != null)
+            {
+                foreach (var fileName in deleted)
+                {
+                    // Die if a filename violates our filter.
+                    if (!CheckFileName(fileName))
+                        return false;
+
+                    string path = Server.MapPath("~/Content/Game/" + gameId + "/" + fileName);
+
+                    // If a file exists with that name, it is deleted.
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                }
+            }
+
+            if (updated != null)
+            {
+                foreach (var file in updated)
+                {
+                    // Die if a filename violates our filter.
+                    if (!CheckFileName(file.FileName))
+                        return false;
+
+                    string path = Server.MapPath("~/Content/Game/" + gameId + "/" + file.FileName);
+
+                    // Save the file.
+                    file.SaveAs(path);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if a filename is acceptable.
+        /// </summary>
+        /// <param name="fileName"></param>
+        private bool CheckFileName(string fileName)
+        {
+            return Regex.IsMatch(fileName,
+                @"^[\w\d_]+\.(js(on)?|png|jpe?g|mp3|wav)$",
+                RegexOptions.IgnoreCase);
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ function doFrame(time = 0) {
     Time.update();
     
     Collision.update();
-    
+
     if (isPlaying) { 
         // Only call when game is running
         World.update();
@@ -157,6 +157,13 @@ window.addEventListener("message", async function (event: MessageEvent) {
         Render.setAllowNormalCameraControl(isPlaying);
     } else if (msg.type == "selectObject") {
         CodeManager.World.setEditorPlacementObject(msg.obj_type, msg.name);
+    } else if (msg.type == "requestLevel") {
+
+        if (!isPlaying)
+            savedState = CodeManager.World.save();
+
+        window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");
+        
     } else {
         console.log("Unhandled message: ",msg);
     }

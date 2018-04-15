@@ -1,7 +1,7 @@
-﻿GameObject.image = "test.png";
+GameObject.image = "test.png";
 
-GameObject.width = 1.6;
-GameObject.height = 1.6;
+GameObject.width = 1.9;
+GameObject.height = 1.9;
 
 GameObject.setup = function () {
     this.velX = Math.random() * 10 - 5;
