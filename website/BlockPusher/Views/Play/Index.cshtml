@@ -18,10 +18,13 @@
         {
             if (Model.CanEdit)
             {
-                <a href="/Play/edit" button class="btn btn-primary">Edit</a>
+                @Html.ActionLink("Edit", "Edit", "Play", new { gameId = Model.GameId }, new { @class = "btn btn-primary", button="" });
             }
-            <button class="btn btn-primary">Edit Copy</button>
-        }
+        <form action="~/Content/CopyGame" method="POST" style="display: inline-block">
+            <input type="hidden" name="gameId" value=@Model.GameId />
+            <input type="submit" value="Edit Copy" class="btn btn-primary" />
+        </form>
+    }
     </div>
     <div id="play-content">
         <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>

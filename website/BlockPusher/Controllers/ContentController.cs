@@ -106,7 +106,6 @@ namespace BlockPusher.Controllers
         /// <returns>List of string file names</returns>
         public JsonResult GetFileNames(int gameId)
         {
-
             // Grab all files from current game directory
             List<string> fileNames = new List<string>();
             try
@@ -126,7 +125,8 @@ namespace BlockPusher.Controllers
             return Json(fileNames, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
+        /*[HttpPost]
+        [Authorize]
         /// <summary>
         /// Saves a new game. Title and description optional.
         /// </summary>
@@ -160,6 +160,49 @@ namespace BlockPusher.Controllers
                 myConnection.Close();
 
                 return newId;
+            }
+        }*/
+
+        [HttpPost]
+        [Authorize]
+        /// <summary>
+        /// Saves a new game, copying another game's files.
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <returns>Redirect to edit new game.</returns>
+        public RedirectToRouteResult CopyGame(int gameId)
+        {
+            var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
+            using (SqlConnection myConnection = new SqlConnection(con))
+            {
+                myConnection.Open();
+
+                // Insert new game.
+                string oString = @"INSERT INTO Games (Title, Author, GameDescription)
+                    OUTPUT INSERTED.GameId
+                    SELECT 'Copy of '+Title, @author, GameDescription FROM Games WHERE GameId = @sourceId";
+                SqlCommand cmd = new SqlCommand(oString, myConnection);
+
+                // Should probably be doing more error handling here but W/E.
+                cmd.Parameters.AddWithValue("@author", User.Identity.Name);
+                cmd.Parameters.AddWithValue("@sourceId", gameId);
+                int newId = (int)cmd.ExecuteScalar();
+                myConnection.Close();
+
+                string newPath = Server.MapPath("~/Content/Game/" + newId + "/");
+
+                // Make new directory.
+                Directory.CreateDirectory(newPath);
+
+                // Copy each old file.
+                DirectoryInfo oldDir = new DirectoryInfo(Server.MapPath("~/Content/Game/" + gameId + "/"));
+
+                foreach (FileInfo file in oldDir.EnumerateFiles())
+                {
+                    file.CopyTo(newPath + file.Name);
+                }
+
+                return RedirectToAction("Edit","Play",new { gameId = newId });
             }
         }
 
