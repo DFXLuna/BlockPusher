@@ -537,6 +537,19 @@
         sandboxElement.contentWindow.postMessage({ type: "requestLevel" }, "*");
     }
 
+    window.openGameInfo = function () {
+        let nameInput = document.getElementById("edit-info-name");
+        let descInput = document.getElementById("edit-info-desc");
+
+        nameInput.value = document.getElementById("edit-game-title").innerText;
+        descInput.value = window.EDIT_DESC;
+    }
+
+    window.submitGameInfo = function(ev) {
+        console.log("A",ev);
+    }
+
+
     // This is called when the engine is ready to receive messages.
     async function onEngineStart() {
         let gameId = window.EDIT_GAMEID;
