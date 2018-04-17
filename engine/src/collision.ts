@@ -15,6 +15,28 @@ interface ObjectBounds extends Bounds {
     object: GameObject;
 }
 
+interface CastResult {
+    // Did the cast hit?
+    hit: boolean;
+    // Coords of the end of the ray
+    x: number;
+    y: number;
+    // The length of the ray.
+    distance: number;
+    // Hit side. If set, will be one of the constants defined in the Collision module.
+    // Not set if no hit or if the ray started inside an object.
+    side?: string;
+
+    // Block type string, set if the cast hit a block.
+    blockType?: string;
+    // Coords of the block that was hit, set if the cast hits a block.
+    blockX?: number;
+    blockY?: number;
+
+    // The object that was hit, set if the cast hits an object.
+    object?: GameObject;
+}
+
 namespace BoundsUtils {
     export function makeObjectBounds(obj: GameObject): ObjectBounds {
         return {
@@ -52,6 +74,67 @@ namespace BoundsUtils {
         return (x > bounds.x && x < bounds.x + bounds.width
             &&  y > bounds.y && y < bounds.y + bounds.height);
     }
+
+    export function checkRay(bounds: Bounds, x: number, y: number, dx: number, dy: number): CastResult | null {
+        
+        /*if (checkPoint(bounds, x, y)) {
+            return -10;
+        }*/
+
+        if (dx > 0 && x < bounds.x && x + dx > bounds.x) {
+            // check left edge
+            let hitY = y + dy / dx * (bounds.x - x);
+            if (hitY > bounds.y && hitY < bounds.y + bounds.height) {
+                return {
+                    hit: true,
+                    x: bounds.x,
+                    y: hitY,
+                    distance: Math.sqrt(Math.pow(bounds.x - x,2) + Math.pow(hitY - y,2)),
+                    side: Collision.Left
+                };
+            }
+        } else if (dx < 0 && x > bounds.x + bounds.width && x + dx < bounds.x + bounds.width) {
+            // check right edge
+            let hitY = y - dy / dx * (x - (bounds.x + bounds.width));
+            if (hitY > bounds.y && hitY < bounds.y + bounds.height) {
+                return {
+                    hit: true,
+                    x: bounds.x + bounds.width,
+                    y: hitY,
+                    distance: Math.sqrt(Math.pow(bounds.x + bounds.width - x,2) + Math.pow(hitY - y,2)),
+                    side: Collision.Right
+                };
+            }
+        }
+
+        if (dy > 0 && y < bounds.y && y + dy > bounds.y) {
+            // check top edge
+            let hitX = x + dx / dy * (bounds.y - y);
+            if (hitX > bounds.x && hitX < bounds.x + bounds.width) {
+                return {
+                    hit: true,
+                    x: hitX,
+                    y: bounds.y,
+                    distance: Math.sqrt(Math.pow(bounds.y - y,2) + Math.pow(hitX - x,2)),
+                    side: Collision.Top
+                };
+            }
+        } else if (dy < 0 && y > bounds.y + bounds.height && y + dy < bounds.y + bounds.height) {
+            // check bottom edge
+            let hitX = x - dx / dy * (y - (bounds.y + bounds.height));
+            if (hitX > bounds.x && hitX < bounds.x + bounds.width) {
+                return {
+                    hit: true,
+                    x: hitX,
+                    y: bounds.y + bounds.height,
+                    distance: Math.sqrt(Math.pow(bounds.y + bounds.height - y,2) + Math.pow(hitX - x,2)),
+                    side: Collision.Bottom
+                };
+            }
+        }
+
+        return null;
+    }
 }
 
 // Now uses a sparse grid instead of a broken quadtree for broadphase.
@@ -59,6 +142,12 @@ namespace BoundsUtils {
 
 export namespace Collision {
     let broadphaseGrid: {[key: string]: ObjectBounds[]} = {};
+
+    // Constants for collision hit sides
+    export let Top = "Top";
+    export let Bottom = "Bottom";
+    export let Left = "Left";
+    export let Right = "Right";
 
     export function setup( ){
         // This doesn't really do anything anymore.
@@ -108,7 +197,6 @@ export namespace Collision {
 
     // Checks for GameObjects ONLY.
     export function checkPoint( x: number , y: number ) {
-        let world = CodeManager.World;
 
         let results = new Array< GameObject >();
         
@@ -129,7 +217,6 @@ export namespace Collision {
 
     // Checks for GameObjects ONLY.
     export function checkBounds( x: number, y: number, width: number, height: number) {
-        let world = CodeManager.World;
 
         let bounds1: Bounds = {x,y,width,height};
 
@@ -152,5 +239,102 @@ export namespace Collision {
 
         let results = Array.from(resultObjects);
         return results;
+    }
+
+    export function castRay( x: number, y: number, dx: number, dy: number ): CastResult {
+        // Implementation of http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.3443&rep=rep1&type=pdf 
+        let world = CodeManager.World;
+
+        let stepX = Math.sign(dx);
+        let stepY = Math.sign(dy);
+
+        let t = 0;
+        let fullDistance = Math.sqrt(dx*dx + dy*dy);
+
+        // Modulo operator in js does not behave like I want it to.
+        let xRemainder = x - Math.floor(x);
+        let YRemainder = y - Math.floor(y);
+
+        let tMaxX = ( dx > 0 ? (1 - xRemainder) : xRemainder ) / Math.abs( dx );
+        let tMaxY = ( dy > 0 ? (1 - YRemainder) : YRemainder ) / Math.abs( dy );
+
+        let tDeltaX = Math.abs(1 / dx);
+        let tDeltaY = Math.abs(1 / dy);
+
+        let currentX = Math.floor(x);
+        let currentY = Math.floor(y);
+
+        let lastSide: string;
+
+        function check(): CastResult | null {
+            // check block
+            let block = world.getBlockTypeAt(currentX , currentY);
+            if (block != null) {
+                return {
+                    hit: true,
+                    x: x+dx * t,
+                    y: y+dy * t,
+                    distance: t * fullDistance,
+                    side: lastSide,
+
+                    blockType: block,
+                    blockX: currentX,
+                    blockY: currentY,
+                };
+            }
+
+            // Now get any objects in this cell.
+            let cellKey = BoundsUtils.getPointCell(currentX, currentY);
+            let boundsArray = broadphaseGrid[cellKey];
+            if (boundsArray != null) {
+                let results = boundsArray.map((bounds) => {
+                    // Check ray for each object.
+                    return BoundsUtils.checkRay(bounds, x, y, dx, dy);
+                }).filter(x => x!=null);
+                // Filter and sort by distance.
+                if (results.length > 0) {
+                    results.sort((a,b)=>(<CastResult>a).distance-(<CastResult>b).distance);
+                    return results[0];
+                }
+            }
+
+            return null;
+        }
+
+        let res = check();
+        if (res)
+            return res;
+
+        let failsafe = 0;
+        while (tMaxX < 1 || tMaxY < 1) {
+            
+            if (tMaxX < tMaxY) {
+                t = tMaxX;
+                tMaxX += tDeltaX;
+                currentX += stepX;
+                lastSide = dx > 0 ? Left : Right;
+            } else {
+                t = tMaxY;
+                tMaxY += tDeltaY;
+                currentY += stepY;
+                lastSide = dy > 0 ? Top : Bottom;
+            }
+            
+            let res = check();
+            if (res) {
+                return res;
+            }
+            
+            if (failsafe++ > 1000) {
+                throw new Error("Raycast ran for too long.");
+            }
+        }
+
+        return {
+            hit: false,
+            x: x+dx,
+            y: y+dy,
+            distance: fullDistance,
+        }
     }
 }

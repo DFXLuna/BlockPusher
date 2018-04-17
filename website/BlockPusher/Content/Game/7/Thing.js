@@ -1,3 +1,4 @@
+
 GameObject.image = "test.png";
 
 GameObject.width = 1.9;
@@ -18,6 +19,19 @@ GameObject.update = function () {
     })
 }
 
-/*GameObject.render = function () {
-    Render.drawRect("yellow",0,0,10,10);
-}*/
+GameObject.render = function () {
+    Render.drawImage(this.image, 0, 0);
+
+    for (var i = 0; i < 4; i++) {
+        let dx = 10 * Math.cos(i*1.56+.2);
+        let dy = 10 * Math.sin(i*1.56+.2);
+        let res = Collision.castRay(this.x+.1, this.y+.1, dx, dy);
+        //Collision.castRay(this.x, this.y, 0, 0);
+
+        Render.drawLine(res.hit ? "red" : "white", 0, 0, (res.x - this.x) * Render.blockScale, (res.y - this.y) * Render.blockScale, 5);
+        Render.drawLine("blue", 0, 0, dx * Render.blockScale, dy * Render.blockScale, 1);
+        if (res.side) {
+            Render.drawText(res.side, (res.x - this.x) * Render.blockScale, (res.y - this.y) * Render.blockScale, "magenta", "15px comic sans ms");
+        }
+    }
+}
