@@ -22,8 +22,7 @@ export namespace GameObjectManager {
     }
 
     export function renderGameObjects(): void {
-        for( let g of gameObjects ){
-            Render.setWorldRenderOffset(g.x, g.y);
+        for( let g of gameObjects ) {
             g.render();
         }
     }
@@ -62,7 +61,6 @@ export namespace GameObjectManager {
 
     export function drawAllAABB() {
         for( let g of gameObjects ) {
-            Render.setWorldRenderOffset(g.x, g.y);
             g.drawAABB();
         }
     }
@@ -112,7 +110,7 @@ export class GameObject {
     }
 
     public render(): void{
-        Render.drawImage(this.image,0,0);
+        Render.drawImage(this.image,this.x,this.y,this.width,this.height);
     }
 
     public getBoundingBox(): { x: number, y: number, width: number, height: number }{
@@ -127,9 +125,7 @@ export class GameObject {
 
     public drawAABB() {
         let blockSizepx = Render.blockScale;
-        Render.drawRectOutline( "#FF0000", 0, 0, 
-            this.width * blockSizepx,
-            this.height * blockSizepx );
+        Render.drawRectOutline( "#FF0000", this.x, this.y, this.width, this.height );
     }
 }
 

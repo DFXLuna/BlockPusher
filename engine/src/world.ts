@@ -49,7 +49,7 @@ export class World {
     
     public updateEdit() {
         // CAMERA MOVEMENT
-        const EDIT_CAMERA_SPEED = 500;
+        const EDIT_CAMERA_SPEED = 10;
 
         let cameraMoveX = 0;
         let cameraMoveY = 0;
@@ -68,8 +68,8 @@ export class World {
 
         if (cameraMoveY != 0 || cameraMoveX != 0) {
             let cameraPos = Render.getCameraPos();
-            cameraPos.x += cameraMoveX * Time.getDelta() * EDIT_CAMERA_SPEED / Render.blockScale;
-            cameraPos.y += cameraMoveY * Time.getDelta() * EDIT_CAMERA_SPEED / Render.blockScale;
+            cameraPos.x += cameraMoveX * Time.getDelta() * EDIT_CAMERA_SPEED;
+            cameraPos.y += cameraMoveY * Time.getDelta() * EDIT_CAMERA_SPEED;
             Render.setCameraPos(cameraPos.x,cameraPos.y,true);
         }
 
@@ -111,7 +111,7 @@ export class World {
                     if (block != null) {
                         let img = Render.findImage(block.imageFilename);
                         if (img != null) {
-                            Render.context.drawImage(img,x*scale,y*scale,scale,scale);
+                            Render.context.drawImage(img,x*1,y*1,1,1);
                         }
                     }
                 }
@@ -120,23 +120,23 @@ export class World {
 
         if (drawGrid) {
             // Draw a grid, useful for editing
-            let height = this.sizeY*scale;
-            let width = this.sizeX*scale;
+            let height = this.sizeY;
+            let width = this.sizeX;
 
             Render.context.strokeStyle = "#222";
-            Render.context.lineWidth = 1;
+            Render.context.lineWidth = 1 / Render.blockScale;
             Render.context.beginPath();
             
             // Vertical grid lines
             for ( let x = 0; x < this.sizeX+1; x++ ) {
-                Render.context.moveTo(x*scale,0);
-                Render.context.lineTo(x*scale,height);
+                Render.context.moveTo(x,0);
+                Render.context.lineTo(x,height);
             }
 
             // Horizontal grid lines
             for ( let y = 0; y < this.sizeY+1; y++ ) {
-                Render.context.moveTo(0,y*scale);
-                Render.context.lineTo(width,y*scale);
+                Render.context.moveTo(0,y);
+                Render.context.lineTo(width,y);
             }
 
             Render.context.stroke();

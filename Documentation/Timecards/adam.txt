@@ -25,3 +25,4 @@ Apr. 12: 3 hours. Object render offset + player now works.
 Apr. 13: 3 hours. Add GameObjects to editor.
 Apr. 14: 5 hours. Reworked collisions, got editor file transfer working.
 Apr. 15: 1 hour. Work on name/description updates.
+Apr. 16: 3 hours. Raycasting, camera rework.

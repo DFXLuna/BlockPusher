@@ -42,18 +42,16 @@ function doFrame(time = 0) {
 
     World.drawBackground();
 
-    Render.setWorldRenderOffset(0,0);
+    Render.enableCamera();
     World.render(showGrid);
 
     GameObjectManager.renderGameObjects();
     if (showGrid)
         GameObjectManager.drawAllAABB();
 
-        
-    Render.setWorldRenderOffset(0,0);
     Collision.debugDraw();
         
-    Render.disableWorldRender();
+    Render.disableCamera();
     World.drawForeground();
 
     // Input must update here so between-frame inputs
