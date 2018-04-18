@@ -28,7 +28,7 @@ GameObject.render = function () {
 
         let dx = 10 * Math.cos(i * 1.56 + .2);
         let dy = 10 * Math.sin(i*1.56+.2);
-        let res = Collision.castRay(startX, startY, dx, dy);
+        let res = Collision.castRay(startX, startY, dx, dy, this);
         //Collision.castRay(this.x, this.y, 0, 0);
 
         Render.drawLine(res.hit ? "red" : "white", startX, startY, res.x, res.y, 5);

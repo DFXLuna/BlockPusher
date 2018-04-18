@@ -16,20 +16,5 @@ namespace BlockPusher
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
         }
-
-        private void Application_BeginRequest()
-        {
-            // Allow CORS for game assets.
-            // We need this because of the sandboxing on the engine.
-            // This is really gross but all the other ways to do it were even more gross.
-
-            if (Request != null && Request.Path != null && Request.Path.StartsWith("/Content/Game/"))
-            {
-                if (Response != null && Response.Headers != null)
-                {
-                    Response.Headers.Add("Access-Control-Allow-Origin", "*");
-                }
-            }
-        }
     }
 }

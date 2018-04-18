@@ -77,57 +77,69 @@ namespace BoundsUtils {
 
     export function checkRay(bounds: Bounds, x: number, y: number, dx: number, dy: number): CastResult | null {
         
-        /*if (checkPoint(bounds, x, y)) {
-            return -10;
-        }*/
+        if (checkPoint(bounds, x, y)) {
+            return {
+                hit: true,
+                x: x,
+                y: y,
+                distance: 0
+            };
+        }
 
-        if (dx > 0 && x < bounds.x && x + dx > bounds.x) {
+        // Min/Max of bounds on each axis
+        let xMin = bounds.x;
+        let xMax = bounds.x + bounds.width;
+
+        let yMin = bounds.y;
+        let yMax = bounds.y + bounds.height;
+
+        if (dx > 0 && x < xMin && x + dx > xMin) {
             // check left edge
-            let hitY = y + dy / dx * (bounds.x - x);
-            if (hitY > bounds.y && hitY < bounds.y + bounds.height) {
+            let hitY = y + dy / dx * (xMin - x);
+            if (hitY > yMin && hitY < yMax) {
                 return {
                     hit: true,
-                    x: bounds.x,
+                    x: xMin,
                     y: hitY,
-                    distance: Math.sqrt(Math.pow(bounds.x - x,2) + Math.pow(hitY - y,2)),
+                    distance: Math.sqrt(Math.pow(xMin - x,2) + Math.pow(hitY - y,2)),
                     side: Collision.Left
                 };
             }
-        } else if (dx < 0 && x > bounds.x + bounds.width && x + dx < bounds.x + bounds.width) {
+        } else if (dx < 0 && x > xMax && x + dx < xMax) {
             // check right edge
-            let hitY = y - dy / dx * (x - (bounds.x + bounds.width));
-            if (hitY > bounds.y && hitY < bounds.y + bounds.height) {
+            let hitY = y - dy / dx * (x - (xMax));
+            if (hitY > yMin && hitY < yMax) {
                 return {
                     hit: true,
-                    x: bounds.x + bounds.width,
+                    x: xMax,
                     y: hitY,
-                    distance: Math.sqrt(Math.pow(bounds.x + bounds.width - x,2) + Math.pow(hitY - y,2)),
+                    distance: Math.sqrt(Math.pow(xMax - x,2) + Math.pow(hitY - y,2)),
                     side: Collision.Right
                 };
             }
         }
 
-        if (dy > 0 && y < bounds.y && y + dy > bounds.y) {
+        if (dy > 0 && y < yMin && y + dy > yMin) {
             // check top edge
-            let hitX = x + dx / dy * (bounds.y - y);
-            if (hitX > bounds.x && hitX < bounds.x + bounds.width) {
+            let hitX = x + dx / dy * (yMin - y);
+            if (hitX > xMin && hitX < xMax) {
                 return {
                     hit: true,
                     x: hitX,
-                    y: bounds.y,
-                    distance: Math.sqrt(Math.pow(bounds.y - y,2) + Math.pow(hitX - x,2)),
+                    y: yMin,
+                    distance: Math.sqrt(Math.pow(yMin - y,2) + Math.pow(hitX - x,2)),
                     side: Collision.Top
                 };
             }
-        } else if (dy < 0 && y > bounds.y + bounds.height && y + dy < bounds.y + bounds.height) {
+        } else if (dy < 0 && y > yMax && y + dy < yMax) {
             // check bottom edge
-            let hitX = x - dx / dy * (y - (bounds.y + bounds.height));
-            if (hitX > bounds.x && hitX < bounds.x + bounds.width) {
+            let hitX = x - dx / dy * (y - (yMax));
+            if (hitX > xMin && hitX < xMax) {
                 return {
                     hit: true,
                     x: hitX,
-                    y: bounds.y + bounds.height,
-                    distance: Math.sqrt(Math.pow(bounds.y + bounds.height - y,2) + Math.pow(hitX - x,2)),
+                    y: yMax,
+                    distance: Math.sqrt(Math.pow(yMax - y,2) + Math.pow(hitX - x,2)),
                     side: Collision.Bottom
                 };
             }
@@ -241,7 +253,7 @@ export namespace Collision {
         return results;
     }
 
-    export function castRay( x: number, y: number, dx: number, dy: number ): CastResult {
+    export function castRay( x: number, y: number, dx: number, dy: number, ignoreObject?: GameObject ): CastResult {
         // Implementation of http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.42.3443&rep=rep1&type=pdf 
         let world = CodeManager.World;
 
@@ -289,7 +301,15 @@ export namespace Collision {
             if (boundsArray != null) {
                 let results = boundsArray.map((bounds) => {
                     // Check ray for each object.
-                    return BoundsUtils.checkRay(bounds, x, y, dx, dy);
+                    
+                    // Skip ignoreObject
+                    if (bounds.object == ignoreObject)
+                        return null;
+                    
+                    let res = BoundsUtils.checkRay(bounds, x, y, dx, dy);
+                    if (res != null)
+                        res.object = bounds.object;
+                    return res;
                 }).filter(x => x!=null);
                 // Filter and sort by distance.
                 if (results.length > 0) {
