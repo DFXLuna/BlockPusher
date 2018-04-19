@@ -365,9 +365,9 @@ export namespace Collision {
         }
     }
 
-    export function castBounds( x: number, y: number, width: number, height: number, dx: number, dy: number, ignoreObject?: GameObject ): CastResult {
+    export function castBounds( x: number, y: number, width: number, height: number, dx: number, dy: number, ignoreObject?: GameObject, debug = false ): CastResult {
         // Fudge factor used to combat rounding errors and other weirdness.
-        const FUDGE_FACTOR = .0001;
+        const FUDGE_FACTOR = .001;
         
         // Modification of the previous ray casting algorithm.
         let world = CodeManager.World;
@@ -376,11 +376,16 @@ export namespace Collision {
         let baseY = y;
 
         // Select the corner of the bounds closest to the direction of the ray.
-        x = dx>0 ? x + width - FUDGE_FACTOR : x + FUDGE_FACTOR;
-        y = dy>0 ? y + height - FUDGE_FACTOR : y + FUDGE_FACTOR;
+        /*{
+            let FUDGE_FACTOR = 0;
+            x = dx>0 ? x + width - FUDGE_FACTOR : x + FUDGE_FACTOR;
+            y = dy>0 ? y + height - FUDGE_FACTOR : y + FUDGE_FACTOR;
+        }*/
+        let xStart = dx>0 ? x + width : x;
+        let yStart = dy>0 ? y + height : y;
 
-        width -= FUDGE_FACTOR*2;
-        height -= FUDGE_FACTOR*2;
+        //width -= FUDGE_FACTOR*2;
+        //height -= FUDGE_FACTOR*2;
 
         let stepX = Math.sign(dx);
         let stepY = Math.sign(dy);
@@ -389,11 +394,14 @@ export namespace Collision {
         let fullDistance = Math.sqrt(dx*dx + dy*dy);
 
         // Modulo operator in js does not behave like I want it to.
-        let xRemainder = x - Math.floor(x);
-        let YRemainder = y - Math.floor(y);
+        let xRemainder = xStart - Math.floor(xStart);
+        let YRemainder = yStart - Math.floor(yStart);
 
         let tMaxX = ( dx > 0 ? (1 - xRemainder) : xRemainder ) / Math.abs( dx );
         let tMaxY = ( dy > 0 ? (1 - YRemainder) : YRemainder ) / Math.abs( dy );
+
+        if (debug)
+            console.log("--",baseX,baseY);
 
         // Don't want NaNs.
         if (tMaxX != tMaxX)
@@ -404,8 +412,8 @@ export namespace Collision {
         let tDeltaX = Math.abs(1 / dx);
         let tDeltaY = Math.abs(1 / dy);
 
-        let currentX = Math.floor(x);
-        let currentY = Math.floor(y);
+        let currentX = Math.floor(dx>0 ? xStart - FUDGE_FACTOR : xStart + FUDGE_FACTOR);
+        let currentY = Math.floor(dy>0 ? yStart - FUDGE_FACTOR : yStart + FUDGE_FACTOR);
 
         let lastSide: string;
 
@@ -427,7 +435,7 @@ export namespace Collision {
                 } else if (adjusted_t < 0) {
                     adjusted_t = 0;
                 }
-                
+
                 let res = {
                     hit: true,
                     x: baseX+dx * adjusted_t,
@@ -470,10 +478,22 @@ export namespace Collision {
 
         // Checks a span of blocks based on the trace state.
         function check(): CastResult | null {
-            let FUDGE_FACTOR = 0;
+            if (debug) {
+                Render.drawRectOutline("lime",currentX,currentY,1,1,2);
+                //console.log("~",baseY,t,baseY+dy*t,baseY+dy*t + FUDGE_FACTOR)
+            }
+            
+            function floorExclusive(x: number) {
+                // I don't even know at this point.
+                let y = Math.floor(x);
+                if (x == y)
+                    return y-1;
+                return y;
+            }
+
             if (lastSide == Left || lastSide == Right) {
                 // Check a vertical span
-                let ff = (dy != 0) ? FUDGE_FACTOR : 0;
+                let ff = (dy == 0) ? FUDGE_FACTOR : 0;
                 let y1 = Math.floor(baseY+dy*t + ff);
                 let y2 = Math.floor(baseY+dy*t + height - ff);
                 for (let yi = y1; yi <= y2; yi++) {
@@ -483,7 +503,7 @@ export namespace Collision {
                 }
             } else if (lastSide == Top || lastSide == Bottom) {
                 // Check a horizontal span
-                let ff = (dy != 0) ? FUDGE_FACTOR : 0;
+                let ff = (dx == 0) ? FUDGE_FACTOR : 0;
                 let x1 = Math.floor(baseX+dx*t + ff);
                 let x2 = Math.floor(baseX+dx*t + width - ff);
                 for (let xi = x1; xi <= x2; xi++) {
