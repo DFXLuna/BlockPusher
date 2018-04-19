@@ -1,16 +1,16 @@
 World.createBlockType("a", "test.png");
 World.createBlockType("b", "test2.jpg");
 
-Render.blockScale = 32
+Render.blockScale = 32;
 
 World.update = function () {
-    if (Math.random() > .9) {
+    /*if (Math.random() > .9) {
         let x = Math.random() * 10;
         let y = Math.random() * 10;
 
         let btype = Math.random() > .5 ? "a" : "b";
         this.setBlockTypeAt(x, y, btype);
-    }
+    }*/
 }
 
 World.drawBackground = function () {

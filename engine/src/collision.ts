@@ -269,6 +269,12 @@ export namespace Collision {
 
         let tMaxX = ( dx > 0 ? (1 - xRemainder) : xRemainder ) / Math.abs( dx );
         let tMaxY = ( dy > 0 ? (1 - YRemainder) : YRemainder ) / Math.abs( dy );
+        
+        // Don't want NaNs.
+        if (tMaxX != tMaxX)
+            tMaxX = Infinity;
+        if (tMaxY != tMaxY)
+            tMaxY = Infinity;
 
         let tDeltaX = Math.abs(1 / dx);
         let tDeltaY = Math.abs(1 / dy);
@@ -346,6 +352,7 @@ export namespace Collision {
             }
             
             if (failsafe++ > 1000) {
+                console.log(">>" ,tMaxX, tMaxY, tDeltaY);
                 throw new Error("Raycast ran for too long.");
             }
         }
@@ -354,6 +361,188 @@ export namespace Collision {
             hit: false,
             x: x+dx,
             y: y+dy,
+            distance: fullDistance,
+        }
+    }
+
+    export function castBounds( x: number, y: number, width: number, height: number, dx: number, dy: number, ignoreObject?: GameObject ): CastResult {
+        // Fudge factor used to combat rounding errors and other weirdness.
+        const FUDGE_FACTOR = .0001;
+        
+        // Modification of the previous ray casting algorithm.
+        let world = CodeManager.World;
+
+        let baseX = x;
+        let baseY = y;
+
+        // Select the corner of the bounds closest to the direction of the ray.
+        x = dx>0 ? x + width - FUDGE_FACTOR : x + FUDGE_FACTOR;
+        y = dy>0 ? y + height - FUDGE_FACTOR : y + FUDGE_FACTOR;
+
+        width -= FUDGE_FACTOR*2;
+        height -= FUDGE_FACTOR*2;
+
+        let stepX = Math.sign(dx);
+        let stepY = Math.sign(dy);
+
+        let t = 0;
+        let fullDistance = Math.sqrt(dx*dx + dy*dy);
+
+        // Modulo operator in js does not behave like I want it to.
+        let xRemainder = x - Math.floor(x);
+        let YRemainder = y - Math.floor(y);
+
+        let tMaxX = ( dx > 0 ? (1 - xRemainder) : xRemainder ) / Math.abs( dx );
+        let tMaxY = ( dy > 0 ? (1 - YRemainder) : YRemainder ) / Math.abs( dy );
+
+        // Don't want NaNs.
+        if (tMaxX != tMaxX)
+            tMaxX = Infinity;
+        if (tMaxY != tMaxY)
+            tMaxY = Infinity;
+
+        let tDeltaX = Math.abs(1 / dx);
+        let tDeltaY = Math.abs(1 / dy);
+
+        let currentX = Math.floor(x);
+        let currentY = Math.floor(y);
+
+        let lastSide: string;
+
+        // Checks an individual grid space.
+        function checkInner(x: number, y: number): CastResult | null {
+            // check block
+            let block = world.getBlockTypeAt(x , y);
+            if (block != null) {
+                let adjusted_t: number;
+                if (lastSide == Left || lastSide == Right) {
+                    adjusted_t = t - tDeltaX*FUDGE_FACTOR;
+                } else {
+                    adjusted_t = t - tDeltaY*FUDGE_FACTOR;
+                }
+
+                if (!isFinite(adjusted_t)) {
+                    // This should hopefully not happen anymore.
+                    adjusted_t = 0;
+                } else if (adjusted_t < 0) {
+                    adjusted_t = 0;
+                }
+                
+                let res = {
+                    hit: true,
+                    x: baseX+dx * adjusted_t,
+                    y: baseY+dy * adjusted_t,
+                    distance: t * fullDistance,
+                    side: lastSide,
+
+                    blockType: block,
+                    blockX: x,
+                    blockY: y,
+                };
+                return res;
+            }
+
+            // Now get any objects in this cell.
+            /*let cellKey = BoundsUtils.getPointCell(currentX, currentY);
+            let boundsArray = broadphaseGrid[cellKey];
+            if (boundsArray != null) {
+                let results = boundsArray.map((bounds) => {
+                    // Check ray for each object.
+                    
+                    // Skip ignoreObject
+                    if (bounds.object == ignoreObject)
+                        return null;
+                    
+                    let res = BoundsUtils.checkRay(bounds, x, y, dx, dy);
+                    if (res != null)
+                        res.object = bounds.object;
+                    return res;
+                }).filter(x => x!=null);
+                // Filter and sort by distance.
+                if (results.length > 0) {
+                    results.sort((a,b)=>(<CastResult>a).distance-(<CastResult>b).distance);
+                    return results[0];
+                }
+            }*/
+
+            return null;
+        }
+
+        // Checks a span of blocks based on the trace state.
+        function check(): CastResult | null {
+            let FUDGE_FACTOR = 0;
+            if (lastSide == Left || lastSide == Right) {
+                // Check a vertical span
+                let ff = (dy != 0) ? FUDGE_FACTOR : 0;
+                let y1 = Math.floor(baseY+dy*t + ff);
+                let y2 = Math.floor(baseY+dy*t + height - ff);
+                for (let yi = y1; yi <= y2; yi++) {
+                    let res = checkInner(currentX, yi);
+                    if (res != null)
+                        return res;
+                }
+            } else if (lastSide == Top || lastSide == Bottom) {
+                // Check a horizontal span
+                let ff = (dy != 0) ? FUDGE_FACTOR : 0;
+                let x1 = Math.floor(baseX+dx*t + ff);
+                let x2 = Math.floor(baseX+dx*t + width - ff);
+                for (let xi = x1; xi <= x2; xi++) {
+                    let res = checkInner(xi, currentY);
+                    if (res != null)
+                        return res;
+                }
+            } else {
+                // Check entire region.
+                /*let x1 = Math.floor(baseX+dx*t);
+                let x2 = Math.floor(baseX+dx*t + width);
+                let y1 = Math.floor(baseY+dy*t);
+                let y2 = Math.floor(baseY+dy*t + height);
+                for (let xi = x1; xi <= x2; xi++) {
+                    for (let yi = y1; yi <= y2; yi++) {
+                        let res = checkInner(xi, yi);
+                        if (res != null) {
+                            return res;
+                        }
+                    }
+                }*/
+            }
+
+            return null;
+        }
+
+        let res = check();
+        if (res)
+            return res;
+
+        let failsafe = 0;
+        while (tMaxX < 1 || tMaxY < 1) {
+            
+            if (tMaxX < tMaxY) {
+                t = tMaxX;
+                tMaxX += tDeltaX;
+                currentX += stepX;
+                lastSide = dx > 0 ? Left : Right;
+            } else {
+                t = tMaxY;
+                tMaxY += tDeltaY;
+                currentY += stepY;
+                lastSide = dy > 0 ? Top : Bottom;
+            }
+            
+            let res = check();
+            if (res) {
+                return res;
+            }
+            
+            if (failsafe++ > 1000) {
+                throw new Error("Raycast ran for too long.");
+            }
+        }
+
+        return {
+            hit: false,
+            x: baseX+dx,
+            y: baseY+dy,
             distance: fullDistance,
         }
     }
