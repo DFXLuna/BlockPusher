@@ -115,12 +115,13 @@ export class GameObject {
         let res = Collision.castBounds(this.x, this.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
     
         if (res.hit) {
+            const MAX_BOUNCE_SPEED = 2;
             // The cast hit. Update velocity and run a second cast.
             if (res.side == Collision.Top || res.side == Collision.Bottom) {
-                this.velY = -this.velY * this.bounciness;
+                this.velY = Math.abs(this.velY) > MAX_BOUNCE_SPEED ? -this.velY * this.bounciness : 0;
                 this.velX *= 1 - this.friction * delta;
             } else if (res.side == Collision.Left || res.side == Collision.Right) {
-                this.velX = -this.velX * this.bounciness;
+                this.velX = Math.abs(this.velY) > MAX_BOUNCE_SPEED ? -this.velX * this.bounciness : 0;
                 this.velY *= 1 - this.friction * delta;
             }
             res = Collision.castBounds(res.x, res.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
