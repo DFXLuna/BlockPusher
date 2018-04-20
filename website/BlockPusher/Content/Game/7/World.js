@@ -3,14 +3,10 @@ World.createBlockType("b", "test2.jpg");
 
 Render.blockScale = 32;
 
-World.update = function () {
-    /*if (Math.random() > .9) {
-        let x = Math.random() * 10;
-        let y = Math.random() * 10;
+World.gravityY = 30;
 
-        let btype = Math.random() > .5 ? "a" : "b";
-        this.setBlockTypeAt(x, y, btype);
-    }*/
+World.update = function () {
+
 }
 
 World.drawBackground = function () {

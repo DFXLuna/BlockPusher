@@ -375,14 +375,8 @@ export namespace Collision {
         let baseX = x;
         let baseY = y;
 
-        // Select the corner of the bounds closest to the direction of the ray.
-        /*{
-            let FUDGE_FACTOR = 0;
-            x = dx>0 ? x + width - FUDGE_FACTOR : x + FUDGE_FACTOR;
-            y = dy>0 ? y + height - FUDGE_FACTOR : y + FUDGE_FACTOR;
-        }*/
-        let xStart = dx>0 ? x + width : x;
-        let yStart = dy>0 ? y + height : y;
+        x = dx>0 ? x + width - FUDGE_FACTOR : x + FUDGE_FACTOR;
+        y = dy>0 ? y + height - FUDGE_FACTOR : y + FUDGE_FACTOR;
 
         //width -= FUDGE_FACTOR*2;
         //height -= FUDGE_FACTOR*2;
@@ -394,14 +388,11 @@ export namespace Collision {
         let fullDistance = Math.sqrt(dx*dx + dy*dy);
 
         // Modulo operator in js does not behave like I want it to.
-        let xRemainder = xStart - Math.floor(xStart);
-        let YRemainder = yStart - Math.floor(yStart);
+        let xRemainder = x - Math.floor(x);
+        let YRemainder = y - Math.floor(y);
 
         let tMaxX = ( dx > 0 ? (1 - xRemainder) : xRemainder ) / Math.abs( dx );
         let tMaxY = ( dy > 0 ? (1 - YRemainder) : YRemainder ) / Math.abs( dy );
-
-        if (debug)
-            console.log("--",baseX,baseY);
 
         // Don't want NaNs.
         if (tMaxX != tMaxX)
@@ -412,8 +403,8 @@ export namespace Collision {
         let tDeltaX = Math.abs(1 / dx);
         let tDeltaY = Math.abs(1 / dy);
 
-        let currentX = Math.floor(dx>0 ? xStart - FUDGE_FACTOR : xStart + FUDGE_FACTOR);
-        let currentY = Math.floor(dy>0 ? yStart - FUDGE_FACTOR : yStart + FUDGE_FACTOR);
+        let currentX = Math.floor(x);
+        let currentY = Math.floor(y);
 
         let lastSide: string;
 
@@ -483,19 +474,25 @@ export namespace Collision {
                 //console.log("~",baseY,t,baseY+dy*t,baseY+dy*t + FUDGE_FACTOR)
             }
             
-            function floorExclusive(x: number) {
+            /*function floorExclusive(x: number) {
                 // I don't even know at this point.
                 let y = Math.floor(x);
                 if (x == y)
                     return y-1;
                 return y;
-            }
+            }*/
 
             if (lastSide == Left || lastSide == Right) {
                 // Check a vertical span
-                let ff = (dy == 0) ? FUDGE_FACTOR : 0;
-                let y1 = Math.floor(baseY+dy*t + ff);
-                let y2 = Math.floor(baseY+dy*t + height - ff);
+                let yt = y+dy*t;
+                let y1, y2;
+                if (dy > 0) {
+                    y1 = Math.floor(yt - height + FUDGE_FACTOR*2);
+                    y2 = currentY;
+                } else {
+                    y1 = currentY;
+                    y2 = Math.floor(yt + height - FUDGE_FACTOR*2);
+                }
                 for (let yi = y1; yi <= y2; yi++) {
                     let res = checkInner(currentX, yi);
                     if (res != null)
@@ -503,9 +500,15 @@ export namespace Collision {
                 }
             } else if (lastSide == Top || lastSide == Bottom) {
                 // Check a horizontal span
-                let ff = (dx == 0) ? FUDGE_FACTOR : 0;
-                let x1 = Math.floor(baseX+dx*t + ff);
-                let x2 = Math.floor(baseX+dx*t + width - ff);
+                let xt = x+dx*t;
+                let x1, x2;
+                if (dx > 0) {
+                    x1 = Math.floor(xt - width + FUDGE_FACTOR*2);
+                    x2 = currentX;
+                } else {
+                    x1 = currentX;
+                    x2 = Math.floor(xt + width - FUDGE_FACTOR*2);
+                }
                 for (let xi = x1; xi <= x2; xi++) {
                     let res = checkInner(xi, currentY);
                     if (res != null)

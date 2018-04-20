@@ -1,6 +1,7 @@
 import { Render } from "./render"
 import { CodeManager } from "./codemanager";
 import { Time } from "./time";
+import { Collision } from "./collision";
 
 export namespace GameObjectManager {
     let gameObjects: Set< GameObject > = new Set< GameObject >();
@@ -77,6 +78,8 @@ export class GameObject {
     image: string;
     width: number;
     height: number;
+    bounciness: number;
+    friction: number;
 
     public constructor( x: number, y: number) {
         this.x = x;
@@ -86,6 +89,8 @@ export class GameObject {
         this.image = ""; delete this.image;
         this.width = 0;  delete this.width;
         this.height = 0; delete this.height;
+        this.bounciness = 0; delete this.bounciness;
+        this.friction = 0; delete this.friction;
 
         this.setup();
 
@@ -101,8 +106,28 @@ export class GameObject {
     }
 
     public updatePhysics() {
-        this.x += this.velX * Time.getDelta();
-        this.y += this.velY * Time.getDelta();
+        let world = CodeManager.World;
+        let delta = Time.getDelta();
+    
+        this.velX += world.gravityX * delta;
+        this.velY += world.gravityY * delta;
+    
+        let res = Collision.castBounds(this.x, this.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
+    
+        if (res.hit) {
+            // The cast hit. Update velocity and run a second cast.
+            if (res.side == Collision.Top || res.side == Collision.Bottom) {
+                this.velY = -this.velY * this.bounciness;
+                this.velX *= 1 - this.friction * delta;
+            } else if (res.side == Collision.Left || res.side == Collision.Right) {
+                this.velX = -this.velX * this.bounciness;
+                this.velY *= 1 - this.friction * delta;
+            }
+            res = Collision.castBounds(res.x, res.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
+        }
+    
+        this.x = res.x;
+        this.y = res.y;
     }
 
     public update(): void {
@@ -133,3 +158,5 @@ export class GameObject {
 (<any>GameObject.prototype).image = "?";
 (<any>GameObject.prototype).width = 1;
 (<any>GameObject.prototype).height = 1;
+(<any>GameObject.prototype).bounciness = 0;
+(<any>GameObject.prototype).friction = 1;
