@@ -19,3 +19,5 @@ Apr. 11: 2 hours.  Collision bug fixes, add world collision, notification on use
 Apr. 12: 1 hour.   Generate documentation, prevent ctrl s on webpage.
 Apr. 14: 1 hour.   Fill in some more documentation.
 Apr. 15: 2 hours.  More doc stuff.
+Apr. 19: 1 hour.   Regen Docs, small tweaks.
+Apr. 23: 2 hours.  Yet more docs.
