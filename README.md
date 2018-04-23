@@ -16,4 +16,3 @@ This project required a combination of web and game programming and involved a n
 
 [Poster](INSERTLINKHERE)
 
-[Planning Documentation](../master/Documentation/DesignSpec.pdf)
