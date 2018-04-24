@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 namespace BlockPusher.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         public ActionResult Index()

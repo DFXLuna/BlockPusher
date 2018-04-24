@@ -25,6 +25,7 @@ export namespace AudioComponent {
             return;
         }
         let sound = new Audio(url);
+        sound.volume = .25;
         sound.src = url;
         audioCache[ soundName ] = sound;
     }

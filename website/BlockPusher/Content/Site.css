@@ -43,6 +43,6 @@ textarea {
     }
 }
 
-.dataTable {
+.dataTable, .modal {
     color: #000;
 }

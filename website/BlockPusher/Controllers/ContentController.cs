@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 
@@ -12,6 +13,9 @@ namespace BlockPusher.Controllers
 {
     public class ContentController : Controller
     {
+        /* DO NOT SANITIZE FILENAMES CORRECTLY
+
+        [HttpPost]
         /// <summary>
         /// Upload a file to the website's Content/Game/[ID] folder.
         /// </summary>
@@ -20,11 +24,10 @@ namespace BlockPusher.Controllers
         /// <param name="gameId">Id of the game currently being edited</param>
         public void Upload(string fileName, string path, int gameId)
         {
-            // testing only
-            //string path = @"F:\School\Senior Design";
-            //string fileName = "test.png";
-            //int gameId = 2;
-
+            if (CheckGameOwnership(gameId) == false)
+            {
+                return;
+            }
 
             // Get correct paths for source file and game folder
             string sourceFile = System.IO.Path.Combine(path, fileName);
@@ -37,7 +40,7 @@ namespace BlockPusher.Controllers
             System.IO.File.Copy(sourceFile, destFile, true);
         }
 
-
+        [HttpPost]
         /// <summary>
         /// Renames a file.
         /// </summary>
@@ -46,10 +49,10 @@ namespace BlockPusher.Controllers
         /// <param name="gameId">Id of the game currently being edited</param>
         public void Rename(string oldName, string newName, int gameId)
         {
-            // testing only
-            //string oldName = "test.png";
-            //string newName = "test2.png";
-            //int gameId = 2;
+            if (CheckGameOwnership(gameId) == false)
+            {
+                return;
+            }
 
             // If they try to rename to the same name, ignore.
             if (String.Equals(oldName, newName))
@@ -77,17 +80,18 @@ namespace BlockPusher.Controllers
             System.IO.File.Move(oldPath, newPath);
         }
 
-
+        [HttpPost]
         /// <summary>
         /// Deletes a file from that game's content folder.
         /// </summary>
         /// <param name="fileName">Name of the file to be deleted.</param>
         /// <param name="gameId">Id of the game currently being edited</param>
-        public void Delete(string fileName, int gameId)
+        public string Delete(string fileName, int gameId)
         {
-            // testing only
-            //string fileName = "test.png";
-            //int gameId = 2;
+            if (CheckGameOwnership(gameId) == false)
+            {
+                return false;
+            }
 
             string path = Server.MapPath("~/Content/Game/" + gameId + "/" + fileName);
 
@@ -95,7 +99,71 @@ namespace BlockPusher.Controllers
             if (System.IO.File.Exists(path))
             {
                 System.IO.File.Delete(path);
+                return true;
             }
+            return false;
+        }*/
+
+        [HttpPost]
+        [Authorize]
+        /// <summary>
+        /// Adds/updates/removes a game's content files.
+        /// </summary>
+        /// <param name="gameId">Id of the game currently being edited.</param>
+        /// <param name="deleted">Files to delete.</param>
+        /// <param name="updated">Files to update.</param>
+        public bool UpdateGameFiles(int gameId, string[] deleted, IEnumerable<HttpPostedFileBase> updated)
+        {
+            if (CheckGameOwnership(gameId) == false)
+            {
+                return false;
+            }
+
+            if (deleted != null)
+            {
+                foreach (var fileName in deleted)
+                {
+                    // Die if a filename violates our filter.
+                    if (!CheckFileName(fileName))
+                        return false;
+
+                    string path = Server.MapPath("~/Content/Game/" + gameId + "/" + fileName);
+
+                    // If a file exists with that name, it is deleted.
+                    if (System.IO.File.Exists(path))
+                    {
+                        System.IO.File.Delete(path);
+                    }
+                }
+            }
+
+            if (updated != null)
+            {
+                foreach (var file in updated)
+                {
+                    // Die if a filename violates our filter.
+                    if (!CheckFileName(file.FileName))
+                        return false;
+
+                    string path = Server.MapPath("~/Content/Game/" + gameId + "/" + file.FileName);
+
+                    // Save the file.
+                    file.SaveAs(path);
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Checks if a filename is acceptable.
+        /// </summary>
+        /// <param name="fileName"></param>
+        private bool CheckFileName(string fileName)
+        {
+            return Regex.IsMatch(fileName,
+                @"^[\w\d_]+\.(js(on)?|png|jpe?g|mp3|wav)$",
+                RegexOptions.IgnoreCase);
         }
 
         /// <summary>
@@ -103,27 +171,29 @@ namespace BlockPusher.Controllers
         /// </summary>
         /// <param name="gameId">Id of the game currently being edited</param>
         /// <returns>List of string file names</returns>
-        public List<string> GetFileNames(int gameId)
+        public JsonResult GetFileNames(int gameId)
         {
-            // testing only
-            //int gameId = 2;
-
-            string path = Server.MapPath("~/Content/Game/" + gameId + "/");
-
             // Grab all files from current game directory
-            string[] fileArray = System.IO.Directory.GetFiles(path);
             List<string> fileNames = new List<string>();
-
-            // Add each file's name to list.
-            foreach(string file in fileArray)
+            try
             {
-                 fileNames.Add(Path.GetFileName(file));
-            }
+                string path = Server.MapPath("~/Content/Game/" + gameId + "/");
 
-            return fileNames;
+                string[] fileArray = System.IO.Directory.GetFiles(path);
+
+                // Add each file's name to list.
+                foreach (string file in fileArray)
+                {
+                    fileNames.Add(Path.GetFileName(file));
+                }
+            }
+            catch (Exception) { }
+
+            return Json(fileNames, JsonRequestBehavior.AllowGet);
         }
 
-        
+        /*[HttpPost]
+        [Authorize]
         /// <summary>
         /// Saves a new game. Title and description optional.
         /// </summary>
@@ -132,10 +202,6 @@ namespace BlockPusher.Controllers
         /// <returns>Game ID</returns>
         public int SaveNewGame(string title, string description)
         {
-            //int gameId = 12;
-            //string title = "test title";
-            //string description = "test desc";
-
             if (String.IsNullOrEmpty(title))
             {
                 title = "New Game";
@@ -149,7 +215,7 @@ namespace BlockPusher.Controllers
             using (SqlConnection myConnection = new SqlConnection(con))
             {
                 myConnection.Open();
-                
+
                 // Insert new game.
                 string oString = "insert into Games (Title, Author, GameDescription) output inserted.GameId values (@title, @author, @description)";
                 SqlCommand cmd = new SqlCommand(oString, myConnection);
@@ -162,27 +228,77 @@ namespace BlockPusher.Controllers
 
                 return newId;
             }
-        }
+        }*/
 
+        [HttpPost]
+        [Authorize]
         /// <summary>
-        /// Renames game title in db.
+        /// Saves a new game, copying another game's files.
         /// </summary>
         /// <param name="gameId"></param>
-        /// <param name="title"></param>
-        /// <returns>Bool indicating whether entry was changed.</returns>
-        public bool RenameGame(int gameId, string title)
+        /// <returns>Redirect to edit new game.</returns>
+        public RedirectToRouteResult CopyGame(int gameId)
         {
-            //int gameId = 12;
-            //string title = "test changing title";
             var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
             using (SqlConnection myConnection = new SqlConnection(con))
             {
-                string editString = "update Games set Title=@title where GameId=@gameid";
+                myConnection.Open();
+
+                // Insert new game.
+                string oString = @"INSERT INTO Games (Title, Author, GameDescription)
+                    OUTPUT INSERTED.GameId
+                    SELECT 'Copy of '+Title, @author, GameDescription FROM Games WHERE GameId = @sourceId";
+                SqlCommand cmd = new SqlCommand(oString, myConnection);
+
+                // Should probably be doing more error handling here but W/E.
+                cmd.Parameters.AddWithValue("@author", User.Identity.Name);
+                cmd.Parameters.AddWithValue("@sourceId", gameId);
+                int newId = (int)cmd.ExecuteScalar();
+                myConnection.Close();
+
+                string newPath = Server.MapPath("~/Content/Game/" + newId + "/");
+
+                // Make new directory.
+                Directory.CreateDirectory(newPath);
+
+                // Copy each old file.
+                DirectoryInfo oldDir = new DirectoryInfo(Server.MapPath("~/Content/Game/" + gameId + "/"));
+
+                foreach (FileInfo file in oldDir.EnumerateFiles())
+                {
+                    file.CopyTo(newPath + file.Name);
+                }
+
+                return RedirectToAction("Edit","Play",new { gameId = newId });
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        /// <summary>
+        /// Updates a game's title + description.
+        /// </summary>
+        /// <param name="gameId"></param>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <returns>Bool indicating whether entry was changed.</returns>
+        public bool UpdateGameInfo(int gameId, string title, string description)
+        {
+            if (CheckGameOwnership(gameId) == false)
+            {
+                return false;
+            }
+
+            var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
+            using (SqlConnection myConnection = new SqlConnection(con))
+            {
+                string editString = "update Games set Title=@title, GameDescription=@description where GameId=@gameid";
                 myConnection.Open();
 
                 // Change game's title.
                 SqlCommand cmd = new SqlCommand(editString, myConnection);
                 cmd.Parameters.AddWithValue("@title", title);
+                cmd.Parameters.AddWithValue("@description", description);
                 cmd.Parameters.AddWithValue("@gameid", gameId);
                 int changes = cmd.ExecuteNonQuery();
                 myConnection.Close();
@@ -191,30 +307,33 @@ namespace BlockPusher.Controllers
             }
         }
 
+
         /// <summary>
-        /// Changes game description in db.
+        /// Check if the game ID is owned by the current user.
         /// </summary>
         /// <param name="gameId"></param>
-        /// <param name="description"></param>
-        /// <returns>Bool indicating whether entry was changed.</returns>
-        public bool ChangeGameDescription(int gameId, string description)
+        /// <returns>Bool indicating ownership.</returns>
+        private bool CheckGameOwnership(int gameId)
         {
-            //int gameId = 12;
-            //string description = "test changing title";
             var con = ConfigurationManager.ConnectionStrings["DefaultConnection"].ToString();
             using (SqlConnection myConnection = new SqlConnection(con))
             {
-                string editString = "update Games set GameDescription=@description where GameId=@gameid";
-                myConnection.Open();
+                {
+                    // Check to make sure game ID is associated with logged in user.
+                    string getString = "select count(GameId) from Games where GameId=@gameid and Author=@author";
+                    SqlCommand getCmd = new SqlCommand(getString, myConnection);
+                    getCmd.Parameters.AddWithValue("@gameid", gameId);
+                    getCmd.Parameters.AddWithValue("@author", User.Identity.Name);
 
-                // Change game's description.
-                SqlCommand cmd = new SqlCommand(editString, myConnection);
-                cmd.Parameters.AddWithValue("@description", description);
-                cmd.Parameters.AddWithValue("@gameid", gameId);
-                int changes = cmd.ExecuteNonQuery();
-                myConnection.Close();
+                    myConnection.Open();
 
-                return changes > 0;
+                    // If game ID is found, the user is the game's author.	
+                    if ((int)getCmd.ExecuteScalar() > 0)
+                    {
+                        return true;
+                    }
+                    return false;
+                }
             }
         }
     }

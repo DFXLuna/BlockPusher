@@ -21,10 +21,10 @@
 
 <div id="play-container">
     <div id="play-top">
-        <h1>Editing GameName.</h1>
+        <h1>Editing '<span id="edit-game-title">@Model.Title</span>'.</h1>
         <p>Documentation links can go here I guess.</p>
-        <button class="btn btn-info">Edit Name/Description</button>
-        <button class="btn btn-success">Save All</button>
+        <button class="btn btn-info" data-toggle="modal" data-target="#edit-info">Edit Name / Description</button>
+        <button class="btn btn-success" onclick="startSaveToServer();">Save All</button>
         <button class="btn btn-primary" onclick="runCode();">Run Code</button>
 
         <button id="edit-toggle-play" class="btn btn-primary" onclick="toggleGamePlayer();">Play Level</button>
@@ -57,20 +57,37 @@
         </div>
     </div>
 </div>
+<div class="modal" id="edit-info">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Info</h5>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="submitGameInfo(event); return false;">
+                    <div class="form-group">
+                        <label for="edit-info-title">Title</label>
+                        <input name="title" id="edit-info-title" type="text" class="form-control" value="@Model.Title" />
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-info-desc">Description</label>
+                        <textarea name="description" id="edit-info-desc" class="form-control">@Model.Description</textarea>
+                    </div>
+                    <input name="gameId" type="hidden" value=@Model.GameId />
+                    <input type="submit" class="btn btn-primary" value="Save" />
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts{
+    <script src="~/Scripts/nosave.js"></script>
     <script>
-        // Leaving notification
-        window.onbeforeunload = function () {
-            return 'You have unsaved changes, are you sure you want to leave?';
-        }
-        // Prevent ctrl s
-        document.addEventListener("keydown", function (ke) {
-            console.log(ke);
-            if (ke.key === "s" && (ke.ctrlKey === true || ke.metaKey === true)) {
-                ke.preventDefault();
-            }
-        }, false);
+        window.EDIT_GAMEID = @Model.GameId;
     </script>
     <script src="/Scripts/vs/loader.js" type="text/javascript" charset="utf-8"></script>
     <script src="~/Scripts/editor.js" type="text/javascript" charset="utf-8"></script>

@@ -11,22 +11,70 @@
     <div id="play-top">
         <h1>@Model.Title</h1>
         <p>by @Model.Author</p>
-        <button class="btn btn-info">Game Info</button>
-        <button class="btn btn-danger">Reset</button>
-        @if (Model.CanEdit)
+        <button class="btn btn-info" data-toggle="modal" data-target="#play-info">Show Info</button>
+
+        <button class="btn btn-danger" onclick="resetGame();">Reset</button>
+        @if (ViewContext.HttpContext.User.Identity.IsAuthenticated)
         {
-            <a href="/Play/edit" button class="btn btn-primary">Edit</a>
-        }
-        <button class="btn btn-primary">Edit Copy</button>
-        @*@Html.ActionLink("test", "SaveNewGame", "Content")*@
-
-
+            if (Model.CanEdit)
+            {
+                @Html.ActionLink("Edit", "Edit", "Play", new { gameId = Model.GameId }, new { @class = "btn btn-primary", button="" });
+            }
+        <form action="~/Content/CopyGame" method="POST" style="display: inline-block">
+            <input type="hidden" name="gameId" value=@Model.GameId />
+            <input type="submit" value="Edit Copy" class="btn btn-primary" />
+        </form>
+    }
     </div>
     <div id="play-content">
         <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
     </div>
-    <p>@Model.Description</p>
+</div>
+<div class="modal" id="play-info">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Description</h5>
+            </div>
+            <div class="modal-body">
+                <p>@Model.Description</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
+@section Scripts {
+    <script>
+        (function () {
+            let gameId = @Model.GameId;
 
-@* TODO LOAD THAT GAME! *@    
+            let sandboxElement = document.getElementById("play-sandbox");
+
+            async function onEngineStart() {
+                console.log("engine start");
+                let res = await fetch("/Content/GetFileNames?gameId=" + gameId);
+                let files = await res.json();
+
+                files.forEach((file) => {
+                    let url = "/Content/Game/" + gameId + "/" + file;
+                    sandboxElement.contentWindow.postMessage({ type: "setFile", file: file, url: url }, "*");
+                });
+                resetGame();
+            }
+
+            window.addEventListener("message", function (event) {
+                let msg = event.data;
+                if (msg.type == "engineReady") {
+                    onEngineStart();
+                }
+            });
+
+            window.resetGame = function () {
+                sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
+            }
+        })();
+    </script>
+}

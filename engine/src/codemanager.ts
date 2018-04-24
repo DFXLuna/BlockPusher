@@ -4,6 +4,7 @@ import { Render } from "./render";
 import { Time } from "./time";
 import { Input } from "./input";
 import { AudioComponent as Audio } from "./audio";
+import { Collision } from "./collision";
 
 interface GameObjectClassInfo {
     setupFunction: Function;
@@ -32,16 +33,16 @@ export namespace CodeManager {
 
     function callSetupFunction(f: Function, objClass?: typeof GameObjectBase | undefined) {
         if (objClass != null)
-            f(World,Render,Audio,Time,Input,objClass.prototype);
+            f(World,Render,Audio,Time,Input,Collision,objClass.prototype);
         else
-            f(World,Render,Audio,Time,Input);
+            f(World,Render,Audio,Time,Input,Collision);
     }
 
     function makeSetupFunction(code: string, isObjectSetupFunc = false) {
         if (isObjectSetupFunc)
-            return new Function("World","Render","Audio","Time","Input","GameObject",code);
+            return new Function("World","Render","Audio","Time","Input","Collision","GameObject",code);
         else
-            return new Function("World","Render","Audio","Time","Input",code);
+            return new Function("World","Render","Audio","Time","Input","Collision",code);
     }
 
     export function runScript(name: string, code: string | null) {
@@ -62,15 +63,7 @@ export namespace CodeManager {
                 return;
             }
 
-            let classInfo = gameObjectClasses[objClassName];
-
-            if (classInfo == null) {
-                classInfo = {
-                    objectClass: (class GameObject extends GameObjectBase {}),
-                    setupFunction: ()=>{}
-                }
-                gameObjectClasses[objClassName] = classInfo;
-            }
+            let classInfo = createObjectClassIfNotExist(objClassName);
 
             classInfo.setupFunction = makeSetupFunction(code,true);
             callSetupFunction(classInfo.setupFunction, classInfo.objectClass);
@@ -79,5 +72,34 @@ export namespace CodeManager {
 
     export function getGameObjectClass(name: string) {
         return gameObjectClasses[name].objectClass;
+    }
+
+    export function getGameObjectClassName(obj: GameObjectBase) {
+        for (let className in gameObjectClasses) {
+            if (obj instanceof gameObjectClasses[className].objectClass)
+                return className;
+        }
+    }
+
+    export function getClassList() {
+        let result: {[key: string]: string} = {};
+        for (let className in gameObjectClasses) {
+            result[className] = <string>gameObjectClasses[className].objectClass.prototype.image;
+        }
+        return result;
+    }
+
+    export function createObjectClassIfNotExist(objClassName: string) {
+        let classInfo = gameObjectClasses[objClassName];
+
+        if (classInfo == null) {
+            classInfo = {
+                objectClass: (class GameObject extends GameObjectBase {}),
+                setupFunction: ()=>{}
+            }
+            gameObjectClasses[objClassName] = classInfo;
+        }
+
+        return classInfo;
     }
 }

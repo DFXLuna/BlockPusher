@@ -24,28 +24,34 @@ function doFrame(time = 0) {
     window.requestAnimationFrame(doFrame);
 
     Time.update();
+    
+    Collision.update();
 
     if (isPlaying) { 
         // Only call when game is running
         World.update();
         // This is maybe where this belongs
         GameObjectManager.updateGameObjects();
-        Collision.doCollision();
     } else {
         World.updateEdit();
     }
 
+
+    // Draw stuff.
     let showGrid = !isPlaying;
 
     World.drawBackground();
 
-    Render.setWorldRenderOffset(0,0);
+    Render.enableCamera();
     World.render(showGrid);
 
     GameObjectManager.renderGameObjects();
+    if (showGrid)
+        GameObjectManager.drawAllAABB();
 
-    Render.disableWorldRender();
-
+    Collision.debugDraw();
+        
+    Render.disableCamera();
     World.drawForeground();
 
     // Input must update here so between-frame inputs
@@ -60,7 +66,7 @@ function updateEditorObjectList() {
 
     let list = {
         blocks: CodeManager.World.getBlockTypes(),
-        objects: {}
+        objects: CodeManager.getClassList()
     };
 
     window.parent.postMessage({type: "setObjectList", list: list},"*");
@@ -106,7 +112,9 @@ window.addEventListener("message", async function (event: MessageEvent) {
             let res = await fetch(msg.url);
             let levelData = await res.text();
 
-            CodeManager.World.load(JSON.parse(levelData));
+            savedState = JSON.parse(levelData);
+
+            CodeManager.World.load(savedState);
         } else if (isScriptFile(msg.file)) {
             let code = null;
             
@@ -130,6 +138,7 @@ window.addEventListener("message", async function (event: MessageEvent) {
         // save level if currently in edit mode
         if (!isPlaying) {
             savedState = CodeManager.World.save();
+            //console.log(JSON.stringify(savedState));
 
             // Send saved level state to editor.
             window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");
@@ -146,6 +155,13 @@ window.addEventListener("message", async function (event: MessageEvent) {
         Render.setAllowNormalCameraControl(isPlaying);
     } else if (msg.type == "selectObject") {
         CodeManager.World.setEditorPlacementObject(msg.obj_type, msg.name);
+    } else if (msg.type == "requestLevel") {
+
+        if (!isPlaying)
+            savedState = CodeManager.World.save();
+
+        window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");
+        
     } else {
         console.log("Unhandled message: ",msg);
     }

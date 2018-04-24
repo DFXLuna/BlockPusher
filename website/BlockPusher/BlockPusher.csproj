@@ -237,15 +237,14 @@
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
     <Content Include="Areas\HelpPage\Views\_ViewStart.cshtml" />
-    <None Include="Content\AssetTest\level.json" />
-    <Content Include="Content\AssetTest\moonspeak.wav" />
-    <Content Include="Content\AssetTest\test.png" />
-    <Content Include="Content\AssetTest\test2.jpg" />
-    <Content Include="Content\AssetTest\Thing.js" />
-    <Content Include="Content\AssetTest\World.js" />
-    <Content Include="Content\AssetTest\zinger.wav" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Game\7\moonspeak.wav" />
+    <Content Include="Content\Game\7\test.png" />
+    <Content Include="Content\Game\7\test2.jpg" />
+    <Content Include="Content\Game\7\Thing.js" />
+    <Content Include="Content\Game\7\World.js" />
+    <Content Include="Content\Game\7\zinger.wav" />
     <Content Include="Content\Play.css" />
     <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
@@ -253,6 +252,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\blockpusher.js" />
     <Content Include="Scripts\editor.js" />
+    <Content Include="Scripts\nosave.js" />
     <Content Include="Views\Play\Sandbox.html" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
@@ -275,6 +275,7 @@
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\CollectionModelDescription.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\DisplayTemplates\ApiGroup.cshtml" />
     <Content Include="Areas\HelpPage\Views\Help\Api.cshtml" />
+    <Content Include="Content\Game\7\level.json" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -336,7 +337,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Game\" />
     <Folder Include="Views\Content\" />
   </ItemGroup>
   <ItemGroup>

@@ -9,9 +9,8 @@ export namespace Render {
     // TODO set these to sane defaults based on world scale @ startup???
     let cameraX = 4;
     let cameraY = 4;
-    // TEMPORARY
-    let cameraWidth = 0;
-    let cameraHeight = 0;
+
+    let cameraEnabled = false;
 
     let allowNormalCameraControl = false;
 
@@ -23,8 +22,6 @@ export namespace Render {
         let temp = canvas.getContext("2d");
         if( temp !== null ){
             context = temp;
-            cameraWidth = context.canvas.width / blockScale;
-            cameraHeight = context.canvas.height / blockScale;
         }
         else{
             throw new Error("Could not get context from canvas");
@@ -56,14 +53,15 @@ export namespace Render {
         allowNormalCameraControl = allow;
     }
 
-    export function setWorldRenderOffset(worldOffsetX: number, worldOffsetY: number) {
-        // TODO offset correctly
-        context.setTransform(1,0,0,1,
-            (worldOffsetX - cameraX) * blockScale + canvas.width/2,
-            (worldOffsetY - cameraY) * blockScale + canvas.height/2);
+    export function enableCamera() {
+        cameraEnabled = true;
+        context.setTransform(blockScale,0,0,blockScale,
+            -cameraX * blockScale + canvas.width/2, 
+            -cameraY * blockScale + canvas.height/2);
     }
 
-    export function disableWorldRender() {
+    export function disableCamera() {
+        cameraEnabled = false;
         context.setTransform(1,0,0,1,0,0);
     }
     
@@ -82,6 +80,8 @@ export namespace Render {
     }
 
     export function drawRectOutline(style: string, x: number, y: number, width: number, length: number, lineWidth = 1): void {
+        if (cameraEnabled)
+            lineWidth /= blockScale;
         context.strokeStyle = style;
         context.lineWidth = lineWidth;
         context.strokeRect( x, y, width, length );
@@ -95,6 +95,8 @@ export namespace Render {
     }
 
     export function drawCircleOutline(style: string, x: number, y: number, radius: number, lineWidth = 1): void {
+        if (cameraEnabled)
+            lineWidth /= blockScale;
         context.strokeStyle = style;
         context.lineWidth = lineWidth;
         context.beginPath();
@@ -103,6 +105,8 @@ export namespace Render {
     }
 
     export function drawLine(style: string, x1: number, y1: number, x2: number, y2: number, lineWidth = 1) {
+        if (cameraEnabled)
+            lineWidth /= blockScale;
         context.strokeStyle = style;
         context.lineWidth = lineWidth;
         context.beginPath();
@@ -126,17 +130,34 @@ export namespace Render {
         return img;
     }
 
-    export function drawImage( imageName: string, x: number, y: number ): void {
+    export function drawImage( imageName: string, x: number, y: number, width?: number, height?: number ): void {
         let img = findImage( imageName );
         if( img == undefined ) {
             return;
         }
-        context.drawImage( img, x, y );
+        if (width == null) {
+            width = cameraEnabled ? img.width / blockScale : img.width;
+        }
+        if (height == null) {
+            height = cameraEnabled ? img.height / blockScale : img.height;
+        }
+        context.drawImage( img, x, y, width, height );
     }
 
     export function drawText( text: string, x: number, y: number, style = "black", font = "20px sans-serif") {
         context.fillStyle = style;
         context.font = font;
-        context.fillText(text, x, y);
+        
+        if (cameraEnabled) {
+            // Dealing with font sizes is too much of a pain, just disable the camera.
+
+            disableCamera();
+
+            context.fillText(text, (x - cameraX) * blockScale + canvas.width/2, (y - cameraY) * blockScale + canvas.height/2);
+
+            enableCamera();
+        } else {
+            context.fillText(text, x, y);
+        }
     }
 }
