@@ -224,7 +224,16 @@ export class World {
         let save_obj: any = {};
         save_obj.width = this.sizeX;
         save_obj.height = this.sizeY;
-        save_obj.blockTypes = this.blockIdLookup.map((info)=> info.name);
+        save_obj.blockTypes = [];
+        
+        for ( let x = 0; x < this.sizeX; x++ ) {
+            for ( let y = 0; y < this.sizeY; y++ ) {
+                let t = this.blockMap[x][y];
+                if (t != 0)
+                    save_obj.blockTypes[t] = this.blockIdLookup[t].name;
+            }
+        }
+
         save_obj.blockMap = JSON.parse(JSON.stringify(this.blockMap));
         save_obj.objects = GameObjectManager.saveObjects();
 
@@ -261,6 +270,7 @@ export class World {
         let objClass = CodeManager.getGameObjectClass(className);
         if (objClass != null) {
             let obj = new objClass(x,y);
+			return obj;
         }
     }
     

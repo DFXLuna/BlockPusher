@@ -3,6 +3,13 @@ import { QuadTree } from "./quadtree"
 import { Render } from "./render"
 import { CodeManager } from "./codemanager";
 
+// This controls whether we check a ray's start position.
+// If this is disabled, a cast will ignore any object it
+// starts inside of. We are leaving it disabled for now.
+const ENABLE_CAST_START_CHECK = false;
+
+// Fudge factor used to combat rounding errors and other weirdness.
+const BOUNDS_CAST_FUDGE_FACTOR = .001;
 
 interface Bounds {
     x: number;
@@ -77,7 +84,7 @@ namespace BoundsUtils {
 
     export function checkRay(bounds: Bounds, x: number, y: number, dx: number, dy: number): CastResult | null {
         
-        if (checkPoint(bounds, x, y)) {
+        if (ENABLE_CAST_START_CHECK && checkPoint(bounds, x, y)) {
             return {
                 hit: true,
                 x: x,
@@ -143,6 +150,99 @@ namespace BoundsUtils {
                     side: Collision.Bottom
                 };
             }
+        }
+
+        return null;
+    }
+
+    export function checkBoundsCast(bounds: Bounds, x: number, y: number, width: number, height: number, dx: number, dy: number): CastResult | null {
+        
+        if (ENABLE_CAST_START_CHECK && checkBounds(bounds,{x,y,width,height})) {
+            return {
+                hit: true,
+                x: x,
+                y: y,
+                distance: 0
+            };
+        }
+
+        let baseX = x;
+        let baseY = y;
+
+        x = dx>0 ? x + width - BOUNDS_CAST_FUDGE_FACTOR : x + BOUNDS_CAST_FUDGE_FACTOR;
+        y = dy>0 ? y + height - BOUNDS_CAST_FUDGE_FACTOR : y + BOUNDS_CAST_FUDGE_FACTOR;
+
+        // Min/Max of bounds on each axis
+        let xMin = bounds.x;
+        let xMax = bounds.x + bounds.width;
+
+        let yMin = bounds.y;
+        let yMax = bounds.y + bounds.height;
+
+        if (dx > 0 && x < xMin && x + dx > xMin) {
+            // check left edge
+            let hitYMin = baseY + dy / dx * (xMin - x);
+            let hitYMax = hitYMin + height;
+            if (hitYMax > yMin && hitYMin < yMax) {
+                return {
+                    hit: true,
+                    x: (xMin - width),
+                    y: hitYMin,
+                    distance: Math.sqrt(Math.pow((xMin - width) - baseX,2) + Math.pow(hitYMin - baseY,2)),
+                    side: Collision.Left
+                };
+            }
+        } else if (dx < 0 && x > xMax && x + dx < xMax) {
+            // check right edge
+            let hitYMin = baseY - dy / dx * (x - (xMax));
+            let hitYMax = hitYMin + height;
+            if (hitYMax > yMin && hitYMin < yMax) {
+                return {
+                    hit: true,
+                    x: xMax,
+                    y: hitYMin,
+                    distance: Math.sqrt(Math.pow(xMax - baseX,2) + Math.pow(hitYMin - baseY,2)),
+                    side: Collision.Right
+                };
+            }
+        }
+
+        if (dy > 0 && y < yMin && y + dy > yMin) {
+            // check top edge
+            let hitXMin = baseX + dx / dy * (yMin - y);
+            let hitXMax = hitXMin + width;
+            if (hitXMax > xMin && hitXMin < xMax) {
+                return {
+                    hit: true,
+                    x: hitXMin,
+                    y: (yMin - height),
+                    distance: Math.sqrt(Math.pow((yMin - height) - baseY,2) + Math.pow(hitXMin - baseX,2)),
+                    side: Collision.Top
+                };
+            }
+        } else if (dy < 0 && y > yMax && y + dy < yMax) {
+            // check bottom edge
+            let hitXMin = baseX - dx / dy * (y - yMax);
+            let hitXMax = hitXMin + width;
+            if (hitXMax > xMin && hitXMin < xMax) {
+                return {
+                    hit: true,
+                    x: hitXMin,
+                    y: yMax,
+                    distance: Math.sqrt(Math.pow(yMax - baseY,2) + Math.pow(hitXMin - baseX,2)),
+                    side: Collision.Bottom
+                };
+            }
+            /*let hitX = x - dx / dy * (y - (yMax));
+            if (hitX > xMin && hitX < xMax) {
+                return {
+                    hit: true,
+                    x: hitX,
+                    y: yMax,
+                    distance: Math.sqrt(Math.pow(yMax - y,2) + Math.pow(hitX - x,2)),
+                    side: Collision.Bottom
+                };
+            }*/
         }
 
         return null;
@@ -286,19 +386,21 @@ export namespace Collision {
 
         function check(): CastResult | null {
             // check block
-            let block = world.getBlockTypeAt(currentX , currentY);
-            if (block != null) {
-                return {
-                    hit: true,
-                    x: x+dx * t,
-                    y: y+dy * t,
-                    distance: t * fullDistance,
-                    side: lastSide,
+            if (ENABLE_CAST_START_CHECK || lastSide !=null) {
+                let block = world.getBlockTypeAt(currentX , currentY);
+                if (block != null) {
+                    return {
+                        hit: true,
+                        x: x+dx * t,
+                        y: y+dy * t,
+                        distance: t * fullDistance,
+                        side: lastSide,
 
-                    blockType: block,
-                    blockX: currentX,
-                    blockY: currentY,
-                };
+                        blockType: block,
+                        blockX: currentX,
+                        blockY: currentY,
+                    };
+                }
             }
 
             // Now get any objects in this cell.
@@ -352,7 +454,6 @@ export namespace Collision {
             }
             
             if (failsafe++ > 1000) {
-                console.log(">>" ,tMaxX, tMaxY, tDeltaY);
                 throw new Error("Raycast ran for too long.");
             }
         }
@@ -365,9 +466,7 @@ export namespace Collision {
         }
     }
 
-    export function castBounds( x: number, y: number, width: number, height: number, dx: number, dy: number, ignoreObject?: GameObject, debug = false ): CastResult {
-        // Fudge factor used to combat rounding errors and other weirdness.
-        const FUDGE_FACTOR = .001;
+    export function castBounds( x: number, y: number, width: number, height: number, dx: number, dy: number, ignoreObject?: GameObject ): CastResult {
         
         // Modification of the previous ray casting algorithm.
         let world = CodeManager.World;
@@ -375,11 +474,11 @@ export namespace Collision {
         let baseX = x;
         let baseY = y;
 
-        x = dx>0 ? x + width - FUDGE_FACTOR : x + FUDGE_FACTOR;
-        y = dy>0 ? y + height - FUDGE_FACTOR : y + FUDGE_FACTOR;
+        x = dx>0 ? x + width - BOUNDS_CAST_FUDGE_FACTOR : x + BOUNDS_CAST_FUDGE_FACTOR;
+        y = dy>0 ? y + height - BOUNDS_CAST_FUDGE_FACTOR : y + BOUNDS_CAST_FUDGE_FACTOR;
 
-        //width -= FUDGE_FACTOR*2;
-        //height -= FUDGE_FACTOR*2;
+        //width -= BOUNDS_CAST_FUDGE_FACTOR*2;
+        //height -= BOUNDS_CAST_FUDGE_FACTOR*2;
 
         let stepX = Math.sign(dx);
         let stepY = Math.sign(dy);
@@ -411,38 +510,40 @@ export namespace Collision {
         // Checks an individual grid space.
         function checkInner(x: number, y: number): CastResult | null {
             // check block
-            let block = world.getBlockTypeAt(x , y);
-            if (block != null) {
-                let adjusted_t: number;
-                if (lastSide == Left || lastSide == Right) {
-                    adjusted_t = t - tDeltaX*FUDGE_FACTOR;
-                } else {
-                    adjusted_t = t - tDeltaY*FUDGE_FACTOR;
+            if (ENABLE_CAST_START_CHECK || lastSide !=null) {
+                let block = world.getBlockTypeAt(x , y);
+                if (block != null) {
+                    let adjusted_t: number;
+                    if (lastSide == Left || lastSide == Right) {
+                        adjusted_t = t - tDeltaX*BOUNDS_CAST_FUDGE_FACTOR;
+                    } else {
+                        adjusted_t = t - tDeltaY*BOUNDS_CAST_FUDGE_FACTOR;
+                    }
+
+                    if (!isFinite(adjusted_t)) {
+                        // This should hopefully not happen anymore.
+                        adjusted_t = 0;
+                    } else if (adjusted_t < 0) {
+                        adjusted_t = 0;
+                    }
+
+                    let res = {
+                        hit: true,
+                        x: baseX+dx * adjusted_t,
+                        y: baseY+dy * adjusted_t,
+                        distance: t * fullDistance,
+                        side: lastSide,
+
+                        blockType: block,
+                        blockX: x,
+                        blockY: y,
+                    };
+                    return res;
                 }
-
-                if (!isFinite(adjusted_t)) {
-                    // This should hopefully not happen anymore.
-                    adjusted_t = 0;
-                } else if (adjusted_t < 0) {
-                    adjusted_t = 0;
-                }
-
-                let res = {
-                    hit: true,
-                    x: baseX+dx * adjusted_t,
-                    y: baseY+dy * adjusted_t,
-                    distance: t * fullDistance,
-                    side: lastSide,
-
-                    blockType: block,
-                    blockX: x,
-                    blockY: y,
-                };
-                return res;
             }
 
             // Now get any objects in this cell.
-            /*let cellKey = BoundsUtils.getPointCell(currentX, currentY);
+            let cellKey = BoundsUtils.getPointCell(x, y);
             let boundsArray = broadphaseGrid[cellKey];
             if (boundsArray != null) {
                 let results = boundsArray.map((bounds) => {
@@ -452,7 +553,7 @@ export namespace Collision {
                     if (bounds.object == ignoreObject)
                         return null;
                     
-                    let res = BoundsUtils.checkRay(bounds, x, y, dx, dy);
+                    let res = BoundsUtils.checkBoundsCast(bounds, baseX, baseY, width, height, dx, dy);
                     if (res != null)
                         res.object = bounds.object;
                     return res;
@@ -462,36 +563,25 @@ export namespace Collision {
                     results.sort((a,b)=>(<CastResult>a).distance-(<CastResult>b).distance);
                     return results[0];
                 }
-            }*/
+            }
 
             return null;
         }
 
         // Checks a span of blocks based on the trace state.
         function check(): CastResult | null {
-            if (debug) {
-                Render.drawRectOutline("lime",currentX,currentY,1,1,2);
-                //console.log("~",baseY,t,baseY+dy*t,baseY+dy*t + FUDGE_FACTOR)
-            }
             
-            /*function floorExclusive(x: number) {
-                // I don't even know at this point.
-                let y = Math.floor(x);
-                if (x == y)
-                    return y-1;
-                return y;
-            }*/
 
             if (lastSide == Left || lastSide == Right) {
                 // Check a vertical span
                 let yt = y+dy*t;
                 let y1, y2;
                 if (dy > 0) {
-                    y1 = Math.floor(yt - height + FUDGE_FACTOR*2);
+                    y1 = Math.floor(yt - height + BOUNDS_CAST_FUDGE_FACTOR*2);
                     y2 = currentY;
                 } else {
                     y1 = currentY;
-                    y2 = Math.floor(yt + height - FUDGE_FACTOR*2);
+                    y2 = Math.floor(yt + height - BOUNDS_CAST_FUDGE_FACTOR*2);
                 }
                 for (let yi = y1; yi <= y2; yi++) {
                     let res = checkInner(currentX, yi);
@@ -503,11 +593,11 @@ export namespace Collision {
                 let xt = x+dx*t;
                 let x1, x2;
                 if (dx > 0) {
-                    x1 = Math.floor(xt - width + FUDGE_FACTOR*2);
+                    x1 = Math.floor(xt - width + BOUNDS_CAST_FUDGE_FACTOR*2);
                     x2 = currentX;
                 } else {
                     x1 = currentX;
-                    x2 = Math.floor(xt + width - FUDGE_FACTOR*2);
+                    x2 = Math.floor(xt + width - BOUNDS_CAST_FUDGE_FACTOR*2);
                 }
                 for (let xi = x1; xi <= x2; xi++) {
                     let res = checkInner(xi, currentY);
@@ -516,10 +606,24 @@ export namespace Collision {
                 }
             } else {
                 // Check entire region.
-                /*let x1 = Math.floor(baseX+dx*t);
-                let x2 = Math.floor(baseX+dx*t + width);
-                let y1 = Math.floor(baseY+dy*t);
-                let y2 = Math.floor(baseY+dy*t + height);
+                let xt = x+dx*t;
+                let yt = y+dy*t;
+                let x1, x2;
+                if (dx > 0) {
+                    x1 = Math.floor(xt - width + BOUNDS_CAST_FUDGE_FACTOR*2);
+                    x2 = currentX;
+                } else {
+                    x1 = currentX;
+                    x2 = Math.floor(xt + width - BOUNDS_CAST_FUDGE_FACTOR*2);
+                }
+                let y1, y2;
+                if (dy > 0) {
+                    y1 = Math.floor(yt - height + BOUNDS_CAST_FUDGE_FACTOR*2);
+                    y2 = currentY;
+                } else {
+                    y1 = currentY;
+                    y2 = Math.floor(yt + height - BOUNDS_CAST_FUDGE_FACTOR*2);
+                }
                 for (let xi = x1; xi <= x2; xi++) {
                     for (let yi = y1; yi <= y2; yi++) {
                         let res = checkInner(xi, yi);
@@ -527,7 +631,7 @@ export namespace Collision {
                             return res;
                         }
                     }
-                }*/
+                }
             }
 
             return null;

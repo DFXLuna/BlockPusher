@@ -113,15 +113,16 @@ export class GameObject {
         this.velY += world.gravityY * delta;
     
         let res = Collision.castBounds(this.x, this.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
-    
+        let res1 = res;
+
         if (res.hit) {
-            const MAX_BOUNCE_SPEED = 2;
+            const MIN_BOUNCE_SPEED = 3;
             // The cast hit. Update velocity and run a second cast.
             if (res.side == Collision.Top || res.side == Collision.Bottom) {
-                this.velY = Math.abs(this.velY) > MAX_BOUNCE_SPEED ? -this.velY * this.bounciness : 0;
+                this.velY = Math.abs(this.velY) > MIN_BOUNCE_SPEED ? -this.velY * this.bounciness : 0;
                 this.velX *= 1 - this.friction * delta;
             } else if (res.side == Collision.Left || res.side == Collision.Right) {
-                this.velX = Math.abs(this.velY) > MAX_BOUNCE_SPEED ? -this.velX * this.bounciness : 0;
+                this.velX = Math.abs(this.velY) > MIN_BOUNCE_SPEED ? -this.velX * this.bounciness : 0;
                 this.velY *= 1 - this.friction * delta;
             }
             res = Collision.castBounds(res.x, res.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
@@ -129,6 +130,9 @@ export class GameObject {
     
         this.x = res.x;
         this.y = res.y;
+
+        if (res1.hit)
+            this.onCollision(res1);
     }
 
     public update(): void {
@@ -143,7 +147,7 @@ export class GameObject {
         return { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
-    public onCollision(): void{}
+    public onCollision(res: any): void{}
     
     public destroy(): void {
         GameObjectManager.removeGameObject( this );
