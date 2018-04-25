@@ -2,7 +2,6 @@
 <head>
     <title>BlockPusher Sandbox</title>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'unsafe-inline' 'unsafe-eval' 'self' data: *;">
     <style>
         html, body {
             background: black;
@@ -13,10 +12,7 @@
             overflow: hidden;
         }
     </style>
-    <script>
-        // Sandboxing attempts
-        delete window.alert;
-    </script></head>
+</head>
 <body>
     <canvas id="game-canvas"></canvas>
     <script src="/Scripts/nosave.js"></script>

@@ -89,8 +89,16 @@ namespace BlockPusher.Controllers
         }
 
         // GET: /Play/Sandbox
-        public ActionResult Sandbox()
+        public ActionResult Sandbox(int? gameId)
 		{
+            string host = Request.Url.Scheme + "://" + Request.Headers.Get("Host");
+
+            // Set us a CSP. Restrict to our content directory, or fall back on data URLs.
+            Response.Headers.Add("Content-Security-Policy",
+                "default-src " + ((gameId != null) ? host + "/Content/Game/"+ gameId + "/" : "data:") + ";" +
+                "style-src 'unsafe-inline';" +
+                "script-src " + host + "/Scripts/ 'unsafe-eval';");
+
             return new FilePathResult("~/Views/Play/Sandbox.html", "text/html");
 		}
 	}

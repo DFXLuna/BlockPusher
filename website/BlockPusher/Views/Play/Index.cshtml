@@ -70,7 +70,7 @@
                 sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
             }
 
-            sandboxElement.src = "/Play/Sandbox";
+            sandboxElement.src = "/Play/Sandbox?gameId=" + gameId;
         })();
     </script>
 }
