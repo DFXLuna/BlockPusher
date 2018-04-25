@@ -4,7 +4,7 @@ GameObject.image = "player.png";
 GameObject.width = 2;
 GameObject.height = 2;
 
-GameObject.paddle = true
+GameObject.player = true
 
 GameObject.update = function () {
 

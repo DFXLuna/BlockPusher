@@ -13,14 +13,12 @@ GameObject.setup = function () {
 }
 
 GameObject.onCollision = function(collision) {
-    if (collision.object && collision.object.paddle) {
+    if (collision.object && collision.object.player) {
         this.remove();
         World.r_score++;
         Audio.playSound("score.wav");
     } else if (collision.blockType == "ground") {
         this.remove();
-        Audio.playSound("bounce.wav");
-    } else {
         Audio.playSound("bounce.wav");
     }
 }

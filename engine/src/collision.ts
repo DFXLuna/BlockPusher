@@ -169,6 +169,8 @@ namespace BoundsUtils {
         let baseX = x;
         let baseY = y;
 
+        let BOUNDS_CAST_FUDGE_FACTOR = 0;
+
         x = dx>0 ? x + width - BOUNDS_CAST_FUDGE_FACTOR : x + BOUNDS_CAST_FUDGE_FACTOR;
         y = dy>0 ? y + height - BOUNDS_CAST_FUDGE_FACTOR : y + BOUNDS_CAST_FUDGE_FACTOR;
 
@@ -181,7 +183,7 @@ namespace BoundsUtils {
 
         if (dx > 0 && x < xMin && x + dx > xMin) {
             // check left edge
-            let hitYMin = baseY + dy / dx * (xMin - x);
+            let hitYMin = baseY + dy / dx * (xMin - x - BOUNDS_CAST_FUDGE_FACTOR);
             let hitYMax = hitYMin + height;
             if (hitYMax > yMin && hitYMin < yMax) {
                 return {
@@ -194,7 +196,7 @@ namespace BoundsUtils {
             }
         } else if (dx < 0 && x > xMax && x + dx < xMax) {
             // check right edge
-            let hitYMin = baseY - dy / dx * (x - (xMax));
+            let hitYMin = baseY - dy / dx * (x - xMax - BOUNDS_CAST_FUDGE_FACTOR);
             let hitYMax = hitYMin + height;
             if (hitYMax > yMin && hitYMin < yMax) {
                 return {
@@ -291,20 +293,6 @@ export namespace Collision {
     export function debugDraw() {
         //if (qt314 != null)
         //    qt314.drawQuadTree();
-    }
-
-    // Checks for collision and calls both gameobjects callback
-    function checkCollision( go1: GameObject, go2: GameObject ): void {
-        let box1 = go1.getBoundingBox();
-        let box2 = go2.getBoundingBox();
-
-        if( box1.x < box2.x + box2.width  &&
-            box1.x + box1.width > box2.x  &&
-            box1.y < box2.y + box2.height &&
-            box1.y + box1.height > box2.y ){
-                go1.onCollision();
-                go2.onCollision();
-        }
     }
 
     // Checks for GameObjects ONLY.
@@ -552,8 +540,8 @@ export namespace Collision {
                     // Skip ignoreObject
                     if (bounds.object == ignoreObject)
                         return null;
-                    
-                    let res = BoundsUtils.checkBoundsCast(bounds, baseX, baseY, width, height, dx, dy);
+
+                    let res = BoundsUtils.checkBoundsCast(bounds, baseX, baseY, width, height, dx*t, dy*t);
                     if (res != null)
                         res.object = bounds.object;
                     return res;
