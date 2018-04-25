@@ -28,7 +28,12 @@ export namespace CodeManager {
         World = new WorldBase();
         callSetupFunction(WorldSetupFunction);
         
-        // TODO reset all those game object classes
+        // reload all object classes
+        for (let className in gameObjectClasses) {
+            let classInfo = gameObjectClasses[className];
+            classInfo.objectClass = (class GameObject extends GameObjectBase {});
+            callSetupFunction(classInfo.setupFunction, classInfo.objectClass);
+        }
     }
 
     function callSetupFunction(f: Function, objClass?: typeof GameObjectBase | undefined) {

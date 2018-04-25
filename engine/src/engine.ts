@@ -144,8 +144,9 @@ window.addEventListener("message", async function (event: MessageEvent) {
             window.parent.postMessage({type: "saveLevel", data: JSON.stringify(savedState)},"*");
         }
 
-        // TODO reset logic:
         // reload all classes from saved code
+        CodeManager.setup();
+        Time.setup();
 
         // reload saved level
         CodeManager.World.load(savedState);

@@ -7,8 +7,8 @@ export namespace Render {
     let imageCache: {[path: string]: HTMLImageElement} = {};
     let imagePath = "";
     // TODO set these to sane defaults based on world scale @ startup???
-    let cameraX = 4;
-    let cameraY = 4;
+    let cameraX = 8;
+    let cameraY = 8;
 
     let cameraEnabled = false;
 
