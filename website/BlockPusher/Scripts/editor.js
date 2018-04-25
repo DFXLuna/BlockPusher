@@ -571,11 +571,16 @@
         files.forEach((file) => {
             fetchFile(file, "/Content/Game/" + gameId + "/" + file);
         });
+
+        sandboxElement.onload = function () {
+            alert("A game script navigated to another page.\nClosing the player.");
+            sandboxElement.remove();
+        }
     }
 
+    var sandboxURL = "/Play/Sandbox";
     sandboxElement.onload = onEngineStart;
-
-    sandboxElement.src = "/Play/Sandbox";
+    sandboxElement.src = sandboxURL;
 
     window.addEventListener("message", function (event) {
         let msg = event.data;

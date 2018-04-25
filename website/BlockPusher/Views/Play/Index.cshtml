@@ -62,15 +62,21 @@
                     sandboxElement.contentWindow.postMessage({ type: "setFile", file: file, url: url }, "*");
                 });
                 resetGame();
+
+                sandboxElement.onload = function () {
+                    alert("A game script navigated to another page.\nClosing the player.");
+                    sandboxElement.remove();
+                }
             }
 
+            var sandboxURL = "/Play/Sandbox?gameId=" + gameId;
             sandboxElement.onload = onEngineStart;
+            sandboxElement.src = sandboxURL;
 
             window.resetGame = function () {
                 sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
             }
 
-            sandboxElement.src = "/Play/Sandbox?gameId=" + gameId;
         })();
     </script>
 }
