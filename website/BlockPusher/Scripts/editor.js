@@ -494,6 +494,7 @@
             playEditButton.classList.remove("btn-danger");
             playEditButton.innerText = "Play Level";
         }
+        sandboxElement.focus();
         sandboxElement.contentWindow.postMessage({ type: "setMode", play: isPlaying }, "*");
     }
 
@@ -532,7 +533,9 @@
         saveToServerRequested = false;
     }
 
-    window.startSaveToServer = function() {
+    window.startSaveToServer = function () {
+        // Save document in editor
+        runCode();
         saveToServerRequested = true;
         sandboxElement.contentWindow.postMessage({ type: "requestLevel" }, "*");
     }
