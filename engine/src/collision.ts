@@ -541,7 +541,13 @@ export namespace Collision {
                     if (bounds.object == ignoreObject)
                         return null;
 
-                    let res = BoundsUtils.checkBoundsCast(bounds, baseX, baseY, width, height, dx*t, dy*t);
+                    let farT = Math.min(tMaxX,tMaxY);
+
+                    //let m = t + .1;
+                    //if (Math.random()<.1)
+                    //console.log(t,m);
+
+                    let res = BoundsUtils.checkBoundsCast(bounds, baseX, baseY, width, height, dx*farT, dy*farT);
                     if (res != null)
                         res.object = bounds.object;
                     return res;

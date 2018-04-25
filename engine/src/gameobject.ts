@@ -131,8 +131,9 @@ export class GameObject {
         this.x = res.x;
         this.y = res.y;
 
-        if (res1.hit)
+        if (res1.hit) {
             this.onCollision(res1);
+        }
     }
 
     public update(): void {
