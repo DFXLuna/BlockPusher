@@ -166,6 +166,3 @@ window.addEventListener("message", async function (event: MessageEvent) {
         console.log("Unhandled message: ",msg);
     }
 });
-
-// Send a message to the parent window when the engine is ready.
-window.parent.postMessage({type: "engineReady"},"*");

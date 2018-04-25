@@ -565,7 +565,6 @@
     async function onEngineStart() {
         let gameId = window.EDIT_GAMEID;
 
-        console.log("engine start");
         let res = await fetch("/Content/GetFileNames?gameId=" + gameId);
         let files = await res.json();
 
@@ -574,12 +573,14 @@
         });
     }
 
+    sandboxElement.onload = onEngineStart;
+
+    sandboxElement.src = "/Play/Sandbox";
+
     window.addEventListener("message", function (event) {
         let msg = event.data;
 
-        if (msg.type == "engineReady") {
-            onEngineStart();
-        } else if (msg.type == "setObjectList") {
+        if (msg.type == "setObjectList") {
             setObjectList(msg.list);
         } else if (msg.type == "saveLevel") {
             let fileBlob = new Blob([msg.data], { type: "application/json" });
@@ -592,4 +593,5 @@
             console.log("Unhandled message: ", msg);
         }
     });
+
 })();

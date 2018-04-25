@@ -27,7 +27,7 @@
     }
     </div>
     <div id="play-content">
-        <iframe id="play-sandbox" src="/Play/Sandbox" sandbox="allow-scripts"></iframe>
+        <iframe id="play-sandbox" sandbox="allow-scripts"></iframe>
     </div>
 </div>
 <div class="modal" id="play-info">
@@ -54,7 +54,6 @@
             let sandboxElement = document.getElementById("play-sandbox");
 
             async function onEngineStart() {
-                console.log("engine start");
                 let res = await fetch("/Content/GetFileNames?gameId=" + gameId);
                 let files = await res.json();
 
@@ -65,16 +64,13 @@
                 resetGame();
             }
 
-            window.addEventListener("message", function (event) {
-                let msg = event.data;
-                if (msg.type == "engineReady") {
-                    onEngineStart();
-                }
-            });
+            sandboxElement.onload = onEngineStart;
 
             window.resetGame = function () {
                 sandboxElement.contentWindow.postMessage({ type: "setMode", play: true }, "*");
             }
+
+            sandboxElement.src = "/Play/Sandbox";
         })();
     </script>
 }
