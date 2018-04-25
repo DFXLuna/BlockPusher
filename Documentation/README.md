@@ -1,5 +1,5 @@
-[Planning Document](../master/Documentation/PredesignSpec.pdf)
-[Implementation Document](../master/Documentation/ImplementationDoc.pdf)
+[Planning Document](../Documentation/PredesignSpec.pdf)
+[Implementation Document](../Documentation/ImplementationDoc.pdf)
 
 
 ## Game Engine
