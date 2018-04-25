@@ -14,5 +14,5 @@ This project required a combination of web and game programming and involved a n
 
 [Presentation](INSERTLINKHERE)
 
-[Poster](INSERTLINKHERE)
+[Poster](../master/Documentation/Poster.pdf)
 
