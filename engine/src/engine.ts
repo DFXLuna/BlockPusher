@@ -82,8 +82,9 @@ function clearObject(obj: object) {
 
 // CALLS FROM THE PARENT CONTEXT
 window.addEventListener("message", async function (event: MessageEvent) {
-    if (event.origin != location.origin)
+    if (event.origin != location.origin && event.source != window) {
         return;
+    }
 
     let msg = event.data;
 
@@ -134,7 +135,6 @@ window.addEventListener("message", async function (event: MessageEvent) {
 
         updateEditorObjectList();
     } else if (msg.type == "setMode") {
-        
         // save level if currently in edit mode
         if (!isPlaying) {
             savedState = CodeManager.World.save();

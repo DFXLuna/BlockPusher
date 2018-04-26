@@ -27,6 +27,7 @@
 
     let replaceFileButton = document.getElementById("edit-replace-file");
     let dropElement = document.getElementById("edit-drop");
+    let filesListDropElement = document.getElementById("edit-left");
 
     // Play/Edit button
     let playEditButton = document.getElementById("edit-toggle-play");
@@ -348,12 +349,12 @@
         e.preventDefault();
     }
 
-    filesListElement.ondrop = function (e) {
+    filesListDropElement.ondrop = function (e) {
         e.preventDefault();
         uploadFile(e.dataTransfer.files);
     }
 
-    filesListElement.ondragover = function (e) {
+    filesListDropElement.ondragover = function (e) {
         e.preventDefault();
     }
 

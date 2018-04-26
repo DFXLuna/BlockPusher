@@ -285,4 +285,8 @@ export class World {
     public getSizeY(): number {
         return this.sizeY;
     }
+
+    public reset() {
+        window.postMessage({type: "setMode", play: true},"*");
+    }
 }

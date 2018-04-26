@@ -245,6 +245,9 @@
     <Content Include="Content\Game\7\Thing.js" />
     <Content Include="Content\Game\7\World.js" />
     <Content Include="Content\Game\7\zinger.wav" />
+    <Content Include="Content\Images\code.png" />
+    <Content Include="Content\Images\content.png" />
+    <Content Include="Content\Images\game.png" />
     <Content Include="Content\Play.css" />
     <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
