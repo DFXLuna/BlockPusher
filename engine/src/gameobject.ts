@@ -81,6 +81,8 @@ export class GameObject {
     bounciness: number;
     friction: number;
 
+    isOnGround = false;
+
     public constructor( x: number, y: number) {
         this.x = x;
         this.y = y;
@@ -115,7 +117,10 @@ export class GameObject {
         let res = Collision.castBounds(this.x, this.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
         let res1 = res;
 
+        this.isOnGround = false;
+
         if (res.hit) {
+
             const MIN_BOUNCE_SPEED = 3;
             // The cast hit. Update velocity and run a second cast.
             if (res.side == Collision.Top || res.side == Collision.Bottom) {
@@ -126,6 +131,10 @@ export class GameObject {
                 this.velY *= 1 - this.friction * delta;
             }
             res = Collision.castBounds(res.x, res.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
+            
+            if (res.side == Collision.Top || res1.side == Collision.Top) {
+                this.isOnGround = true;
+            }
         }
     
         this.x = res.x;
