@@ -131,7 +131,7 @@ export class GameObject {
                 this.velY *= 1 - this.friction * delta;
             }
             res = Collision.castBounds(res.x, res.y, this.width, this.height, this.velX * delta, this.velY * delta, this);
-            
+
             if (res.side == Collision.Top || res1.side == Collision.Top) {
                 this.isOnGround = true;
             }
@@ -142,6 +142,10 @@ export class GameObject {
 
         if (res1.hit) {
             this.onCollision(res1);
+        }
+
+        if (res.hit) {
+            this.onCollision(res);
         }
     }
 
